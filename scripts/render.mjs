@@ -249,10 +249,15 @@ function preview(list) {
 </dialog>`;
 }
 
-// Spreadsheet preview. Name, photo, title, firm and country are real; email and LinkedIn are blurred placeholders, never the data.
+// Spreadsheet preview. The first OPEN_ROWS rows show real name, photo, title, firm and country.
+// After that, surname and firm are replaced by blurred placeholders, so the page can't be scraped
+// into the product. Email and LinkedIn are always placeholders, never the data.
+const OPEN_ROWS = 20;
 const BLUR = {
   email: ['firstname@familyoffice.com', 'name@capitalpartners.eu', 'info.direct@holdings.com', 'first.last@wealth.com'],
   linkedin: ['linkedin.com/in/firstname-lastname', 'linkedin.com/in/name-surname-42'],
+  surname: ['Lastname', 'Surname', 'Familyname', 'Name'],
+  firm: ['Family Office Holding', 'Capital Partners AG', 'Private Investments SA', 'Family Capital Ltd', 'Heritage Holdings'],
 };
 const bl = (k, i) => `<span class="blur">${BLUR[k][i % BLUR[k].length]}</span>`;
 
@@ -260,12 +265,17 @@ function sheetDialog(list) {
   const rows = (list.rows || []).map((r, i) => {
     const label = r.name || r.firm || '';
     const x = r.extra || {};
-    return `<tr><td class="ix">${i + 1}</td><td class="nm"><span class="av">${face({ ...r, name: label }, 48)}</span>${esc(label)}</td><td>${esc(r.title || x.stage || '')}</td><td>${esc(r.name ? r.firm || '' : '')}</td><td>${esc(r.country || r.region || '')}</td><td>${bl('email', i)}</td><td>${bl('linkedin', i)}</td></tr>`;
+    const open = i < OPEN_ROWS;
+    const first = String(label).split(/\s+/)[0] || '';
+    const nameCell = open ? esc(label) : r.name ? `${esc(first)} ${bl('surname', i)}` : bl('firm', i);
+    const avatar = open ? face({ ...r, name: label }, 48) : face({ name: label }, 48);
+    const firmCell = r.name ? (open ? esc(r.firm || '') : bl('firm', i)) : '';
+    return `<tr><td class="ix">${i + 1}</td><td class="nm"><span class="av">${avatar}</span>${nameCell}</td><td>${esc(r.title || x.stage || '')}</td><td>${firmCell}</td><td>${esc(r.country || r.region || '')}</td><td>${bl('email', i)}</td><td>${bl('linkedin', i)}</td></tr>`;
   });
   return `<dialog class="preview sheetdlg" id="sheet" aria-label="All ${n(list.stats.rows)} rows">
-  <div class="pvhead"><span class="script">the full list</span><h2>${n(list.stats.rows)} rows. Emails and LinkedIn are blurred.</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
+  <div class="pvhead"><span class="script">the full list</span><h2>${n(list.stats.rows)} rows. The first ${OPEN_ROWS} in full, the rest unlock when you buy.</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
   <div class="grid-wrap"><table class="sheettbl"><thead><tr><th class="ix">#</th><th>Name</th><th>Title</th><th>Firm</th><th>Country</th><th>Email</th><th>LinkedIn</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>
-  <div class="pvfoot"><span>Direct emails and LinkedIn profiles unlock when you buy.</span><button class="btn" data-buy="${esc(list.slug)}">Unlock all ${n(list.stats.rows)} for ${usd(list.price_cents)}</button></div>
+  <div class="pvfoot"><span>Full names, firms, direct emails and LinkedIn profiles unlock when you buy.</span><button class="btn" data-buy="${esc(list.slug)}">Unlock all ${n(list.stats.rows)} for ${usd(list.price_cents)}</button></div>
 </dialog>`;
 }
 
