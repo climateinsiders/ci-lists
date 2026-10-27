@@ -91,29 +91,73 @@
       });
   });
 
-  // ---- post-purchase upsell (thanks page) ----
-  var upsell = document.getElementById('upsell');
-  var sid = q.get('session_id') || '';
-  if (upsell && /^cs_/.test(sid)) {
-    fetch('/api/session?session_id=' + encodeURIComponent(sid))
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (j) {
-        if (!j || !j.remaining || !j.remaining.length) return;
-        var ul = document.getElementById('upsell-names');
-        ul.innerHTML = '';
-        j.remaining.forEach(function (n) { var li = document.createElement('li'); li.textContent = n; ul.appendChild(li); });
-        document.getElementById('upsell-sub').textContent = 'The other ' + j.remaining.length + ' lists, same format, same email delivery.';
-        upsell.hidden = false;
-      })
-      .catch(function () {});
-    var ub = document.getElementById('upsell-buy');
-    ub.addEventListener('click', function () {
-      ub.disabled = true;
-      var label = ub.textContent;
-      ub.textContent = 'Opening checkout…';
+  // ---- after purchase: your list + the one-time offer ----
+  var after = document.getElementById('after');
+  if (after) {
+    var sid = q.get('session_id') || '';
+    var dlg = document.getElementById('slam-dialog');
+    var clocks = document.querySelectorAll('[data-clock]');
+    var deadline = 0, timer = null;
+    var pad2 = function (n) { return (n < 10 ? '0' : '') + n; };
+
+    function tick() {
+      var left = Math.max(0, deadline - Date.now());
+      var h = Math.floor(left / 3600000), m = Math.floor(left / 60000) % 60, s = Math.floor(left / 1000) % 60;
+      clocks.forEach(function (c) {
+        c.querySelector('[data-h]').textContent = pad2(h);
+        c.querySelector('[data-m]').textContent = pad2(m);
+        c.querySelector('[data-s]').textContent = pad2(s);
+      });
+      if (!left) {
+        clearInterval(timer);
+        document.querySelectorAll('.slam [data-upsell]').forEach(function (b) { b.hidden = true; });
+        document.querySelectorAll('.slam [data-expired]').forEach(function (b) { b.hidden = false; });
+        if (dlg && dlg.open) dlg.close();
+      }
+      return left;
+    }
+
+    function render(j) {
+      var ul = document.getElementById('mylists');
+      ul.innerHTML = '';
+      (j.lists || []).forEach(function (l) {
+        var li = document.createElement('li');
+        var nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = l.name; li.appendChild(nm);
+        var acts = document.createElement('span'); acts.className = 'acts';
+        if (l.airtable_url) {
+          var a = document.createElement('a'); a.className = 'btn'; a.href = l.airtable_url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Open in Airtable ↗'; acts.appendChild(a);
+        }
+        var d = document.createElement('a'); d.className = 'btn ghost'; d.href = '/api/download?session_id=' + encodeURIComponent(sid) + '&slug=' + encodeURIComponent(l.slug); d.textContent = 'Download CSV ↓'; acts.appendChild(d);
+        li.appendChild(acts); ul.appendChild(li);
+      });
+      if (j.email) document.getElementById('sentto').textContent = 'also emailed to ' + j.email;
+      if (j.upsell || !j.created) { after.classList.add('done'); return; }
+      deadline = j.created * 1000 + 24 * 3600 * 1000;
+      timer = setInterval(tick, 1000);
+      if (tick() > 0) {
+        var seen = false;
+        try { seen = sessionStorage.getItem('ci_slam_seen') === '1'; sessionStorage.setItem('ci_slam_seen', '1'); } catch (e) {}
+        if (!seen && dlg) setTimeout(function () { openD(dlg); }, 1200);
+      }
+    }
+
+    // On localhost there is no API, so the design can be previewed with sample data.
+    var demo = { email: 'you@company.com', upsell: false, created: Math.floor(Date.now() / 1000) - 1800, lists: [{ slug: 'europe-500', name: '500 European family office contacts', airtable_url: '#' }] };
+    (/^cs_/.test(sid) ? fetch('/api/session?session_id=' + encodeURIComponent(sid)).then(function (r) { return r.ok ? r.json() : Promise.reject(); }) : Promise.reject())
+      .catch(function () { if (location.hostname === 'localhost') return demo; throw 0; })
+      .then(render)
+      .catch(function () { document.getElementById('mylists').innerHTML = '<li class="ph">We could not load your list here. It is in your inbox, or email yoann@climateinsiders.com.</li>'; });
+
+    document.addEventListener('click', function (ev) {
+      if (ev.target.closest('[data-skip]')) { ev.preventDefault(); if (dlg && dlg.open) closeD(); return; }
+      var b = ev.target.closest('[data-upsell]');
+      if (!b) return;
+      ev.preventDefault();
+      var label = b.textContent;
+      b.disabled = true; b.textContent = 'Opening checkout…';
       post('/api/checkout', { upsell: true, session_id: sid, attribution: attribution })
         .then(function (j) { location.href = j.url; })
-        .catch(function (e) { say(e.message, 7000); ub.disabled = false; ub.textContent = label; });
+        .catch(function (e) { say(e.message, 7000); b.disabled = false; b.textContent = label; });
     });
   }
 })();

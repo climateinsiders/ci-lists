@@ -29,7 +29,7 @@ export default async function handler(req, res) {
             currency: 'usd',
             unit_amount: UPSELL_PRICE_CENTS,
             product_data: {
-              name: `The other ${rest.length} investor lists (Climate Insiders)`,
+              name: 'All 47,000 investors (Climate Insiders)',
               description: `${rest.map((l) => l.short_name).join(', ')}. CSV + Airtable, delivered by email.`,
             },
           },

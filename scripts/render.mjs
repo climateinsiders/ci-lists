@@ -1,7 +1,8 @@
 import { ICONS, SMALL_ICONS } from './icons.mjs';
 
 const SITE = 'https://lists.climateinsiders.com';
-const UPSELL = 250;
+const UPSELL = 390;
+const UPSELL_INVESTORS = 47000;
 const AS = 'https://allstar-ci.vercel.app/p';
 const WF = 'https://cdn.prod.website-files.com/657b1ee1812a034008e87de8';
 
@@ -259,23 +260,54 @@ ${sheetDialog(f)}`;
   });
 }
 
+// The grand slam offer, shown twice: as the right column and as a pop-up on arrival.
+function slamCard() {
+  return `<div class="slam">
+  <span class="tag">buyers only · one-time offer</span>
+  <div class="clock" data-clock><span class="digits"><b data-h>24</b>:<b data-m>00</b>:<b data-s>00</b></span><small>left to claim this. Then it is gone.</small></div>
+  <h2>All <span class="hl">${n(UPSELL_INVESTORS)}</span> investors. <span class="px">$${UPSELL}</span></h2>
+  <ul class="checks">
+    <li>${SMALL_ICONS.check}<span><b>${n(UPSELL_INVESTORS)} investors</b> instead of the 500 you just bought.</span></li>
+    <li>${SMALL_ICONS.check}<span><b>Under 1¢ per investor.</b> One payment of $${UPSELL}.</span></li>
+    <li>${SMALL_ICONS.check}<span>Yours for good. Wrong row? Reply, I fix it.</span></li>
+    <li>${SMALL_ICONS.check}<span>Only shown to buyers, once. Not on the site, not by email.</span></li>
+  </ul>
+  <button class="btn big" data-upsell>Yes, give me all ${n(UPSELL_INVESTORS)} · $${UPSELL}</button>
+  <p class="fine" data-expired hidden>This offer has closed.</p>
+  <button class="skip" type="button" data-skip>No thanks, I'll stick with my list</button>
+</div>`;
+}
+
 export function thanksPage() {
   const body = `
-<header class="topbar">${brand()}</header>
-<section class="thanks">
-  <div class="mail">${SMALL_ICONS.mail}</div>
-  <span class="script" style="font-size:24px">paid. thank you.</span>
-  <h1>It's on its way.</h1>
-  <p>Your list is being emailed to the address you used at checkout. Give it two minutes, then check the promotions tab if it's not in the inbox.</p>
+<header class="hero">
+  <div class="title">
+    ${brand()}
+    <span class="script">paid. thank you.</span>
+    <h1><span class="hl">You're in.</span></h1>
+  </div>
+</header>
+
+<section class="offer main after" id="after">
+  <div class="picksCol">
+    <div class="head"><h3>Your list is ready<span class="script">yours for good</span></h3><small id="sentto">also emailed to you</small></div>
+    <ul class="mylists" id="mylists"><li class="ph">Loading your list…</li></ul>
+    <div class="next">
+      <span class="script">three rules before you write to anyone</span>
+      <ol>
+        <li><b>Filter first.</b> Pick the twelve that fit your sector and stage. Twelve well-matched names beat five hundred cold ones.</li>
+        <li><b>One email per person,</b> under 110 words, one specific line about them. A short second note 4 to 5 days later.</li>
+        <li><b>Book the flight.</b> The Nordics reply to email. France, Benelux and DACH reply to a coffee.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="valueCol slamCol" id="slamcol">${slamCard()}</div>
 </section>
-<section class="upsell" id="upsell" hidden>
-  <span class="script">one more thing</span>
-  <h2>Add every other list for <span class="hl">$${UPSELL}</span></h2>
-  <p class="sub" id="upsell-sub">The rest of the investor lists, same format, same email delivery.</p>
-  <ul class="names" id="upsell-names"></ul>
-  <button class="btn big" id="upsell-buy" data-upsell>Add them all for $${UPSELL}</button>
-  <p class="fine">One payment. They arrive in the same inbox in 2 minutes. No thanks? You're done, nothing else to do.</p>
-</section>
-<p class="thanks-small small">Nothing after ten minutes? Email <a href="mailto:yoann@climateinsiders.com">yoann@climateinsiders.com</a> with your receipt.</p>`;
-  return shell({ title: 'Thank you · Climate Insiders Investor Lists', description: 'Your list is on its way.', canonical: `${SITE}/thanks`, body });
+
+<p class="thanks-small small">Nothing after ten minutes? Email <a href="mailto:yoann@climateinsiders.com">yoann@climateinsiders.com</a> with your receipt.</p>
+<dialog class="preview slamdlg" id="slam-dialog" aria-label="One-time offer">
+  <div class="pvhead"><span class="script">wait, one thing</span><h2>Before you go</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
+  <div class="slamwrap">${slamCard()}</div>
+</dialog>`;
+  return shell({ title: 'You are in · Climate Insiders Investor Lists', description: 'Your list is ready.', canonical: `${SITE}/thanks`, body });
 }
