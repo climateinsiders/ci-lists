@@ -43,7 +43,10 @@ function fixtureRows(l) {
   const firms = ['Northgate Family Office', 'Alder Capital', 'Meridian Holdings', 'Vantage Wealth', 'Harbour & Co'];
   const countries = ['Germany', 'France', 'Switzerland', 'Sweden', 'Netherlands'];
   const rows = l.sample.map((e) => ({ name: e.name, title: e.title, firm: e.firm, country: e.country, region: e.region, extra: e.extra, website: e.website, photo_url: e.photo_url, logo_url: e.logo_url }));
+  const stages = ['Seed', 'Series A', 'Seed, Series A', 'Series A, Series B'];
+  const sectors = ['Energy', 'Food and agritech', 'Transport and mobility', 'Climate software'];
   for (let i = rows.length; i < l.stats.rows; i++) {
+    if (l.slug === 'climate-vcs-474') { rows.push({ name: null, firm: `Climate Fund ${i + 1}`, region: ['Europe', 'North America', 'Asia-Pacific'][i % 3], extra: { stage: stages[i % 4], sector: sectors[(i * 3) % 4], min: String(1 + (i % 3)), max: String(5 + (i % 6)), lead: i % 2 ? 'Yes' : 'No' } }); continue; }
     rows.push({ name: `${first[i % first.length]} ${last[(i * 7) % last.length]}`, title: titles[i % 5], firm: firms[(i * 3) % 5], country: countries[(i * 2) % 5] });
   }
   return rows;

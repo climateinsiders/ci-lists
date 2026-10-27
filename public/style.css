@@ -77,8 +77,8 @@ button { font: inherit; cursor: pointer; }
 .offer { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 400px; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 22px; box-shadow: 6px 6px 0 var(--ink); overflow: hidden; }
 .offer.main { margin-top: 18px; transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); box-shadow: calc(6px - var(--ry-n, 0) * 1px) calc(6px + var(--rx-n, 0) * 1px) 0 var(--ink); transition: transform .18s ease-out, box-shadow .18s ease-out; will-change: transform; }
 .picksCol { padding: 16px 22px 12px; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
-.valueCol { padding: 16px 24px 20px; background: var(--tone); border-left: 1.5px solid var(--ink); display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow: auto; }
-.valueCol .script { font-size: 32px; line-height: 1; margin-top: 12px; }
+.valueCol { padding: 12px 24px 14px; background: var(--tone); border-left: 1.5px solid var(--ink); display: flex; flex-direction: column; gap: 6px; min-height: 0; overflow: auto; }
+.valueCol .script { font-size: 30px; line-height: 1; margin-top: 8px; }
 .valueCol .buy { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .valueCol .bigprice { font-family: var(--serif); font-weight: 900; font-size: 48px; line-height: 1; }
 .valueCol .bigprice small { font-family: var(--sans); font-weight: 500; font-size: 10.5px; color: var(--ink-2); display: block; letter-spacing: .06em; text-transform: uppercase; margin-top: 3px; white-space: nowrap; }
@@ -300,3 +300,11 @@ dialog.preview .picks { grid-auto-rows: auto; flex: none; }
 .btn.ghost.is-loading::after { border-color: rgba(31,27,22,.25); border-top-color: var(--ink); }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .btn.is-loading::after { animation-duration: 1.6s; } }
+
+.sheettbl.funds td:nth-child(3), .sheettbl.funds td:nth-child(5) { max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
+.sheettbl.funds td:nth-child(4), .sheettbl.funds td:nth-child(6), .sheettbl.funds td:nth-child(7) { max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+
+.valueCol .checks { gap: 4px; }
+.valueCol .checks li { line-height: 1.24; }
+.valueCol .checks li { font-size: 15px; }
+.valueCol .fine { font-size: 12px; line-height: 1.3; }

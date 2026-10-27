@@ -166,7 +166,7 @@ function picks(list) {
 
 function valuePoints(list) {
   const pts = list.value_points || [];
-  return `<ul class="checks">${pts.map((t) => `<li>${SMALL_ICONS.check}<span>${esc(t)}</span></li>`).join('')}</ul>`;
+  return `<ul class="checks">${pts.map((t) => `<li>${SMALL_ICONS.check}<span>${esc(t.replace('CSV + Airtable', 'Airtable + Excel'))}</span></li>`).join('')}</ul>`;
 }
 
 function quote(i) {
@@ -194,6 +194,9 @@ function proofStrip() {
   <div class="rotator" aria-live="polite">${quotes}</div>
 </section>`;
 }
+
+// How the list is named in "you asked for ..." (the database short name reads badly for two lists).
+const KICKER_NAME = { 'lps-366': 'LPs', 'climate-vcs-474': 'Climate VCs' };
 
 const CHIP_NAME = { 'usa-500': 'US', 'uk-200': 'UK', 'france-benelux-150': 'France + Benelux', 'apac-200': 'APAC', 'latam-canada-150': 'Canada + LatAm', 'lps-366': 'LPs', 'climate-vcs-474': 'Climate VCs' };
 
@@ -229,14 +232,14 @@ function offerBlock(list, { sheet = false } = {}) {
   return `<div class="picksCol">
     <div class="head"><h3>Top 10 picks<span class="script">straight from the sheet</span></h3>${sheet ? `<button class="viewall" type="button" data-sheet>View all ${n(list.stats.rows)} <span aria-hidden="true">↗</span></button>` : `<small>${n(list.stats.rows)} in the full list</small>`}</div>
     <ul class="picks">${picks(list)}</ul>
-    <p class="more">… and ${n(Math.max(0, list.stats.rows - 10))} more with the full ${isFund ? 'details' : 'emails and LinkedIn'}.</p>
+    <p class="more">… and ${n(Math.max(0, list.stats.rows - 10))} more with the full ${isFund ? 'details' : (list.stats.emails || 0) / Math.max(1, list.stats.rows || 1) >= 0.4 ? 'emails and LinkedIn' : 'names, firms and roles'}.</p>
   </div>
   <div class="valueCol">
     <div class="buy">
       <div class="bigprice">${usd(list.price_cents)}<small>one time · yours forever</small></div>
       <button class="btn big" data-buy="${esc(list.slug)}">Get the list</button>
     </div>
-    <p class="fine">Stripe checkout. Card, Apple Pay, Google Pay. Airtable + Excel by email in 2 minutes, receipt and invoice included. Digital product, all sales final, see <a href="/terms">terms</a>.</p>
+    <p class="fine">Card, Apple Pay, Google Pay. Airtable + Excel by email in 2 minutes. Invoice included. Digital product, all sales final, see <a href="/terms">terms</a>.</p>
     <span class="script">what you get</span>
     ${valuePoints(list)}
   </div>`;
@@ -257,11 +260,34 @@ const BLUR = {
   email: ['firstname@familyoffice.com', 'name@capitalpartners.eu', 'info.direct@holdings.com', 'first.last@wealth.com'],
   linkedin: ['linkedin.com/in/firstname-lastname', 'linkedin.com/in/name-surname-42'],
   surname: ['Lastname', 'Surname', 'Familyname', 'Name'],
+  sector: ['Energy, Mobility, Industry', 'Food and agritech, Materials', 'Climate software, Energy'],
+  ticket: ['€1–8m', '€2–10m', '€0.5–5m'],
+  lead: ['Yes', 'No'],
   firm: ['Family Office Holding', 'Capital Partners AG', 'Private Investments SA', 'Family Capital Ltd', 'Heritage Holdings'],
 };
 const bl = (k, i) => `<span class="blur">${BLUR[k][i % BLUR[k].length]}</span>`;
 
+function fundSheetDialog(list) {
+  const rows = (list.rows || []).map((r, i) => {
+    const x = r.extra || {};
+    const open = i < OPEN_ROWS;
+    const name = r.firm || r.name || '';
+    const nameCell = open ? esc(name) : bl('firm', i);
+    const avatar = open ? face({ ...r, name }, 48) : face({ name }, 48);
+    // min/max come as plain numbers (millions of EUR) for most funds, as free text ("$30m - $50m") for some.
+    const isNum = (v) => /^\d+(\.\d+)?$/.test(String(v ?? '').trim());
+    const ticket = isNum(x.min) && isNum(x.max) ? `€${esc(x.min)}–${esc(x.max)}m` : esc([x.min, x.max].find((v) => v && !isNum(v)) || (x.min ? `from €${x.min}m` : x.max ? `up to €${x.max}m` : ''));
+    return `<tr><td class="ix">${i + 1}</td><td class="nm"><span class="av">${avatar}</span>${nameCell}</td><td>${esc(x.stage || '')}</td><td>${esc(r.region || '')}</td><td>${open ? esc(x.sector || '') : bl('sector', i)}</td><td>${open ? ticket : bl('ticket', i)}</td><td>${open ? esc(x.lead || '') : bl('lead', i)}</td></tr>`;
+  });
+  return `<dialog class="preview sheetdlg" id="sheet" aria-label="All ${n(list.stats.rows)} funds">
+  <div class="pvhead"><span class="script">the full list</span><h2>${n(list.stats.rows)} funds. The first ${OPEN_ROWS} in full, the rest unlock when you buy.</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
+  <div class="grid-wrap"><table class="sheettbl funds"><thead><tr><th class="ix">#</th><th>Fund</th><th>Stage</th><th>Region</th><th>Sector</th><th>Ticket</th><th>Leads rounds</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>
+  <div class="pvfoot"><span>Fund names, sectors, ticket sizes and who leads unlock when you buy.</span><button class="btn" data-buy="${esc(list.slug)}">Unlock all ${n(list.stats.rows)} for ${usd(list.price_cents)}</button></div>
+</dialog>`;
+}
+
 function sheetDialog(list) {
+  if (list.slug === 'climate-vcs-474') return fundSheetDialog(list);
   const rows = (list.rows || []).map((r, i) => {
     const label = r.name || r.firm || '';
     const x = r.extra || {};
@@ -287,7 +313,7 @@ export function page(lists, featured) {
 <header class="hero">
   <div class="title">
     ${brand()}
-    <span class="script">${featured ? `you asked for ${esc(f.short_name)}. here it is.` : 'hey, founders and fund managers'}</span>
+    <span class="script">${featured ? `you asked for ${esc(KICKER_NAME[f.slug] || f.short_name)}. here it is.` : 'hey, founders and fund managers'}</span>
     <h1><span class="hl">${esc(f.name)}</span></h1>
   </div>
 </header>
