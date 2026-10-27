@@ -25,7 +25,7 @@ export function siteUrl() {
 // ---------- Supabase (PostgREST, service role) ----------
 async function sb(path, { method = 'GET', body, prefer } = {}) {
   const url = `${env('SUPABASE_URL')}/rest/v1/${path}`;
-  const key = env('SUPABASE_SERVICE_ROLE_KEY');
+  const key = (process.env.SUPABASE_SERVICE_ROLE_KEY || env('SUPABASE_SECRET_KEY'));
   const res = await fetch(url, {
     method,
     headers: {
@@ -61,8 +61,8 @@ export async function getEntries(slug, { sampleOnly = false } = {}) {
       `${env('SUPABASE_URL')}/rest/v1/paid_list_entries?select=${sel}&slug=eq.${encodeURIComponent(slug)}${filter}&order=sort_order.asc`,
       {
         headers: {
-          apikey: env('SUPABASE_SERVICE_ROLE_KEY'),
-          Authorization: `Bearer ${env('SUPABASE_SERVICE_ROLE_KEY')}`,
+          apikey: (process.env.SUPABASE_SERVICE_ROLE_KEY || env('SUPABASE_SECRET_KEY')),
+          Authorization: `Bearer ${(process.env.SUPABASE_SERVICE_ROLE_KEY || env('SUPABASE_SECRET_KEY'))}`,
           Range: `${from}-${from + page - 1}`,
         },
       },
