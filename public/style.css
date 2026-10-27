@@ -152,7 +152,8 @@ dialog.preview .picks { grid-auto-rows: auto; flex: none; }
   .hero .sub { font-size: 15px; }
   .offer { grid-template-columns: minmax(0, 1fr); }
   .offer.main { margin-top: 22px; transform: none; }
-  .valueCol { order: -1; border-left: 0; border-bottom: 1.5px solid var(--ink); }
+  /* mobile: the top 10 comes first (value up front), then the offer */
+  .valueCol { border-left: 0; border-top: 1.5px solid var(--ink); }
   .picks { grid-template-columns: minmax(0, 1fr); }
   .valueCol .buy { flex-direction: column; align-items: stretch; gap: 10px; }
   .valueCol .btn.big { flex: none; width: 100%; }
