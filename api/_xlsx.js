@@ -42,8 +42,9 @@ const SENIORITY = [
 export function seniority(title) {
   const t = String(title || '');
   if (!t) return '';
-  if (/chief investment|\bcio\b|managing partner|founder|chairman|\bceo\b|chief executive|president|owner|principal of the family/i.test(t)) return 'Decision maker';
-  if (/partner|managing director|head of|\bdirector\b|principal/i.test(t)) return 'Senior';
+  const u = t.replace(/vice[ -]president/gi, 'VP');
+  if (/chief investment|\bcio\b|managing partner|founder|chairman|\bceo\b|chief executive|president|owner|principal of the family/i.test(u)) return 'Decision maker';
+  if (/partner|managing director|head of|\bdirector\b|principal|\bvp\b|\bsvp\b|\bevp\b/i.test(u)) return 'Senior';
   return 'Investment team';
 }
 
