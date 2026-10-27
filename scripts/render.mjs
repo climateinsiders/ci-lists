@@ -300,9 +300,9 @@ function slamCard() {
   const item = (name, sub) => `<li><span class="ck">${SMALL_ICONS.check}</span><span><b>${name}</b><small>${sub}</small></span><em>included</em></li>`;
   return `<div class="slam">
   <span class="tag">buyers only · one-time offer</span>
-  <h2>Get <span class="hl">all ${n(UPSELL_INVESTORS)} investors</span> and the full kit.</h2>
+  <h2>Get <span class="hl">all ${n(UPSELL_INVESTORS)} investors</span> from everywhere.</h2>
   <ul class="stack">
-    ${item(`All ${n(UPSELL_INVESTORS)} investors, every list`, `Hand-checked, deduplicated, up to date. Family offices, LPs and climate funds that are actively investing, not a scraped directory.`)}
+    ${item(`All ${n(UPSELL_INVESTORS)} investors`, `Every region, hand-checked and deduplicated.`)}
     ${item('Cold outreach kit', 'Everything you need to write to them.')}
     ${item('Fundraising kit', 'Everything you need to run the raise.')}
     ${item('Airtable + Excel, free fixes', 'Delivered like your first list. Wrong row? Reply, I fix it.')}
@@ -406,7 +406,7 @@ export function welcomePage() {
   </div>
 </header>
 
-<section class="offer main after" id="welcome">
+<section class="offer main after" id="welcome" data-investors="${n(UPSELL_INVESTORS)}">
   <div class="picksCol">
     <div class="head"><h3>Your full access<span class="script">yours for good</span></h3><small id="sentto">also emailed to you</small></div>
     <ul class="mylists" id="access"><li class="ph">Loading your access…</li></ul>
@@ -415,9 +415,9 @@ export function welcomePage() {
   <div class="valueCol slamCol">
     <div class="slam">
       <span class="tag">offer unlocked</span>
-      <h2>All <span class="hl">${n(UPSELL_INVESTORS)} investors</span> and the full kit are yours.</h2>
+      <h2>All <span class="hl">${n(UPSELL_INVESTORS)} investors</span> from everywhere are yours.</h2>
       <ul class="stack">
-        <li><span class="ck">${SMALL_ICONS.check}</span><span><b>The ${n(UPSELL_INVESTORS)} investors list</b><small>Open it with the button on the left.</small></span><em>yours</em></li>
+        <li><span class="ck">${SMALL_ICONS.check}</span><span><b>All ${n(UPSELL_INVESTORS)} investors</b><small>Every region. Open it on the left.</small></span><em>yours</em></li>
         <li><span class="ck">${SMALL_ICONS.check}</span><span><b>Cold outreach kit</b><small>Everything you need to write to them.</small></span><em>yours</em></li>
         <li><span class="ck">${SMALL_ICONS.check}</span><span><b>Fundraising kit</b><small>Everything you need to run the raise.</small></span><em>yours</em></li>
         <li><span class="ck">${SMALL_ICONS.check}</span><span><b>1 year of the newsletter</b><small>Read by 22,000+ readers.</small></span><em>yours</em></li>
