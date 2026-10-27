@@ -109,14 +109,13 @@ ${footer()}
 function topbar() {
   return `<header class="topbar">
   <a class="brand" href="/"><img src="/yoann.jpg" alt="" width="34" height="34"><span>Climate Insiders<small>Investor lists</small></span></a>
-  <button class="btn ghost small" data-buy="all">All 10 lists · $${BUNDLE}</button>
 </header>`;
 }
 
 function footer() {
   return `<footer class="foot">
-  <span>Real people. Real contacts. Sorted by region, then office.</span>
-  <span><a href="https://climateinsiders.com">climateinsiders.com</a> · <a href="mailto:yoann@climateinsiders.com">yoann@climateinsiders.com</a></span>
+  <span>© Climate Insiders</span>
+  <span><a href="https://climateinsiders.com">climateinsiders.com</a></span>
 </footer>`;
 }
 
@@ -199,35 +198,68 @@ export function preview(list, lists, i) {
 </dialog>`;
 }
 
+const WORDMARKS = `
+  <span class="wm g"><b style="color:#4285F4">G</b><b style="color:#EA4335">o</b><b style="color:#FBBC04">o</b><b style="color:#4285F4">g</b><b style="color:#34A853">l</b><b style="color:#EA4335">e</b></span>
+  <span class="wm ms"><i class="sq"><i style="background:#F25022"></i><i style="background:#7FBA00"></i><i style="background:#00A4EF"></i><i style="background:#FFB900"></i></i>Microsoft</span>
+  <span class="wm accel">Accel</span>
+  <span class="wm yc"><i>Y</i>Combinator</span>
+  <span class="wm seq">Sequoia</span>`;
+
 function proofStrip() {
+  const faces = PROOF.quotes.map((q) => `<img src="${q.photo}" alt="" loading="lazy" onerror="this.remove()">`).join('');
   const quotes = PROOF.quotes
-    .map((q, i) => `<figure class="rq${i === 0 ? ' on' : ''}"><img src="${q.photo}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><blockquote>“${esc(q.text)}”</blockquote><figcaption><b>${esc(q.who)}</b>, ${esc(q.role)} · <em>${esc(q.round)}</em></figcaption></figure>`)
+    .map((q, i) => `<figure class="rq${i === 0 ? ' on' : ''}"><blockquote>“${esc(q.text)}”</blockquote><figcaption><b>${esc(q.who)}</b>, ${esc(q.role)} · <em>${esc(q.round)}</em></figcaption></figure>`)
     .join('');
   return `<section class="proof">
-  <div class="who"><img src="/yoann.jpg" alt=""><span><b>Built by Yoann Berno.</b> 8 years as a climate VC, 47 investments, #1 climate tech creator on Favikon, 200K+ followers.</span></div>
+  <div class="stat"><span class="faces">${faces}</span><span><b>1,654 founders · $148M+ raised</b><small>with the investor data behind these lists</small></span></div>
+  <div class="raised"><small>They raised from</small><span class="wms">${WORDMARKS}</span></div>
   <div class="rotator" aria-live="polite">${quotes}</div>
-  <div class="logos"><span>Founders I backed</span>${PROOF.logos.map(([a, s]) => `<img src="${s}" alt="${esc(a)}" loading="lazy" onerror="this.remove()">`).join('')}</div>
 </section>`;
 }
 
 // One template. `featured` (a slug) puts that list first, un-greys it and opens its preview on load.
+function chip(list, i) {
+  return `<button class="chip" type="button" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog">
+  <span class="dot">${ICONS[list.icon] || ICONS.globe}</span>
+  <span class="t"><b>${esc(list.count_label)}</b> ${esc(list.card_name)}</span>
+  <span class="lk">${SMALL_ICONS.lock}</span>
+</button>`;
+}
+
+function bundleBar(lists) {
+  const full = lists.reduce((a, l) => a + l.price_cents / 100, 0);
+  const total = lists.reduce((a, l) => a + (l.stats.rows || 0), 0);
+  return `<div class="bundle" id="all">
+  <span class="tag">best value</span>
+  <span class="txt"><b>All ${lists.length} lists, $${BUNDLE}</b> <s>$${full}</s><small>${n(total)} investors. Every region, the LPs and the climate funds.</small></span>
+  <button class="btn" data-buy="all">Get all ${lists.length}</button>
+</div>`;
+}
+
+// One template. `featured` (a slug) leads, three more big cards follow, the rest sit in a compact row.
 export function page(lists, featured) {
   const f = lists.find((l) => l.slug === featured) || lists[0];
-  const ordered = [f, ...lists.filter((l) => l !== f)];
+  const rest = lists.filter((l) => l !== f);
+  const big = [f, ...rest.slice(0, 3)];
+  const small = rest.slice(3);
   const totalRows = lists.reduce((a, l) => a + (l.stats.rows || 0), 0);
   const body = `
 <section class="hero">
-  <span class="script">${featured ? `you asked for ${esc(f.short_name)}. here it is.` : 'hey, founders and fund managers'}</span>
-  <h1>${featured ? `<span class="hl">${esc(f.name)}</span>` : `The <span class="hl">investor lists</span>.`}</h1>
+  <div>
+    <span class="script">${featured ? `you asked for ${esc(f.short_name)}. here it is.` : 'hey, founders and fund managers'}</span>
+    <h1>${featured ? `<span class="hl">${esc(f.name)}</span>` : `The <span class="hl">investor lists</span>.`}</h1>
+  </div>
+  ${bundleBar(lists)}
 </section>
 <section class="grid" id="lists">
-${ordered.map((l) => card(l, lists.indexOf(l), { featured: l === f })).join('\n')}
+${big.map((l) => card(l, lists.indexOf(l), { featured: l === f })).join('\n')}
 </section>
+<section class="chips"><span class="lbl">+ ${small.length} more lists</span>${small.map((l) => chip(l, lists.indexOf(l))).join('')}</section>
 ${proofStrip()}
 ${lists.map((l, i) => preview(l, lists, i)).join('\n')}`;
   const title = featured ? `${f.name} · Climate Insiders` : 'Investor lists for founders and fund managers · Climate Insiders';
   const description = featured
-    ? `${f.tagline} ${n(f.stats.rows)} rows. ${usd(f.price_cents)} one time, delivered by email.`
+    ? `${f.tagline} ${n(f.stats.rows)} rows. ${usd(f.price_cents)} one time, or all 10 lists for $${BUNDLE}.`
     : `${n(totalRows)} named investor contacts across family offices, LPs and climate VC funds. $90 a list, $${BUNDLE} for all ten.`;
   return shell({
     title,
