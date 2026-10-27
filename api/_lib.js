@@ -3,6 +3,7 @@
 
 export const BUNDLE_PRICE_CENTS = 39000;
 export const LIST_PRICE_CENTS = 9000;
+export const UPSELL_PRICE_CENTS = 25000; // every list the buyer does not own yet
 
 export function env(name, fallback) {
   const v = process.env[name];

@@ -1,7 +1,7 @@
 import { ICONS, SMALL_ICONS } from './icons.mjs';
 
 const SITE = 'https://lists.climateinsiders.com';
-const BUNDLE = 390;
+const UPSELL = 250;
 const AS = 'https://allstar-ci.vercel.app/p';
 const WF = 'https://cdn.prod.website-files.com/657b1ee1812a034008e87de8';
 
@@ -124,28 +124,6 @@ function toneAttr(list) {
   return `style="--tone:${bg};--tone-ink:${ink}"`;
 }
 
-// The card is a small version of the LinkedIn poster. When `image_url` is set, that poster is shown instead.
-export function card(list, i, { featured = false } = {}) {
-  const faces = (list.sample || []).slice(0, 3).map((e) => `<span class="face">${face(e, 64)}</span>`).join('');
-  const [first, ...rest] = list.card_name.split(' ');
-  const art = list.image_url
-    ? `<img class="poster" src="${esc(list.image_url)}" alt="${esc(list.name)}">`
-    : `<span class="poster-html">
-        <span class="eyebrow"><b>${esc(list.short_name)}</b></span>
-        <span class="count">${esc(list.count_label)}</span>
-        <span class="headline"><span class="hl">${esc(first)}</span> ${esc(rest.join(' '))}</span>
-        <span class="art">${ICONS[list.icon] || ICONS.globe}</span>
-        <span class="faces">${faces}</span>
-      </span>`;
-  return `<button class="card${featured ? ' featured' : ' locked'}" type="button" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog" aria-label="${esc(list.name)}">
-  <span class="tape"></span>
-  <span class="num">${pad(i + 1)}</span>
-  ${featured ? '' : `<span class="lock" title="Buy to unlock">${SMALL_ICONS.lock}</span>`}
-  ${art}
-  <span class="cta">${featured ? `<span class="price">${usd(list.price_cents)}</span><span class="btn">See the top 10<span class="more"> and buy</span></span>` : `<span class="peek">See the top 10 →</span>`}</span>
-</button>`;
-}
-
 function picks(list) {
   const isFund = list.slug === 'climate-vcs-474';
   return (list.sample || [])
@@ -169,35 +147,6 @@ function quote(i) {
   return `<figure class="quote"><img src="${q.photo}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><blockquote>“${esc(q.text)}”</blockquote><figcaption><b>${esc(q.who)}</b> · ${esc(q.role)} · <em>${esc(q.round)}</em></figcaption></figure>`;
 }
 
-export function preview(list, lists, i) {
-  const isFund = list.slug === 'climate-vcs-474';
-  return `<dialog class="preview" id="p-${esc(list.slug)}" data-slug="${esc(list.slug)}" aria-labelledby="t-${esc(list.slug)}">
-<div class="sheet" ${toneAttr(list)}>
-  <button class="close" type="button" data-close aria-label="Close">×</button>
-  <div class="left">
-    <span class="script">${esc(list.short_name)}</span>
-    <h2 id="t-${esc(list.slug)}">${esc(list.name)}</h2>
-    ${valuePoints(list)}
-    <div class="bigprice">${usd(list.price_cents)}<small>one time · yours forever</small></div>
-    <button class="btn big" data-buy="${esc(list.slug)}">Buy this list</button>
-    <p class="fine">Stripe checkout. Card, Apple Pay, Google Pay. Receipt and invoice by email. Or all 10 for $${BUNDLE}: <a href="#" data-buy="all">get the bundle</a>.</p>
-    <form class="free" data-sample="${esc(list.slug)}" autocomplete="off">
-      <label>Not sure yet? I'll email you the 10 rows below, unmasked, free.</label>
-      <input class="hp" type="text" name="website" tabindex="-1" aria-hidden="true">
-      <input name="email" type="email" required placeholder="you@company.com" aria-label="Your email">
-      <button class="btn ghost small" type="submit">Send</button>
-    </form>
-  </div>
-  <div class="right">
-    <div class="head"><h3>Top 10 picks<span class="script">straight from the sheet</span></h3><small>${n(list.stats.rows)} in the full list</small></div>
-    <ul class="picks">${picks(list)}</ul>
-    <p class="more">… and ${n(Math.max(0, list.stats.rows - 10))} more with the full ${isFund ? 'details' : 'emails and LinkedIn'}.</p>
-    ${quote(i)}
-  </div>
-</div>
-</dialog>`;
-}
-
 const WORDMARKS = `
   <span class="wm g"><b style="color:#4285F4">G</b><b style="color:#EA4335">o</b><b style="color:#FBBC04">o</b><b style="color:#4285F4">g</b><b style="color:#34A853">l</b><b style="color:#EA4335">e</b></span>
   <span class="wm ms"><i class="sq"><i style="background:#F25022"></i><i style="background:#7FBA00"></i><i style="background:#00A4EF"></i><i style="background:#FFB900"></i></i>Microsoft</span>
@@ -217,57 +166,64 @@ function proofStrip() {
 </section>`;
 }
 
-// One template. `featured` (a slug) puts that list first, un-greys it and opens its preview on load.
-function chip(list, i) {
-  return `<button class="chip" type="button" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog">
-  <span class="dot">${ICONS[list.icon] || ICONS.globe}</span>
-  <span class="t"><b>${esc(list.count_label)}</b> ${esc(list.card_name)}</span>
-  <span class="lk">${SMALL_ICONS.lock}</span>
-</button>`;
+const CHIP_NAME = { 'usa-500': 'US', 'uk-200': 'UK', 'france-benelux-150': 'France + Benelux', 'apac-200': 'APAC', 'latam-canada-150': 'Canada + LatAm', 'lps-366': 'LPs', 'climate-vcs-474': 'Climate VCs' };
+
+function chip(list) {
+  return `<span class="chip" ${toneAttr(list)}><span class="dot">${ICONS[list.icon] || ICONS.globe}</span><span class="t"><b>${esc(list.count_label)}</b> ${esc(CHIP_NAME[list.slug] || list.short_name)}</span></span>`;
 }
 
-function bundleBar(lists) {
-  const full = lists.reduce((a, l) => a + l.price_cents / 100, 0);
-  const total = lists.reduce((a, l) => a + (l.stats.rows || 0), 0);
-  return `<div class="bundle" id="all">
-  <span class="tag">best value</span>
-  <span class="txt"><b>All ${lists.length} lists, $${BUNDLE}</b> <s>$${full}</s><small>${n(total)} investors. Every region, the LPs and the climate funds.</small></span>
-  <button class="btn" data-buy="all">Get all ${lists.length}</button>
-</div>`;
+function statRow(list) {
+  const st = list.stats || {};
+  const isFund = list.slug === 'climate-vcs-474';
+  const items = [
+    [n(st.rows), isFund ? 'funds' : 'names'],
+    st.emails && !isFund ? [n(st.emails), 'direct emails'] : null,
+    st.firms ? [n(st.firms), isFund ? 'firms' : 'firms and offices'] : null,
+    st.countries ? [n(st.countries), 'countries'] : null,
+  ].filter(Boolean);
+  return `<ul class="stats">${items.map(([v, l]) => `<li><b>${v}</b> ${l}</li>`).join('')}</ul>`;
 }
 
-// One template. `featured` (a slug) leads, three more big cards follow, the rest sit in a compact row.
+// One page, one offer: the featured list ($90). Everything else is shown as a quiet strip and sold after purchase.
 export function page(lists, featured) {
   const f = lists.find((l) => l.slug === featured) || lists[0];
-  const rest = lists.filter((l) => l !== f);
-  const big = [f, ...rest.slice(0, 3)];
-  const small = rest.slice(3);
-  const totalRows = lists.reduce((a, l) => a + (l.stats.rows || 0), 0);
+  const isFund = f.slug === 'climate-vcs-474';
+  const others = lists.filter((l) => l !== f);
   const body = `
 <section class="hero">
-  <div>
-    <span class="script">${featured ? `you asked for ${esc(f.short_name)}. here it is.` : 'hey, founders and fund managers'}</span>
-    <h1>${featured ? `<span class="hl">${esc(f.name)}</span>` : `The <span class="hl">investor lists</span>.`}</h1>
+  <span class="script">${featured ? `you asked for ${esc(f.short_name)}. here it is.` : 'hey, founders and fund managers'}</span>
+  <h1><span class="hl">${esc(f.name)}</span></h1>
+  <p class="sub">${esc(f.tagline)} In your inbox in 2 minutes.</p>
+  ${statRow(f)}
+</section>
+
+<section class="offer" id="offer" ${toneAttr(f)}>
+  <div class="left">
+    <div class="buy">
+      <div class="bigprice">${usd(f.price_cents)}<small>one time · yours forever</small></div>
+      <button class="btn big" data-buy="${esc(f.slug)}">Get the list</button>
+    </div>
+    <p class="fine">Stripe checkout. Card, Apple Pay, Google Pay. CSV by email in 2 minutes, receipt and invoice included.</p>
+    <span class="script">what you get</span>
+    ${valuePoints(f)}
   </div>
-  ${bundleBar(lists)}
+  <div class="right">
+    <div class="head"><h3>Top 10 picks<span class="script">straight from the sheet</span></h3><small>${n(f.stats.rows)} in the full list</small></div>
+    <ul class="picks">${picks(f)}</ul>
+    <p class="more">… and ${n(Math.max(0, f.stats.rows - 10))} more with the full ${isFund ? 'details' : 'emails and LinkedIn'}.</p>
+  </div>
 </section>
-<section class="grid" id="lists">
-${big.map((l) => card(l, lists.indexOf(l), { featured: l === f })).join('\n')}
-</section>
-<section class="chips"><span class="lbl">+ ${small.length} more lists</span>${small.map((l) => chip(l, lists.indexOf(l))).join('')}</section>
-${proofStrip()}
-${lists.map((l, i) => preview(l, lists, i)).join('\n')}`;
+
+<section class="chips"><span class="lbl">+ ${others.length} more lists</span><span class="row">${others.map(chip).join('')}</span></section>
+${proofStrip()}`;
   const title = featured ? `${f.name} · Climate Insiders` : 'Investor lists for founders and fund managers · Climate Insiders';
-  const description = featured
-    ? `${f.tagline} ${n(f.stats.rows)} rows. ${usd(f.price_cents)} one time, or all 10 lists for $${BUNDLE}.`
-    : `${n(totalRows)} named investor contacts across family offices, LPs and climate VC funds. $90 a list, $${BUNDLE} for all ten.`;
+  const description = `${f.tagline} ${n(f.stats.rows)} rows. ${usd(f.price_cents)} one time, delivered by email.`;
   return shell({
     title,
     description,
     canonical: featured ? `${SITE}/${f.slug}` : `${SITE}/`,
-    ogImage: featured && f.image_url ? f.image_url : undefined,
+    ogImage: f.image_url || undefined,
     body,
-    extraHead: featured ? `<meta name="x-featured" content="${esc(f.slug)}">` : '',
   });
 }
 
@@ -278,8 +234,15 @@ export function thanksPage() {
   <span class="script" style="font-size:24px">paid. thank you.</span>
   <h1>It's on its way.</h1>
   <p>Your list is being emailed to the address you used at checkout. Give it two minutes, then check the promotions tab if it's not in the inbox.</p>
-  <p class="small">One rule before you write to anyone: pick the twelve that fit your sector and stage. Leave the rest alone. Nothing after ten minutes? Email <a href="mailto:yoann@climateinsiders.com">yoann@climateinsiders.com</a> with your receipt.</p>
-  <p><a class="btn ghost" href="/">Back to the lists</a></p>
-</section>`;
+</section>
+<section class="upsell" id="upsell" hidden>
+  <span class="script">one more thing</span>
+  <h2>Add every other list for <span class="hl">$${UPSELL}</span></h2>
+  <p class="sub" id="upsell-sub">The rest of the investor lists, same format, same email delivery.</p>
+  <ul class="names" id="upsell-names"></ul>
+  <button class="btn big" id="upsell-buy" data-upsell>Add them all for $${UPSELL}</button>
+  <p class="fine">One payment. They arrive in the same inbox in 2 minutes. No thanks? You're done, nothing else to do.</p>
+</section>
+<p class="thanks-small small">Nothing after ten minutes? Email <a href="mailto:yoann@climateinsiders.com">yoann@climateinsiders.com</a> with your receipt.</p>`;
   return shell({ title: 'Thank you · Climate Insiders Investor Lists', description: 'Your list is on its way.', canonical: `${SITE}/thanks`, body });
 }

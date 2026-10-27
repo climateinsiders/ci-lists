@@ -1,21 +1,22 @@
 # Climate Insiders Investor Lists
 
-lists.climateinsiders.com. Ten investor lists, $90 each or $390 for all ten, delivered by email as CSV (plus an Airtable view when one is set).
+lists.climateinsiders.com. Ten investor lists, $90 each, then a $250 add-on for every list the buyer does not own yet, delivered by email as CSV (plus an Airtable view when one is set).
 
-Zero dependencies. Static pages are generated at build time from Supabase; three serverless functions handle checkout, the Stripe webhook and the free sample.
+Zero dependencies. Static pages are generated at build time from Supabase; serverless functions handle checkout (including the upsell), the Stripe webhook, the post-purchase session lookup and the free sample (no longer linked from the page).
 
 ## Funnel
 
 1. LinkedIn post advertises one list with a keyword (for example `EU500`).
 2. Comment keyword -> reply with `https://lists.climateinsiders.com/europe-500?utm_source=linkedin&utm_campaign=eu500`.
-3. The page leads with that list: big card, ten masked sample rows, buy button, free-sample email form.
+3. The page is one offer: that list's value bullets, $90 buy button and top 10 masked rows. The other nine lists are a single quiet line of chips, not clickable.
 4. Stripe Checkout -> webhook -> CSV emailed from yoann@climateinsiders.com -> row in `list_purchases`.
-5. Below the fold: the other nine cards and the all-ten bundle.
+5. `/thanks?session_id=...` offers every list the buyer lacks for $250 (`POST /api/checkout {upsell:true, session_id}`). The delivery email links back to the same page.
 
 ## Layout
 
 ```
-api/checkout.js         POST {slug} or {bundle:true} -> Stripe Checkout URL
+api/checkout.js         POST {slug}, {bundle:true} or {upsell:true, session_id} -> Stripe Checkout URL
+api/session.js          GET ?session_id -> lists the buyer does not own yet
 api/stripe-webhook.js   checkout.session.completed -> record + deliver CSVs
 api/sample.js           POST {email, slug} -> 10 real rows by email, lead recorded
 api/_lib.js             Supabase REST, Resend, Stripe REST, CSV

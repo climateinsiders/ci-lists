@@ -1,6 +1,6 @@
-import { getActiveLists, stripe, readJson, json, siteUrl, BUNDLE_PRICE_CENTS } from './_lib.js';
+import { getActiveLists, stripe, readJson, json, siteUrl, BUNDLE_PRICE_CENTS, UPSELL_PRICE_CENTS } from './_lib.js';
 
-// POST /api/checkout  { slug: "europe-500" }  or  { bundle: true }
+// POST /api/checkout  { slug: "europe-500" }, { bundle: true } or { upsell: true, session_id } (all lists the buyer lacks)
 // Creates a Stripe Checkout session and returns its URL.
 export default async function handler(req, res) {
   if (req.method !== 'POST') return json(res, 405, { error: 'POST only' });
@@ -10,7 +10,32 @@ export default async function handler(req, res) {
     const attribution = body.attribution && typeof body.attribution === 'object' ? body.attribution : {};
     let lineItems, slugs, bundle, origin;
 
-    if (body.bundle) {
+    if (body.upsell) {
+      const sid = String(body.session_id || '');
+      if (!/^cs_[A-Za-z0-9_]+$/.test(sid)) return json(res, 400, { error: 'Missing purchase' });
+      const prev = await stripe(`checkout/sessions/${sid}`);
+      if (prev.payment_status !== 'paid') return json(res, 400, { error: 'Purchase not found' });
+      if (prev.metadata?.upsell === '1') return json(res, 400, { error: 'Already upgraded' });
+      const owned = (prev.metadata?.slugs || '').split(',').filter(Boolean);
+      const rest = lists.filter((l) => !owned.includes(l.slug));
+      if (!rest.length) return json(res, 400, { error: 'You already own every list' });
+      bundle = false;
+      slugs = rest.map((l) => l.slug);
+      origin = `/thanks?session_id=${sid}`;
+      lineItems = [
+        {
+          quantity: 1,
+          price_data: {
+            currency: 'usd',
+            unit_amount: UPSELL_PRICE_CENTS,
+            product_data: {
+              name: `The other ${rest.length} investor lists (Climate Insiders)`,
+              description: `${rest.map((l) => l.short_name).join(', ')}. CSV + Airtable, delivered by email.`,
+            },
+          },
+        },
+      ];
+    } else if (body.bundle) {
       bundle = true;
       slugs = lists.map((l) => l.slug);
       origin = '#all';
@@ -57,6 +82,7 @@ export default async function handler(req, res) {
       metadata: {
         slugs: slugs.join(','),
         bundle: bundle ? '1' : '0',
+        upsell: body.upsell ? '1' : '0',
         utm_source: String(attribution.utm_source || ''),
         utm_campaign: String(attribution.utm_campaign || ''),
         utm_content: String(attribution.utm_content || ''),

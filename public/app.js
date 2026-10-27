@@ -1,4 +1,4 @@
-// Card previews, buy buttons, free-sample form, attribution. No framework.
+// Buy button, rotating testimonials, post-purchase upsell, attribution. No framework.
 (function () {
   var q = new URLSearchParams(location.search);
   var attribution = {
@@ -28,40 +28,6 @@
     });
   }
 
-  // ---- previews ----
-  var openDialog = null;
-  function open(slug, push) {
-    var d = document.getElementById('p-' + slug);
-    if (!d) return;
-    if (openDialog && openDialog !== d) openDialog.close();
-    openDialog = d;
-    if (typeof d.showModal === 'function') d.showModal(); else d.setAttribute('open', '');
-    d.querySelector('.right').scrollTop = 0;
-    if (push && history.pushState) history.pushState({ slug: slug }, '', '/' + slug + location.search);
-  }
-  function closeAll(push) {
-    if (openDialog) { openDialog.close(); openDialog = null; }
-    if (push && history.pushState) history.pushState({}, '', '/' + location.search);
-  }
-  document.addEventListener('click', function (ev) {
-    var o = ev.target.closest('[data-open]');
-    if (o) { ev.preventDefault(); open(o.getAttribute('data-open'), true); return; }
-    var c = ev.target.closest('[data-close]');
-    if (c) { ev.preventDefault(); closeAll(true); return; }
-    // click on the backdrop closes
-    if (ev.target.tagName === 'DIALOG') closeAll(true);
-  });
-  document.addEventListener('cancel', function (ev) { if (ev.target.tagName === 'DIALOG') { ev.preventDefault(); closeAll(true); } }, true);
-  window.addEventListener('popstate', function (ev) {
-    var s = ev.state && ev.state.slug;
-    if (s) open(s, false); else closeAll(false);
-  });
-  var featured = document.querySelector('meta[name="x-featured"]');
-  if (featured) {
-    if (history.replaceState) history.replaceState({ slug: featured.content }, '', location.pathname + location.search);
-    setTimeout(function () { open(featured.content, false); }, 250);
-  }
-
   // ---- rotating testimonials ----
   var rq = document.querySelectorAll('.rq');
   if (rq.length > 1) {
@@ -88,17 +54,29 @@
       });
   });
 
-  // ---- free sample ----
-  document.addEventListener('submit', function (ev) {
-    var form = ev.target.closest('form[data-sample]');
-    if (!form) return;
-    ev.preventDefault();
-    var btn = form.querySelector('button');
-    btn.disabled = true;
-    post('/api/sample', { email: form.email.value.trim(), slug: form.dataset.sample, website: form.website.value, attribution: attribution })
-      .then(function () {
-        form.innerHTML = '<div class="ok">Sent. Check your inbox (and the promotions tab). The full list is one click away on the left.</div>';
+  // ---- post-purchase upsell (thanks page) ----
+  var upsell = document.getElementById('upsell');
+  var sid = q.get('session_id') || '';
+  if (upsell && /^cs_/.test(sid)) {
+    fetch('/api/session?session_id=' + encodeURIComponent(sid))
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) {
+        if (!j || !j.remaining || !j.remaining.length) return;
+        var ul = document.getElementById('upsell-names');
+        ul.innerHTML = '';
+        j.remaining.forEach(function (n) { var li = document.createElement('li'); li.textContent = n; ul.appendChild(li); });
+        document.getElementById('upsell-sub').textContent = 'The other ' + j.remaining.length + ' lists, same format, same email delivery.';
+        upsell.hidden = false;
       })
-      .catch(function (e) { say(e.message, 7000); btn.disabled = false; });
-  });
+      .catch(function () {});
+    var ub = document.getElementById('upsell-buy');
+    ub.addEventListener('click', function () {
+      ub.disabled = true;
+      var label = ub.textContent;
+      ub.textContent = 'Opening checkout…';
+      post('/api/checkout', { upsell: true, session_id: sid, attribution: attribution })
+        .then(function (j) { location.href = j.url; })
+        .catch(function (e) { say(e.message, 7000); ub.disabled = false; ub.textContent = label; });
+    });
+  }
 })();

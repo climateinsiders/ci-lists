@@ -54,7 +54,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    await deliverPurchase({ email, slugs, bundle, amountCents: s.amount_total });
+    await deliverPurchase({ email, slugs, bundle, amountCents: s.amount_total, sessionId: s.id, upsell: s.metadata?.upsell === '1' });
     await updateRows('list_purchases', `stripe_session_id=eq.${encodeURIComponent(s.id)}`, { delivered_at: new Date().toISOString(), delivery_error: null });
     return json(res, 200, { ok: true });
   } catch (err) {

@@ -1,7 +1,7 @@
 import { getActiveLists, getEntries, toCsv, sendEmail, textToHtml, siteUrl, fmtUsd } from './_lib.js';
 
 // Build the CSVs for the purchased slugs and email them. Returns the Resend id.
-export async function deliverPurchase({ email, slugs, bundle, amountCents }) {
+export async function deliverPurchase({ email, slugs, bundle, amountCents, sessionId, upsell = false }) {
   const lists = await getActiveLists();
   const chosen = lists.filter((l) => slugs.includes(l.slug));
   if (!chosen.length) throw new Error('No lists matched the purchase');
@@ -14,7 +14,10 @@ export async function deliverPurchase({ email, slugs, bundle, amountCents }) {
     lines.push(`- ${list.name} (${entries.length} rows)${list.airtable_url ? `\n  Airtable view: ${list.airtable_url}` : ''}`);
   }
 
-  const subject = bundle ? 'Your 10 investor lists (all of them, attached)' : `Your list: ${chosen[0].name}`;
+  const many = chosen.length > 1;
+  const subject = bundle ? 'Your 10 investor lists (all of them, attached)' : many ? `Your ${chosen.length} investor lists (attached)` : `Your list: ${chosen[0].name}`;
+  // Single-list buyers get a link back to the $250 add-on; the page checks what they already own.
+  const upgrade = !bundle && !upsell && sessionId ? `Want the other ${lists.length - chosen.length} lists too? One click, $250: ${siteUrl()}/thanks?session_id=${sessionId}\n\n` : '';
   const text = `Hi,
 
 Here ${chosen.length === 1 ? 'is the list' : 'are the lists'} you bought. CSV attached, opens in Excel, Numbers, Google Sheets or Notion.
@@ -29,7 +32,7 @@ Three things before you write to anyone:
 
 If a row is wrong or out of date, reply to this email with the name and I will fix it in the master sheet.
 
-${bundle ? '' : `Want the other ${lists.length - 1} lists? All 10 for ${fmtUsd(39000)} here: ${siteUrl()}/#all\n\n`}Go raise,
+${upgrade}Go raise,
 Yoann
 
 Climate Insiders · climateinsiders.com
@@ -66,8 +69,6 @@ ${rows}
 
 The full list has the rest, sorted by region, then office. ${fmtUsd(list.price_cents)} one time, delivered to this inbox in two minutes:
 ${siteUrl()}/${list.slug}
-
-Or all 10 lists for ${fmtUsd(39000)}: ${siteUrl()}/#all
 
 One rule before you write to any of them: pick the 12 that fit your sector and stage. Leave the rest alone.
 
