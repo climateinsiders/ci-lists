@@ -45,7 +45,7 @@ export function termsPage() {
 </style>`;
   return shell({
     title: 'Terms of sale and privacy · Climate Insiders Investor Lists',
-    description: 'Terms of sale, licence, no-refund policy and privacy notice for Climate Insiders Investor Lists.',
+    description: 'Terms of sale, data licence, delivery, refunds and privacy notice for Climate Insiders Investor Lists, sold by Climate Insiders OÜ (Estonia).',
     canonical: `${SITE}/terms`,
     body,
   });

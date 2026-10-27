@@ -91,10 +91,11 @@ function initials(s) {
 }
 
 // Photo first, then the firm logo, then the firm favicon, then initials.
+const https = (u) => String(u).replace(/^http:\/\//i, 'https://');
 function face(e, size) {
   const fallback = `this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${esc(initials(e.name || e.firm))}'}))`;
-  if (e.photo_url) return `<img src="${esc(e.photo_url)}" alt="" loading="lazy" onerror="${fallback}">`;
-  if (e.logo_url) return `<img class="logo" src="${esc(e.logo_url)}" alt="" loading="lazy" onerror="${fallback}">`;
+  if (e.photo_url) return `<img src="${esc(https(e.photo_url))}" alt="" loading="lazy" onerror="${fallback}">`;
+  if (e.logo_url) return `<img class="logo" src="${esc(https(e.logo_url))}" alt="" loading="lazy" onerror="${fallback}">`;
   const d = domainOf(e);
   if (d) return `<img class="logo" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(d)}&sz=${size}" alt="" loading="lazy" onerror="${fallback}">`;
   return `<span>${esc(initials(e.firm || e.name))}</span>`;
@@ -108,7 +109,7 @@ function maskEmail(e) {
 
 const GA_ID = 'G-REVK9GPTEP';
 
-export function shell({ title, description, body, canonical, ogTitle, ogImage, extraHead = '' }) {
+export function shell({ title, description, body, canonical, ogTitle, ogImage, jsonld, extraHead = '' }) {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -122,7 +123,11 @@ export function shell({ title, description, body, canonical, ogTitle, ogImage, e
 <meta property="og:type" content="website">
 <meta property="og:url" content="${esc(canonical)}">
 <meta property="og:image" content="${esc(ogImage || `${SITE}/og.png`)}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="Climate Insiders">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="${esc(ogImage || `${SITE}/og.png`)}">${jsonld ? `\n<script type="application/ld+json">${JSON.stringify(jsonld).replace(/</g, '\\u003c')}</script>` : ''}
 <link rel="icon" href="https://cdn.prod.website-files.com/657b1ee1812a034008e87de8/658538a0538bd8c8a8da2e34_fav-sm.jpg" type="image/jpeg">
 <link rel="apple-touch-icon" href="https://cdn.prod.website-files.com/657b1ee1812a034008e87de8/6585389a7f43d48ed7b3c851_fav-md.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -153,8 +158,14 @@ function brand() {
   return `<a class="brand" href="/"><img src="/yoann.jpg" alt="" width="44" height="44"><span>Climate Insiders</span></a>`;
 }
 
+let NAV = [];
+export function setNav(lists) { NAV = lists.map((l) => ({ slug: l.slug, name: l.name })); }
+
 function footer() {
-  return `<footer class="foot">
+  const nav = NAV.length
+    ? `<nav class="listnav" aria-label="All investor lists"><span class="lbl">All investor lists</span>${NAV.map((l) => `<a href="/${esc(l.slug)}">${esc(l.name)}</a>`).join('')}<a href="/all">All 10 lists together</a></nav>`
+    : '';
+  return `${nav}<footer class="foot">
   <span>© Climate Insiders</span>
   <span><a href="/terms">Terms and privacy</a> · <a href="https://climateinsiders.com">climateinsiders.com</a></span>
 </footer>`;
@@ -170,7 +181,7 @@ export function card(list, i, { featured = false, open = false } = {}) {
   const faces = (list.sample || []).slice(0, 3).map((e) => `<span class="face">${face(e, 64)}</span>`).join('');
   const [first, ...rest] = list.card_name.split(' ');
   const art = list.image_url
-    ? `<img class="poster" src="${esc(list.image_url)}" alt="${esc(list.name)}">`
+    ? `<img class="poster" src="${esc(https(list.image_url))}" alt="${esc(list.name)}">`
     : `<span class="poster-html">
         <span class="eyebrow"><b>${esc(list.short_name)}</b></span>
         <span class="count">${esc(list.count_label)}</span>
@@ -242,9 +253,9 @@ function chip(list) {
   const flags = LIST_FLAGS[list.slug];
   const label = list.name;
   if (flags) {
-    return `<button class="chip flagchip" type="button" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog" aria-label="${esc(label)}" title="${esc(list.card_name)}">${flagStack(flags.slice(0, 4), 'flags sm')}<span class="t"><b>${esc(list.count_label)}</b></span></button>`;
+    return `<a class="chip flagchip" href="/${esc(list.slug)}" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog" aria-label="${esc(label)}" title="${esc(list.card_name)}">${flagStack(flags.slice(0, 4), 'flags sm')}<span class="t"><b>${esc(list.count_label)}</b></span></a>`;
   }
-  return `<button class="chip" type="button" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog" aria-label="${esc(label)}"><span class="dot">${ICONS[list.icon] || ICONS.globe}</span><span class="t"><b>${esc(list.count_label)}</b> ${esc(CHIP_NAME[list.slug] || list.short_name)}</span></button>`;
+  return `<a class="chip" href="/${esc(list.slug)}" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog" aria-label="${esc(label)}"><span class="dot">${ICONS[list.icon] || ICONS.globe}</span><span class="t"><b>${esc(list.count_label)}</b> ${esc(CHIP_NAME[list.slug] || list.short_name)}</span></a>`;
 }
 
 function statRow(list) {
@@ -358,7 +369,7 @@ export function page(lists, featured) {
   <div class="title">
     ${brand()}
     <div class="kick"><span class="script">${featured ? `you asked for ${esc(KICKER_NAME[f.slug] || f.short_name)}. here it is.` : 'hey, founders and fund managers'}</span></div>
-    <h1>${LIST_FLAGS[f.slug] ? flagStack(LIST_FLAGS[f.slug], 'flags lg') : `<span class="flags lg" aria-hidden="true"><span class="fl iconfl">${ICONS[f.icon] || ICONS.globe}</span></span>`}<span class="hl">${esc(f.name)}</span></h1>
+    <div class="h1row">${LIST_FLAGS[f.slug] ? flagStack(LIST_FLAGS[f.slug], 'flags lg') : `<span class="flags lg" aria-hidden="true"><span class="fl iconfl">${ICONS[f.icon] || ICONS.globe}</span></span>`}<h1><span class="hl">${esc(f.name)}</span></h1></div>
   </div>
 </header>
 
@@ -370,14 +381,27 @@ ${proofStrip()}
 ${others.map(preview).join('\n')}
 ${sheetDialog(f)}`;
   const title = featured ? `${f.name} · Climate Insiders` : 'Investor lists for founders and fund managers · Climate Insiders';
-  const description = `${f.tagline} ${n(f.stats.rows)} rows. ${usd(f.price_cents)} one time, delivered by email.`;
-  return shell({
-    title,
-    description,
-    canonical: featured ? `${SITE}/${f.slug}` : `${SITE}/`,
-    ogImage: f.image_url || undefined,
-    body,
-  });
+  const description = featured
+    ? `${f.tagline} ${n(f.stats.rows)} rows, checked by hand and up to date. ${usd(f.price_cents)} one time, Excel and Airtable.`
+    : `Hand-checked investor lists for founders and fund managers: family offices in Europe, the US, UK, DACH, the Nordics, APAC and LatAm, plus LPs and climate VCs.`;
+  const url = featured ? `${SITE}/${f.slug}` : `${SITE}/`;
+  const ogImage = f.image_url || (featured ? `${SITE}/og/${f.slug}.png` : `${SITE}/og.png`);
+  const org = { '@type': 'Organization', name: 'Climate Insiders', url: 'https://climateinsiders.com', logo: 'https://cdn.prod.website-files.com/657b1ee1812a034008e87de8/6585389a7f43d48ed7b3c851_fav-md.jpg' };
+  const jsonld = featured
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: f.name,
+        description: f.tagline,
+        image: ogImage,
+        url,
+        sku: f.slug,
+        category: 'Investor database',
+        brand: { '@type': 'Brand', name: 'Climate Insiders' },
+        offers: { '@type': 'Offer', price: (f.price_cents / 100).toFixed(2), priceCurrency: 'USD', availability: 'https://schema.org/InStock', url, seller: org },
+      }
+    : { '@context': 'https://schema.org', '@graph': [{ ...org, '@id': 'https://climateinsiders.com/#org' }, { '@type': 'WebSite', name: 'Climate Insiders Investor Lists', url: `${SITE}/`, publisher: { '@id': 'https://climateinsiders.com/#org' } }] };
+  return shell({ title, description, canonical: url, ogImage, jsonld, body });
 }
 
 // The grand slam offer: a stack of what they get, then one button.
@@ -443,6 +467,8 @@ ${lists.map((l, i) => legacyPreview(l, i)).join('\n')}`;
     title: 'All 10 investor lists · Climate Insiders',
     description: `${n(UNIQUE_INVESTORS)} investors across 10 lists: family offices in every region, LPs and climate VC funds. $${BUNDLE} for all ten.`,
     canonical: `${SITE}/all`,
+    ogImage: `${SITE}/og/all.png`,
+    jsonld: { '@context': 'https://schema.org', '@type': 'Product', name: 'All 10 Climate Insiders investor lists', description: `${n(UNIQUE_INVESTORS)} investors across 10 hand-checked lists.`, image: `${SITE}/og/all.png`, url: `${SITE}/all`, sku: 'all', brand: { '@type': 'Brand', name: 'Climate Insiders' }, offers: { '@type': 'Offer', price: String(BUNDLE) + '.00', priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: `${SITE}/all` } },
     body,
     extraHead: '<meta name="x-page" content="all"><link rel="stylesheet" href="/all.css">',
   });

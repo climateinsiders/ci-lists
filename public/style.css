@@ -409,3 +409,15 @@ dialog.preview { overscroll-behavior: contain; }
   .picksCol, .valueCol { min-height: auto; overflow: visible; }
   .picks { flex: none; grid-auto-rows: auto; }
 }
+
+/* ======== SEO: h1 row (icon outside the heading), real links for chips, list nav ======== */
+.hero .h1row { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.hero .h1row .flags { --fs: 40px; }
+.hero .h1row h1 { display: block; }
+a.chip { text-decoration: none; cursor: pointer; }
+.listnav { display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 18px 0 14px; margin-top: 28px; border-top: 1.5px solid var(--rule); font-size: 13px; }
+.listnav .lbl { width: 100%; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.listnav a { color: var(--ink-2); text-decoration: none; border-bottom: 1px solid var(--rule); }
+.listnav a:hover { color: var(--orange-deep); border-color: var(--orange); }
+.hero .h1row .flags .fl { border-width: 2.5px; }
+@media (max-width: 900px) { .hero .h1row { display: block; } .hero .h1row .flags { --fs: 32px; display: flex; width: fit-content; margin: 0 auto 8px; } }

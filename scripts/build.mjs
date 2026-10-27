@@ -2,7 +2,7 @@
 import { mkdir, writeFile, readFile, cp, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { page, allPage, thanksPage, welcomePage } from './render.mjs';
+import { page, allPage, thanksPage, welcomePage, setNav } from './render.mjs';
 import { termsPage } from './terms.mjs';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
@@ -75,6 +75,7 @@ function decorate(lists) {
 
 async function main() {
   const lists = decorate(await loadLists());
+  setNav(lists);
   await rm(dist, { recursive: true, force: true });
   await mkdir(dist, { recursive: true });
   await cp(path.join(root, 'public'), dist, { recursive: true });
@@ -93,11 +94,11 @@ async function main() {
   await writeFile(path.join(dist, 'welcome', 'index.html'), welcomePage());
   await writeFile(
     path.join(dist, 'sitemap.xml'),
-    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['', 'all', ...lists.map((l) => l.slug)]
-      .map((p) => `  <url><loc>https://lists.climateinsiders.com/${p}</loc></url>`)
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['', 'all', ...lists.map((l) => l.slug), 'terms']
+      .map((p) => `  <url><loc>https://lists.climateinsiders.com/${p}</loc><lastmod>${new Date().toISOString().slice(0, 10)}</lastmod></url>`)
       .join('\n')}\n</urlset>\n`,
   );
-  await writeFile(path.join(dist, 'robots.txt'), 'User-agent: *\nAllow: /\nSitemap: https://lists.climateinsiders.com/sitemap.xml\n');
+  await writeFile(path.join(dist, 'robots.txt'), 'User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: https://lists.climateinsiders.com/sitemap.xml\n');
   if (!existsSync(path.join(dist, 'og.png'))) console.warn('No og.png in public/, social previews will be blank');
   console.log(`Built ${lists.length + 2} pages into dist/`);
 }
