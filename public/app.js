@@ -148,6 +148,47 @@
     })(t0);
   }
 
+  // ---- after the $390 offer: direct access to everything ----
+  var welcome = document.getElementById('welcome');
+  if (welcome) {
+    var wsid = q.get('session_id') || '';
+    var rowFor = function (name, sub, url, label, primary) {
+      var li = document.createElement('li');
+      var nm = document.createElement('span'); nm.className = 'nm';
+      nm.textContent = name;
+      if (sub) { var sm = document.createElement('small'); sm.textContent = sub; nm.appendChild(sm); }
+      li.appendChild(nm);
+      var acts = document.createElement('span'); acts.className = 'acts';
+      if (url) {
+        var a = document.createElement('a'); a.className = 'btn' + (primary ? '' : ' ghost'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = label; acts.appendChild(a);
+      } else {
+        var w = document.createElement('span'); w.className = 'soon'; w.textContent = 'link arriving by email'; acts.appendChild(w);
+      }
+      li.appendChild(acts);
+      return li;
+    };
+    var renderWelcome = function (j) {
+      confetti();
+      var ul = document.getElementById('access');
+      ul.innerHTML = '';
+      var a = j.access || {};
+      ul.appendChild(rowFor('The 47,000 investors database', 'Direct access, yours for good', a.database_url, 'Open the database ↗', true));
+      ul.appendChild(rowFor('Cold outreach kit', '', a.outreach_kit_url, 'Open the kit ↗'));
+      ul.appendChild(rowFor('Fundraising kit', '', a.fundraising_kit_url, 'Open the kit ↗'));
+      ul.appendChild(rowFor('Climate Insiders newsletter', '1 year, 22,000+ readers', a.newsletter_url, 'Open ↗'));
+      (j.lists || []).forEach(function (l) {
+        ul.appendChild(rowFor(l.name, 'Your first list', l.airtable_url, 'Airtable ↗'));
+      });
+      if (j.email) document.getElementById('sentto').textContent = 'also emailed to ' + j.email;
+    };
+    // On localhost there is no API, so the design can be previewed with sample data.
+    var wdemo = { email: 'you@company.com', upsell: true, access: { database_url: '#', outreach_kit_url: '#', fundraising_kit_url: null, newsletter_url: null }, lists: [{ slug: 'europe-500', name: '500 European family office contacts', airtable_url: '#' }] };
+    (/^cs_/.test(wsid) ? fetch('/api/session?session_id=' + encodeURIComponent(wsid)).then(function (r) { return r.ok ? r.json() : Promise.reject(); }) : Promise.reject())
+      .catch(function () { if (location.hostname === 'localhost') return wdemo; throw 0; })
+      .then(renderWelcome)
+      .catch(function () { document.getElementById('access').innerHTML = '<li class="ph">We could not load your access here. Check your inbox, or email yoann@climateinsiders.com.</li>'; });
+  }
+
   // ---- after purchase: your list + the one-time offer ----
   var after = document.getElementById('after');
   if (after) {

@@ -394,3 +394,47 @@ export function thanksPage() {
 <canvas id="confetti" aria-hidden="true"></canvas>`;
   return shell({ title: 'You are in · Climate Insiders Investor Lists', description: 'Your list is ready.', canonical: `${SITE}/thanks`, body });
 }
+
+// After the $390 grand slam offer: confirmation and direct access to everything they bought.
+export function welcomePage() {
+  const body = `
+<header class="hero">
+  <div class="title">
+    ${brand()}
+    <span class="script">paid. thank you.</span>
+    <h1><span class="hl">You have everything.</span></h1>
+  </div>
+</header>
+
+<section class="offer main after" id="welcome">
+  <div class="picksCol">
+    <div class="head"><h3>Your full access<span class="script">yours for good</span></h3><small id="sentto">also emailed to you</small></div>
+    <ul class="mylists" id="access"><li class="ph">Loading your access…</li></ul>
+    <div class="proofs"><div class="raised"><small>They raised from</small><span class="wms">${WORDMARKS}</span></div><div class="pair">${quote(0)}${quote(2)}</div></div>
+  </div>
+  <div class="valueCol slamCol">
+    <div class="slam">
+      <span class="tag">offer unlocked</span>
+      <h2>All <span class="hl">${n(UPSELL_INVESTORS)} investors</span> and the full kit are yours.</h2>
+      <ul class="stack">
+        <li><span class="ck">${SMALL_ICONS.check}</span><span><b>The ${n(UPSELL_INVESTORS)} investors list</b><small>Open it with the button on the left.</small></span><em>yours</em></li>
+        <li><span class="ck">${SMALL_ICONS.check}</span><span><b>Cold outreach kit</b><small>Everything you need to write to them.</small></span><em>yours</em></li>
+        <li><span class="ck">${SMALL_ICONS.check}</span><span><b>Fundraising kit</b><small>Everything you need to run the raise.</small></span><em>yours</em></li>
+        <li><span class="ck">${SMALL_ICONS.check}</span><span><b>1 year of the newsletter</b><small>Read by 22,000+ readers.</small></span><em>yours</em></li>
+      </ul>
+      <div class="next start">
+        <span class="script">start here</span>
+        <ol>
+          <li><b>Open the database</b> and filter by your sector and stage before anything else.</li>
+          <li><b>Write to twelve, not five hundred.</b> One email per person, one specific line about them.</li>
+          <li><b>Wrong row?</b> Reply to any email from me and I fix it. Free, forever.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<p class="thanks-small small">Anything missing? Email <a href="mailto:yoann@climateinsiders.com">yoann@climateinsiders.com</a> with your receipt.</p>
+<canvas id="confetti" aria-hidden="true"></canvas>`;
+  return shell({ title: 'You have everything · Climate Insiders Investor Lists', description: 'Your full access.', canonical: `${SITE}/welcome`, body });
+}

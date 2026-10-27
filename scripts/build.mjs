@@ -2,7 +2,7 @@
 import { mkdir, writeFile, readFile, cp, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { page, allPage, thanksPage } from './render.mjs';
+import { page, allPage, thanksPage, welcomePage } from './render.mjs';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const dist = path.join(root, 'dist');
@@ -83,6 +83,8 @@ async function main() {
   await writeFile(path.join(dist, 'all', 'index.html'), allPage(lists));
   await mkdir(path.join(dist, 'thanks'), { recursive: true });
   await writeFile(path.join(dist, 'thanks', 'index.html'), thanksPage());
+  await mkdir(path.join(dist, 'welcome'), { recursive: true });
+  await writeFile(path.join(dist, 'welcome', 'index.html'), welcomePage());
   await writeFile(
     path.join(dist, 'sitemap.xml'),
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['', 'all', ...lists.map((l) => l.slug)]

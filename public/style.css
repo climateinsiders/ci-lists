@@ -270,3 +270,21 @@ dialog.preview .picks { grid-auto-rows: auto; flex: none; }
 @media (max-width: 900px) { .proofs .pair { grid-template-columns: 1fr; } .offer.after { grid-template-columns: minmax(0, 1fr); } .slamCol { border-left: 0; border-top: 1.5px solid var(--ink); order: 2; } .mylists { max-height: none; } .mylists li { flex-direction: column; align-items: stretch; } .mylists .acts { flex-wrap: wrap; } .mylists .acts .btn { flex: 1; } .slam h2 { font-size: 27px; } }
 @media (prefers-reduced-motion: reduce) { .slam .btn.big { animation: none; } #confetti { display: none; } }
 
+
+/* ---- /welcome: access rows, start-here steps ---- */
+.mylists .nm small { display: block; font-family: var(--sans); font-weight: 500; font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+.mylists .soon { font-size: 12.5px; color: var(--muted); background: var(--paper-2); border-radius: 999px; padding: 6px 12px; white-space: nowrap; }
+.mylists li:first-child { border-color: var(--orange); box-shadow: 3px 3px 0 var(--orange); }
+.mylists li { transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+.mylists li:hover { border-color: var(--orange); transform: translateX(3px); }
+.slam .next.start { margin-top: 2px; }
+.slam .next.start .script { font-size: 26px; }
+.slam .next.start ol { font-size: 14px; gap: 6px; }
+.slam .stack li:first-child { box-shadow: 2px 2px 0 var(--ink); border-color: var(--ink); }
+.slam .stack em { color: #1b7a4a; }
+#access { max-height: none; overflow: visible; gap: 7px; }
+#access li { padding: 8px 14px; }
+#access .nm { font-size: 17px; }
+#access .btn { padding: 8px 14px; font-size: 13px; }
+.slam .next.start ol { gap: 5px; }
+@media (min-width: 901px) { #welcome .proofs { gap: 14px; padding-top: 12px; } #welcome .proofs .quote blockquote { font-size: 13.5px; } }

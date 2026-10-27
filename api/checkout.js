@@ -89,7 +89,7 @@ export default async function handler(req, res) {
     const session = await stripe('checkout/sessions', {
       mode: 'payment',
       line_items: lineItems,
-      success_url: `${siteUrl()}/thanks?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${siteUrl()}/${body.upsell ? 'welcome' : 'thanks'}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl()}${origin}`,
       allow_promotion_codes: upgradeToken ? undefined : true,
       customer_email: customerEmail,
