@@ -24,7 +24,12 @@
 
   function post(url, body) {
     return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(function (r) {
-      return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || 'Something went wrong'); return j; });
+      return r.text().then(function (t) {
+        var j;
+        try { j = JSON.parse(t); } catch (e) { throw new Error('Checkout is not available on this server (no API). Use the deployed site, or run "npm run dev:api" locally.'); }
+        if (!r.ok) throw new Error(j.error || 'Something went wrong');
+        return j;
+      });
     });
   }
 

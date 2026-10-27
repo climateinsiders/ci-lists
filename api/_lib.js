@@ -43,6 +43,12 @@ async function sb(path, { method = 'GET', body, prefer } = {}) {
 }
 
 export async function getActiveLists() {
+  // Local dev (scripts/dev-server.mjs) without Supabase keys: use the fixture lists.
+  if (process.env.LOCAL_DEV === '1' && !process.env.SUPABASE_URL) {
+    const { readFile } = await import('node:fs/promises');
+    const raw = await readFile(new URL('../scripts/fixture.json', import.meta.url), 'utf8');
+    return JSON.parse(raw).lists;
+  }
   return sb('paid_lists?active=eq.true&order=sort_order.asc');
 }
 

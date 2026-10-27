@@ -124,6 +124,6 @@ export default async function handler(req, res) {
     return json(res, 200, { url: session.url });
   } catch (err) {
     console.error(err);
-    return json(res, 500, { error: 'Checkout did not open. Try again in a minute.' });
+    return json(res, 500, { error: process.env.LOCAL_DEV === '1' ? `Checkout failed: ${err.message}` : 'Checkout did not open. Try again in a minute.' });
   }
 }
