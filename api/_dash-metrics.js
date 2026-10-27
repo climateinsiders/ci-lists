@@ -82,7 +82,10 @@ export function buildDashboard({ purchases = [], posts = [], events = [], lists 
     const c = P.filter((p) => p.kw && p.kw === lc(kw));
     if (!c.length) return null;
     const before = c.filter((p) => p.t <= t + DAY).sort((a, b) => b.t - a.t);
-    return before[0] || c.sort((a, b) => a.t - b.t)[0];
+    if (before[0]) return before[0];
+    // Activity from before the first post with this keyword (an older post reused the word) stays unmatched.
+    const earliest = c.sort((a, b) => a.t - b.t)[0];
+    return t >= earliest.t - 3 * DAY ? earliest : null;
   };
   // A list keyword (EU500) that no post uses: the latest post promoting that list.
   const postForList = (kw, t) => {
