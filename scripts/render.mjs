@@ -270,6 +270,7 @@ function slamCard() {
     ${item(`The ${n(UPSELL_INVESTORS)} investors list`, `Instead of the 500 you just bought. Under 1¢ per investor.`)}
     ${item('Cold outreach kit', 'Everything you need to write to them.')}
     ${item('Fundraising kit', 'Everything you need to run the raise.')}
+    ${item('Airtable + CSV, free fixes', 'Delivered like your first list. Wrong row? Reply, I fix it.')}
   </ul>
   <div class="clock" data-clock><span class="digits"><b data-h>24</b>:<b data-m>00</b>:<b data-s>00</b></span><small>left to claim this. Buyers only, shown once, then it is gone.</small></div>
   <button class="btn big" data-upsell>Yes, give me everything · $${UPSELL}</button>
@@ -300,7 +301,7 @@ export function thanksPage() {
         <li><b>Book the flight.</b> The Nordics reply to email. France, Benelux and DACH reply to a coffee.</li>
       </ol>
     </div>
-    <div class="proofs">${quote(0)}${quote(2)}</div>
+    <div class="proofs"><div class="raised"><small>They raised from</small><span class="wms">${WORDMARKS}</span></div><div class="pair">${quote(0)}${quote(2)}</div></div>
   </div>
   <div class="valueCol slamCol" id="slamcol">${slamCard()}</div>
 </section>

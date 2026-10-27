@@ -228,15 +228,15 @@ dialog.preview .picks { grid-auto-rows: auto; flex: none; }
 .slam h2 { font-family: var(--serif); font-weight: 900; font-size: 32px; line-height: 1.05; letter-spacing: -0.02em; margin: 0; }
 .slam h2 .hl { background: linear-gradient(transparent 58%, rgba(255,122,26,.45) 58%); }
 .stack { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.stack li { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; background: #fff; border: 1.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; box-shadow: 2px 2px 0 var(--ink); }
+.stack li { display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: center; background: #fff; border: 1.5px solid var(--ink); border-radius: 14px; padding: 8px 12px; box-shadow: 2px 2px 0 var(--ink); }
 .stack li:first-child { box-shadow: 3px 3px 0 var(--orange); }
 .stack .ck { width: 28px; height: 28px; border-radius: 50%; background: var(--orange); color: #fff; display: grid; place-items: center; }
 .stack .ck svg { width: 16px; height: 16px; }
-.stack b { display: block; font-family: var(--serif); font-weight: 900; font-size: 18px; line-height: 1.1; }
+.stack b { display: block; font-family: var(--serif); font-weight: 900; font-size: 17px; line-height: 1.1; }
 .stack small { display: block; font-size: 12.5px; color: var(--ink-2); margin-top: 2px; line-height: 1.3; }
 .stack em { font-style: normal; font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #1b7a4a; background: #d8efe0; border-radius: 999px; padding: 3px 8px; }
 .slam .clock { display: flex; align-items: center; gap: 12px; }
-.slam .digits { font-family: var(--serif); font-weight: 900; font-size: 38px; line-height: 1; letter-spacing: -0.02em; color: var(--orange-deep); font-variant-numeric: tabular-nums; }
+.slam .digits { font-family: var(--serif); font-weight: 900; font-size: 34px; line-height: 1; letter-spacing: -0.02em; color: var(--orange-deep); font-variant-numeric: tabular-nums; }
 .slam .digits b { font-weight: 900; }
 .slam .clock small { font-size: 12.5px; color: var(--ink-2); line-height: 1.3; }
 .slam .btn.big { flex: none; width: 100%; font-size: 17px; padding: 17px 22px; animation: pulse 2.4s ease-in-out infinite; }
@@ -248,12 +248,17 @@ dialog.preview .picks { grid-auto-rows: auto; flex: none; }
 .quote figcaption { grid-column: 2; font-size: 12px; color: var(--muted); }
 .quote figcaption b { color: var(--ink); }
 .quote figcaption em { font-style: normal; color: var(--orange); font-weight: 600; }
-.proofs { margin-top: 16px; display: grid; gap: 2px; }
-.proofs .quote { border-top: 1.5px solid var(--rule); padding: 12px 2px 4px; }
-.proofs .quote blockquote { font-size: 14.5px; }
+.proofs { margin-top: auto; padding-top: 14px; display: grid; gap: 10px; border-top: 1.5px solid var(--rule); }
+.proofs .raised { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.proofs .raised small { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.proofs .wms { gap: 16px; }
+.proofs .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.proofs .quote { padding: 0; grid-template-columns: 36px 1fr; gap: 3px 10px; }
+.proofs .quote img { width: 36px; height: 36px; }
+.proofs .quote blockquote { font-size: 13.5px; line-height: 1.3; }
 #confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
 .thanks-small { text-align: center; font-size: 13px; color: var(--muted); margin: 12px 0 18px; }
 @media (min-width: 901px) and (min-height: 660px) { html:has(.offer.after) .thanks-small { margin: 8px 0 8px; } }
-@media (max-width: 900px) { .offer.after { grid-template-columns: minmax(0, 1fr); } .slamCol { border-left: 0; border-top: 1.5px solid var(--ink); order: 2; } .mylists { max-height: none; } .mylists li { flex-direction: column; align-items: stretch; } .mylists .acts { flex-wrap: wrap; } .mylists .acts .btn { flex: 1; } .slam h2 { font-size: 27px; } }
+@media (max-width: 900px) { .proofs .pair { grid-template-columns: 1fr; } .offer.after { grid-template-columns: minmax(0, 1fr); } .slamCol { border-left: 0; border-top: 1.5px solid var(--ink); order: 2; } .mylists { max-height: none; } .mylists li { flex-direction: column; align-items: stretch; } .mylists .acts { flex-wrap: wrap; } .mylists .acts .btn { flex: 1; } .slam h2 { font-size: 27px; } }
 @media (prefers-reduced-motion: reduce) { .slam .btn.big { animation: none; } #confetti { display: none; } }
 
