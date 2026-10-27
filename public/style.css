@@ -291,3 +291,12 @@ dialog.preview .picks { grid-auto-rows: auto; flex: none; }
 .paydlg { max-width: min(560px, 96vw); }
 .paybody { background: #fff; padding: 14px 16px 18px; overflow: auto; min-height: 240px; }
 .paybody .loading { text-align: center; color: var(--muted); padding: 60px 0; font-size: 14px; }
+
+/* ---- buy button: fixed width while loading, spinner instead of a longer label ---- */
+.valueCol .btn.big { min-width: 0; white-space: nowrap; }
+.btn { position: relative; }
+.btn.is-loading { color: transparent !important; pointer-events: none; opacity: 1 !important; }
+.btn.is-loading::after { content: ''; position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; margin: -10px 0 0 -10px; border: 2.5px solid rgba(255,255,255,.45); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
+.btn.ghost.is-loading::after { border-color: rgba(31,27,22,.25); border-top-color: var(--ink); }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .btn.is-loading::after { animation-duration: 1.6s; } }

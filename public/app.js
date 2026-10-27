@@ -119,9 +119,9 @@
   if (payDlg) payDlg.addEventListener('close', function () { destroyEmbedded(); openDialog = null; });
 
   function startCheckout(payload, btn) {
-    var label = btn ? btn.textContent : '';
-    if (btn) { btn.disabled = true; btn.textContent = 'Opening checkout…'; }
-    var done = function () { if (btn) { btn.disabled = false; btn.textContent = label; } };
+    // The label never changes (a longer text made the button grow past its box); a spinner shows progress.
+    if (btn) { btn.disabled = true; btn.classList.add('is-loading'); btn.setAttribute('aria-busy', 'true'); }
+    var done = function () { if (btn) { btn.disabled = false; btn.classList.remove('is-loading'); btn.removeAttribute('aria-busy'); } };
     post('/api/checkout', Object.assign({ embedded: !!payDlg, attribution: attribution }, payload))
       .then(function (j) {
         if (j.url || !j.client_secret) { location.href = j.url; return; } // hosted fallback
