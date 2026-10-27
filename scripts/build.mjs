@@ -28,7 +28,7 @@ async function loadLists() {
   for (const l of lists) {
     const [stats] = await sb(`rpc/paid_list_stats?slug=${l.slug}`).catch(() => [null]);
     l.stats = stats || (await computeStats(l.slug));
-    l.rows = await sb(`paid_list_entries?slug=eq.${l.slug}&order=sort_order.asc&select=name,firm,photo_url`);
+    l.rows = await sb(`paid_list_entries?slug=eq.${l.slug}&order=sort_order.asc&select=name,title,firm,country,region,extra,website,photo_url,logo_url`);
     l.sample = await sb(`paid_list_entries?slug=eq.${l.slug}&is_sample=eq.true&order=sort_order.asc&select=name,title,firm,country,region,city,email,website,extra,photo_url,logo_url`);
   }
   return lists;
@@ -38,8 +38,13 @@ async function loadLists() {
 function fixtureRows(l) {
   const first = ['Anna', 'Lukas', 'Marie', 'Jonas', 'Elena', 'Pieter', 'Sofia', 'Henrik', 'Clara', 'Marco', 'Ingrid', 'Louis'];
   const last = ['Berg', 'Moreau', 'Keller', 'Lindqvist', 'Rossi', 'Dubois', 'Hansen', 'Weber', 'Janssen', 'Fontaine', 'Schmidt', 'Novak'];
-  const rows = l.sample.map((e) => ({ name: e.name || e.firm, photo_url: e.photo_url || null }));
-  for (let i = rows.length; i < l.stats.rows; i++) rows.push({ name: `${first[i % first.length]} ${last[(i * 7) % last.length]}`, photo_url: null });
+  const titles = ['Managing Partner', 'Chief Investment Officer', 'Co-Founder & CEO', 'Head of Investments', 'Principal'];
+  const firms = ['Northgate Family Office', 'Alder Capital', 'Meridian Holdings', 'Vantage Wealth', 'Harbour & Co'];
+  const countries = ['Germany', 'France', 'Switzerland', 'Sweden', 'Netherlands'];
+  const rows = l.sample.map((e) => ({ name: e.name, title: e.title, firm: e.firm, country: e.country, region: e.region, extra: e.extra, website: e.website, photo_url: e.photo_url, logo_url: e.logo_url }));
+  for (let i = rows.length; i < l.stats.rows; i++) {
+    rows.push({ name: `${first[i % first.length]} ${last[(i * 7) % last.length]}`, title: titles[i % 5], firm: firms[(i * 3) % 5], country: countries[(i * 2) % 5] });
+  }
   return rows;
 }
 

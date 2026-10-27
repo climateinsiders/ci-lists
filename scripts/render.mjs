@@ -157,8 +157,10 @@ function proofStrip() {
     .map((q, i) => `<figure class="rq${i === 0 ? ' on' : ''}"><blockquote>“${esc(q.text)}”</blockquote><figcaption><b>${esc(q.who)}</b>, ${esc(q.role)} · <em>${esc(q.round)}</em></figcaption></figure>`)
     .join('');
   return `<section class="proof">
-  <div class="stat"><span class="faces">${faces}</span><span><b>1,654 founders · $148M+ raised</b><small>with the investor data behind these lists</small></span></div>
-  <div class="raised"><small>They raised from</small><span class="wms">${WORDMARKS}</span></div>
+  <div class="left">
+    <div class="stat"><span class="faces">${faces}</span><span><b>1,654 founders · $148M+ raised</b><small>with the investor data behind these lists</small></span></div>
+    <div class="raised"><small>They raised from</small><span class="wms">${WORDMARKS}</span></div>
+  </div>
   <div class="rotator" aria-live="polite">${quotes}</div>
 </section>`;
 }
@@ -207,28 +209,23 @@ function preview(list) {
 </dialog>`;
 }
 
-// Spreadsheet preview. Only the name and photo are real; every other cell is a blurred placeholder, never the data.
+// Spreadsheet preview. Name, photo, title, firm and country are real; email and LinkedIn are blurred placeholders, never the data.
 const BLUR = {
-  title: ['Managing Partner', 'Chief Investment Officer', 'Co-Founder & CEO', 'Head of Investments', 'Principal'],
-  firm: ['Northgate Family Office', 'Alder Capital Partners', 'Meridian Holdings', 'Vantage Wealth', 'Harbour & Co'],
   email: ['firstname@familyoffice.com', 'name@capitalpartners.eu', 'info.direct@holdings.com', 'first.last@wealth.com'],
   linkedin: ['linkedin.com/in/firstname-lastname', 'linkedin.com/in/name-surname-42'],
-  country: ['Germany', 'France', 'Switzerland', 'Sweden', 'Netherlands', 'United Kingdom'],
 };
-const bl = (k, i, step) => `<span class="blur">${BLUR[k][(i * step) % BLUR[k].length]}</span>`;
+const bl = (k, i) => `<span class="blur">${BLUR[k][i % BLUR[k].length]}</span>`;
 
 function sheetDialog(list) {
   const rows = (list.rows || []).map((r, i) => {
     const label = r.name || r.firm || '';
-    const av = r.photo_url
-      ? `<img src="${esc(r.photo_url)}" alt="" loading="lazy" width="24" height="24" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${esc(initials(label))}'}))">`
-      : `<span>${esc(initials(label))}</span>`;
-    return `<tr><td class="ix">${i + 1}</td><td class="nm"><span class="av">${av}</span>${esc(label)}</td><td>${bl('title', i, 3)}</td><td>${bl('firm', i, 2)}</td><td>${bl('email', i, 1)}</td><td>${bl('linkedin', i, 1)}</td><td>${bl('country', i, 5)}</td></tr>`;
+    const x = r.extra || {};
+    return `<tr><td class="ix">${i + 1}</td><td class="nm"><span class="av">${face({ ...r, name: label }, 48)}</span>${esc(label)}</td><td>${esc(r.title || x.stage || '')}</td><td>${esc(r.name ? r.firm || '' : '')}</td><td>${esc(r.country || r.region || '')}</td><td>${bl('email', i)}</td><td>${bl('linkedin', i)}</td></tr>`;
   });
   return `<dialog class="preview sheetdlg" id="sheet" aria-label="All ${n(list.stats.rows)} rows">
-  <div class="pvhead"><span class="script">the full list</span><h2>${n(list.stats.rows)} rows, blurred. Names are real.</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
-  <div class="grid-wrap"><table class="sheettbl"><thead><tr><th class="ix">#</th><th>Name</th><th>Title</th><th>Firm</th><th>Email</th><th>LinkedIn</th><th>Country</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>
-  <div class="pvfoot"><span>Email, firm, title and LinkedIn unlock when you buy.</span><button class="btn" data-buy="${esc(list.slug)}">Unlock all ${n(list.stats.rows)} for ${usd(list.price_cents)}</button></div>
+  <div class="pvhead"><span class="script">the full list</span><h2>${n(list.stats.rows)} rows. Emails and LinkedIn are blurred.</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
+  <div class="grid-wrap"><table class="sheettbl"><thead><tr><th class="ix">#</th><th>Name</th><th>Title</th><th>Firm</th><th>Country</th><th>Email</th><th>LinkedIn</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>
+  <div class="pvfoot"><span>Direct emails and LinkedIn profiles unlock when you buy.</span><button class="btn" data-buy="${esc(list.slug)}">Unlock all ${n(list.stats.rows)} for ${usd(list.price_cents)}</button></div>
 </dialog>`;
 }
 
@@ -242,13 +239,12 @@ export function page(lists, featured) {
   <div class="title">
     <span class="script">${featured ? `you asked for ${esc(f.short_name)}. here it is.` : 'hey, founders and fund managers'}</span>
     <h1><span class="hl">${esc(f.name)}</span></h1>
-    ${statRow(f)}
   </div>
 </header>
 
 <section class="offer main" id="offer" ${toneAttr(f)}>${offerBlock(f, { sheet: true })}</section>
 
-<section class="chips"><span class="lbl">+ ${others.length} more lists</span><span class="row">${others.map(chip).join('')}</span></section>
+<section class="chips"><span class="lbl">+ ${others.length} more lists</span><span class="row">${others.slice(0, 6).map(chip).join('')}</span></section>
 ${proofStrip()}
 ${others.map(preview).join('\n')}
 ${sheetDialog(f)}`;
