@@ -58,10 +58,9 @@ button { font: inherit; cursor: pointer; }
 .btn[disabled] { opacity: .6; cursor: wait; transform: none; }
 
 /* ---- hero: brand and title share one row ---- */
-.hero { display: grid; grid-template-columns: 1fr minmax(0, 720px) 1fr; align-items: center; gap: 16px; padding: 18px 0 0; }
-.hero .brand { justify-self: start; display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; line-height: 1.1; white-space: nowrap; }
+.hero { padding: 10px 0 0; }
+.hero .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 14px; letter-spacing: -0.01em; line-height: 1.1; white-space: nowrap; margin-bottom: 4px; }
 .hero .brand img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
-.hero .brand small { display: block; font-weight: 500; font-size: 11px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; margin-top: 2px; }
 .hero .title { text-align: center; }
 .hero .script { font-size: 22px; display: block; margin-bottom: -4px; }
 .hero h1 { font-family: var(--serif); font-variation-settings: 'opsz' 144; font-weight: 900; font-size: clamp(28px, 3.3vw, 46px); line-height: 1.04; letter-spacing: -0.02em; margin: 0; }
@@ -76,18 +75,18 @@ button { font: inherit; cursor: pointer; }
 
 /* ---- the offer: top 10 on the left, value stack and buy on the right ---- */
 .offer { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 400px; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 22px; box-shadow: 6px 6px 0 var(--ink); overflow: hidden; }
-.offer.main { margin-top: 26px; transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); box-shadow: calc(6px - var(--ry-n, 0) * 1px) calc(6px + var(--rx-n, 0) * 1px) 0 var(--ink); transition: transform .18s ease-out, box-shadow .18s ease-out; will-change: transform; }
+.offer.main { margin-top: 18px; transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); box-shadow: calc(6px - var(--ry-n, 0) * 1px) calc(6px + var(--rx-n, 0) * 1px) 0 var(--ink); transition: transform .18s ease-out, box-shadow .18s ease-out; will-change: transform; }
 .offer.main::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255,122,26,.13), transparent 60%); opacity: 0; transition: opacity .25s ease; }
 .offer.main:hover::after { opacity: 1; }
 .picksCol { padding: 16px 22px 12px; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
-.valueCol { padding: 18px 24px 16px; background: var(--tone); border-left: 1.5px solid var(--ink); display: flex; flex-direction: column; gap: 9px; min-height: 0; overflow: auto; }
-.valueCol .script { font-size: 32px; line-height: 1; margin-top: 2px; }
+.valueCol { padding: 16px 24px 20px; background: var(--tone); border-left: 1.5px solid var(--ink); display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow: auto; }
+.valueCol .script { font-size: 32px; line-height: 1; margin-top: 12px; }
 .valueCol .buy { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .valueCol .bigprice { font-family: var(--serif); font-weight: 900; font-size: 48px; line-height: 1; }
 .valueCol .bigprice small { font-family: var(--sans); font-weight: 500; font-size: 10.5px; color: var(--ink-2); display: block; letter-spacing: .06em; text-transform: uppercase; margin-top: 3px; white-space: nowrap; }
 .valueCol .btn.big { flex: 1; }
 .valueCol .fine { font-size: 12.5px; color: var(--ink-2); margin: 0; line-height: 1.35; }
-.checks { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 8px; flex: 1; align-content: space-between; }
+.checks { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 5px; }
 .checks li { display: flex; gap: 11px; font-size: 15.5px; line-height: 1.25; align-items: flex-start; font-weight: 500; }
 .checks svg { width: 20px; height: 20px; color: var(--orange); flex: none; margin-top: 1px; }
 .picksCol .head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -113,7 +112,7 @@ button { font: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { .offer.main { transform: none !important; } .pick:hover { transform: none; } }
 
 /* ---- the other lists: big chips, click for the same offer ---- */
-.chips { display: flex; align-items: center; gap: 14px; margin-top: 24px; }
+.chips { display: flex; align-items: center; gap: 14px; margin-top: 18px; }
 .chips .lbl { font-family: var(--hand); font-size: 28px; line-height: 1; color: var(--ink-2); white-space: nowrap; font-weight: 700; }
 .chips .row { display: flex; flex-wrap: wrap; gap: 6px 8px; flex: 1; min-width: 0; padding: 0 3px 3px 0; }
 .chip { display: inline-flex; align-items: center; gap: 8px; background: var(--card); border: 1.5px solid var(--ink); border-radius: 999px; padding: 3px 13px 3px 3px; font-size: 14px; color: var(--ink); white-space: nowrap; box-shadow: 2px 2px 0 var(--ink); transition: transform .12s ease, box-shadow .12s ease, background .12s ease; }
@@ -152,7 +151,6 @@ dialog.preview .picks { grid-auto-rows: auto; flex: none; }
   .offer.main { flex: 1; min-height: 0; }
 }
 @media (max-width: 900px) {
-  .hero { grid-template-columns: 1fr; gap: 10px; padding-top: 14px; }
   .hero .sub { font-size: 15px; }
   .offer { grid-template-columns: minmax(0, 1fr); }
   .offer.main { margin-top: 22px; transform: none; }
@@ -169,8 +167,8 @@ dialog.preview .picks { grid-auto-rows: auto; flex: none; }
 }
 
 /* ---- proof strip: one row ---- */
-.proof { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 36px; align-items: center; padding: 14px 0 12px; margin-top: 24px; border-top: 1.5px solid var(--rule); }
-.proof .left { display: grid; gap: 10px; }
+.proof { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 36px; align-items: center; padding: 10px 0 8px; margin-top: 18px; border-top: 1.5px solid var(--rule); }
+.proof .left { display: grid; gap: 6px; }
 .proof .stat { display: flex; align-items: center; gap: 12px; }
 .proof .stat .faces { display: flex; }
 .proof .stat .faces img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--paper); margin-left: -8px; object-fit: cover; }

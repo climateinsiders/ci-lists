@@ -106,7 +106,7 @@ ${footer()}
 }
 
 function brand() {
-  return `<a class="brand" href="/"><img src="/yoann.jpg" alt="" width="38" height="38"><span>Climate Insiders<small>Investor lists</small></span></a>`;
+  return `<a class="brand" href="/"><img src="/yoann.jpg" alt="" width="44" height="44"><span>Climate Insiders</span></a>`;
 }
 
 function footer() {
@@ -235,8 +235,8 @@ export function page(lists, featured) {
   const others = lists.filter((l) => l !== f);
   const body = `
 <header class="hero">
-  ${brand()}
   <div class="title">
+    ${brand()}
     <span class="script">${featured ? `you asked for ${esc(f.short_name)}. here it is.` : 'hey, founders and fund managers'}</span>
     <h1><span class="hl">${esc(f.name)}</span></h1>
   </div>
