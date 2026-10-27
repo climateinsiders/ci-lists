@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { page, allPage, thanksPage, welcomePage, setNav } from './render.mjs';
 import { termsPage } from './terms.mjs';
+import { dashboardPage } from './dashboard.mjs';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const dist = path.join(root, 'dist');
@@ -92,13 +93,15 @@ async function main() {
   await mkdir(path.join(dist, 'terms'), { recursive: true });
   await writeFile(path.join(dist, 'terms', 'index.html'), termsPage());
   await writeFile(path.join(dist, 'welcome', 'index.html'), welcomePage());
+  await mkdir(path.join(dist, 'dashboard'), { recursive: true });
+  await writeFile(path.join(dist, 'dashboard', 'index.html'), dashboardPage());
   await writeFile(
     path.join(dist, 'sitemap.xml'),
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['', 'all', ...lists.map((l) => l.slug), 'terms']
       .map((p) => `  <url><loc>https://lists.climateinsiders.com/${p}</loc><lastmod>${new Date().toISOString().slice(0, 10)}</lastmod></url>`)
       .join('\n')}\n</urlset>\n`,
   );
-  await writeFile(path.join(dist, 'robots.txt'), 'User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: https://lists.climateinsiders.com/sitemap.xml\n');
+  await writeFile(path.join(dist, 'robots.txt'), 'User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /dashboard\nSitemap: https://lists.climateinsiders.com/sitemap.xml\n');
   if (!existsSync(path.join(dist, 'og.png'))) console.warn('No og.png in public/, social previews will be blank');
   console.log(`Built ${lists.length + 2} pages into dist/`);
 }
