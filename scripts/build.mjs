@@ -20,15 +20,27 @@ async function sb(pathq) {
 async function loadLists() {
   if (local) {
     console.log('Building from scripts/fixture.json');
-    return JSON.parse(await readFile(path.join(root, 'scripts', 'fixture.json'), 'utf8')).lists;
+    const lists = JSON.parse(await readFile(path.join(root, 'scripts', 'fixture.json'), 'utf8')).lists;
+    for (const l of lists) l.rows = fixtureRows(l);
+    return lists;
   }
   const lists = await sb('paid_lists?active=eq.true&order=sort_order.asc');
   for (const l of lists) {
     const [stats] = await sb(`rpc/paid_list_stats?slug=${l.slug}`).catch(() => [null]);
     l.stats = stats || (await computeStats(l.slug));
+    l.rows = await sb(`paid_list_entries?slug=eq.${l.slug}&order=sort_order.asc&select=name,firm,photo_url`);
     l.sample = await sb(`paid_list_entries?slug=eq.${l.slug}&is_sample=eq.true&order=sort_order.asc&select=name,title,firm,country,region,city,email,website,extra,photo_url,logo_url`);
   }
   return lists;
+}
+
+// Local preview only: the fixture has just the 10 sample rows, so pad with made-up names to show the sheet.
+function fixtureRows(l) {
+  const first = ['Anna', 'Lukas', 'Marie', 'Jonas', 'Elena', 'Pieter', 'Sofia', 'Henrik', 'Clara', 'Marco', 'Ingrid', 'Louis'];
+  const last = ['Berg', 'Moreau', 'Keller', 'Lindqvist', 'Rossi', 'Dubois', 'Hansen', 'Weber', 'Janssen', 'Fontaine', 'Schmidt', 'Novak'];
+  const rows = l.sample.map((e) => ({ name: e.name || e.firm, photo_url: e.photo_url || null }));
+  for (let i = rows.length; i < l.stats.rows; i++) rows.push({ name: `${first[i % first.length]} ${last[(i * 7) % last.length]}`, photo_url: null });
+  return rows;
 }
 
 async function computeStats(slug) {

@@ -1,4 +1,4 @@
-// Buy button, rotating testimonials, post-purchase upsell, attribution. No framework.
+// Dialogs, hover effects, buy button, rotating testimonials, post-purchase upsell, attribution. No framework.
 (function () {
   var q = new URLSearchParams(location.search);
   var attribution = {
@@ -25,6 +25,43 @@
   function post(url, body) {
     return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(function (r) {
       return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || 'Something went wrong'); return j; });
+    });
+  }
+
+  // ---- dialogs: other lists + the spreadsheet ----
+  var openDialog = null;
+  function openD(d) {
+    if (!d) return;
+    if (openDialog && openDialog !== d) openDialog.close();
+    openDialog = d;
+    if (typeof d.showModal === 'function') d.showModal(); else d.setAttribute('open', '');
+    var sc = d.querySelector('.grid-wrap, .offer'); if (sc) sc.scrollTop = 0;
+  }
+  function closeD() { if (openDialog) { openDialog.close(); openDialog = null; } }
+  document.addEventListener('click', function (ev) {
+    var o = ev.target.closest('[data-open]');
+    if (o) { ev.preventDefault(); openD(document.getElementById('p-' + o.getAttribute('data-open'))); return; }
+    if (ev.target.closest('[data-sheet]')) { ev.preventDefault(); openD(document.getElementById('sheet')); return; }
+    if (ev.target.closest('[data-close]')) { ev.preventDefault(); closeD(); return; }
+    if (ev.target.tagName === 'DIALOG') closeD(); // backdrop click
+  });
+  document.addEventListener('cancel', function (ev) { if (ev.target.tagName === 'DIALOG') { ev.preventDefault(); closeD(); } }, true);
+
+  // ---- main offer follows the cursor: soft tilt + orange spotlight ----
+  var main = document.querySelector('.offer.main');
+  if (main && window.matchMedia('(hover: hover) and (min-width: 901px)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    main.addEventListener('mousemove', function (e) {
+      var r = main.getBoundingClientRect();
+      var x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      main.style.setProperty('--ry', ((x - 0.5) * 2.2).toFixed(2) + 'deg');
+      main.style.setProperty('--rx', ((0.5 - y) * 1.6).toFixed(2) + 'deg');
+      main.style.setProperty('--ry-n', ((x - 0.5) * 2).toFixed(2));
+      main.style.setProperty('--rx-n', ((0.5 - y) * 2).toFixed(2));
+      main.style.setProperty('--mx', (x * 100).toFixed(1) + '%');
+      main.style.setProperty('--my', (y * 100).toFixed(1) + '%');
+    });
+    main.addEventListener('mouseleave', function () {
+      ['--rx', '--ry', '--rx-n', '--ry-n'].forEach(function (k) { main.style.setProperty(k, k.indexOf('-n') > 0 ? '0' : '0deg'); });
     });
   }
 

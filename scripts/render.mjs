@@ -96,7 +96,6 @@ ${extraHead}
 </head>
 <body>
 <div class="wrap">
-${topbar()}
 ${body}
 ${footer()}
 </div>
@@ -106,10 +105,8 @@ ${footer()}
 </html>`;
 }
 
-function topbar() {
-  return `<header class="topbar">
-  <a class="brand" href="/"><img src="/yoann.jpg" alt="" width="34" height="34"><span>Climate Insiders<small>Investor lists</small></span></a>
-</header>`;
+function brand() {
+  return `<a class="brand" href="/"><img src="/yoann.jpg" alt="" width="38" height="38"><span>Climate Insiders<small>Investor lists</small></span></a>`;
 }
 
 function footer() {
@@ -169,7 +166,7 @@ function proofStrip() {
 const CHIP_NAME = { 'usa-500': 'US', 'uk-200': 'UK', 'france-benelux-150': 'France + Benelux', 'apac-200': 'APAC', 'latam-canada-150': 'Canada + LatAm', 'lps-366': 'LPs', 'climate-vcs-474': 'Climate VCs' };
 
 function chip(list) {
-  return `<span class="chip" ${toneAttr(list)}><span class="dot">${ICONS[list.icon] || ICONS.globe}</span><span class="t"><b>${esc(list.count_label)}</b> ${esc(CHIP_NAME[list.slug] || list.short_name)}</span></span>`;
+  return `<button class="chip" type="button" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog"><span class="dot">${ICONS[list.icon] || ICONS.globe}</span><span class="t"><b>${esc(list.count_label)}</b> ${esc(CHIP_NAME[list.slug] || list.short_name)}</span></button>`;
 }
 
 function statRow(list) {
@@ -184,38 +181,77 @@ function statRow(list) {
   return `<ul class="stats">${items.map(([v, l]) => `<li><b>${v}</b> ${l}</li>`).join('')}</ul>`;
 }
 
-// One page, one offer: the featured list ($90). Everything else is shown as a quiet strip and sold after purchase.
-export function page(lists, featured) {
-  const f = lists.find((l) => l.slug === featured) || lists[0];
-  const isFund = f.slug === 'climate-vcs-474';
-  const others = lists.filter((l) => l !== f);
-  const body = `
-<section class="hero">
-  <span class="script">${featured ? `you asked for ${esc(f.short_name)}. here it is.` : 'hey, founders and fund managers'}</span>
-  <h1><span class="hl">${esc(f.name)}</span></h1>
-  <p class="sub">${esc(f.tagline)} In your inbox in 2 minutes.</p>
-  ${statRow(f)}
-</section>
-
-<section class="offer" id="offer" ${toneAttr(f)}>
-  <div class="left">
+// The offer: top 10 on the left, the value stack and the buy button on the right.
+function offerBlock(list, { sheet = false } = {}) {
+  const isFund = list.slug === 'climate-vcs-474';
+  return `<div class="picksCol">
+    <div class="head"><h3>Top 10 picks<span class="script">straight from the sheet</span></h3>${sheet ? `<button class="viewall" type="button" data-sheet>View all ${n(list.stats.rows)} <span aria-hidden="true">↗</span></button>` : `<small>${n(list.stats.rows)} in the full list</small>`}</div>
+    <ul class="picks">${picks(list)}</ul>
+    <p class="more">… and ${n(Math.max(0, list.stats.rows - 10))} more with the full ${isFund ? 'details' : 'emails and LinkedIn'}.</p>
+  </div>
+  <div class="valueCol">
     <div class="buy">
-      <div class="bigprice">${usd(f.price_cents)}<small>one time · yours forever</small></div>
-      <button class="btn big" data-buy="${esc(f.slug)}">Get the list</button>
+      <div class="bigprice">${usd(list.price_cents)}<small>one time · yours forever</small></div>
+      <button class="btn big" data-buy="${esc(list.slug)}">Get the list</button>
     </div>
     <p class="fine">Stripe checkout. Card, Apple Pay, Google Pay. CSV by email in 2 minutes, receipt and invoice included.</p>
     <span class="script">what you get</span>
-    ${valuePoints(f)}
+    ${valuePoints(list)}
+  </div>`;
+}
+
+function preview(list) {
+  return `<dialog class="preview" id="p-${esc(list.slug)}" aria-label="${esc(list.name)}">
+  <div class="pvhead"><span class="script">${esc(list.short_name)}</span><h2>${esc(list.name)}</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
+  <section class="offer" ${toneAttr(list)}>${offerBlock(list)}</section>
+</dialog>`;
+}
+
+// Spreadsheet preview. Only the name and photo are real; every other cell is a blurred placeholder, never the data.
+const BLUR = {
+  title: ['Managing Partner', 'Chief Investment Officer', 'Co-Founder & CEO', 'Head of Investments', 'Principal'],
+  firm: ['Northgate Family Office', 'Alder Capital Partners', 'Meridian Holdings', 'Vantage Wealth', 'Harbour & Co'],
+  email: ['firstname@familyoffice.com', 'name@capitalpartners.eu', 'info.direct@holdings.com', 'first.last@wealth.com'],
+  linkedin: ['linkedin.com/in/firstname-lastname', 'linkedin.com/in/name-surname-42'],
+  country: ['Germany', 'France', 'Switzerland', 'Sweden', 'Netherlands', 'United Kingdom'],
+};
+const bl = (k, i, step) => `<span class="blur">${BLUR[k][(i * step) % BLUR[k].length]}</span>`;
+
+function sheetDialog(list) {
+  const rows = (list.rows || []).map((r, i) => {
+    const label = r.name || r.firm || '';
+    const av = r.photo_url
+      ? `<img src="${esc(r.photo_url)}" alt="" loading="lazy" width="24" height="24" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${esc(initials(label))}'}))">`
+      : `<span>${esc(initials(label))}</span>`;
+    return `<tr><td class="ix">${i + 1}</td><td class="nm"><span class="av">${av}</span>${esc(label)}</td><td>${bl('title', i, 3)}</td><td>${bl('firm', i, 2)}</td><td>${bl('email', i, 1)}</td><td>${bl('linkedin', i, 1)}</td><td>${bl('country', i, 5)}</td></tr>`;
+  });
+  return `<dialog class="preview sheetdlg" id="sheet" aria-label="All ${n(list.stats.rows)} rows">
+  <div class="pvhead"><span class="script">the full list</span><h2>${n(list.stats.rows)} rows, blurred. Names are real.</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
+  <div class="grid-wrap"><table class="sheettbl"><thead><tr><th class="ix">#</th><th>Name</th><th>Title</th><th>Firm</th><th>Email</th><th>LinkedIn</th><th>Country</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>
+  <div class="pvfoot"><span>Email, firm, title and LinkedIn unlock when you buy.</span><button class="btn" data-buy="${esc(list.slug)}">Unlock all ${n(list.stats.rows)} for ${usd(list.price_cents)}</button></div>
+</dialog>`;
+}
+
+// One page, one offer: the featured list ($90). The other lists are chips that open the same offer in a dialog.
+export function page(lists, featured) {
+  const f = lists.find((l) => l.slug === featured) || lists[0];
+  const others = lists.filter((l) => l !== f);
+  const body = `
+<header class="hero">
+  ${brand()}
+  <div class="title">
+    <span class="script">${featured ? `you asked for ${esc(f.short_name)}. here it is.` : 'hey, founders and fund managers'}</span>
+    <h1><span class="hl">${esc(f.name)}</span></h1>
+    ${statRow(f)}
   </div>
-  <div class="right">
-    <div class="head"><h3>Top 10 picks<span class="script">straight from the sheet</span></h3><small>${n(f.stats.rows)} in the full list</small></div>
-    <ul class="picks">${picks(f)}</ul>
-    <p class="more">… and ${n(Math.max(0, f.stats.rows - 10))} more with the full ${isFund ? 'details' : 'emails and LinkedIn'}.</p>
-  </div>
-</section>
+</header>
+
+<section class="offer main" id="offer" ${toneAttr(f)}>${offerBlock(f, { sheet: true })}</section>
 
 <section class="chips"><span class="lbl">+ ${others.length} more lists</span><span class="row">${others.map(chip).join('')}</span></section>
-${proofStrip()}`;
+${proofStrip()}
+${others.map(preview).join('\n')}
+${sheetDialog(f)}`;
   const title = featured ? `${f.name} · Climate Insiders` : 'Investor lists for founders and fund managers · Climate Insiders';
   const description = `${f.tagline} ${n(f.stats.rows)} rows. ${usd(f.price_cents)} one time, delivered by email.`;
   return shell({
@@ -229,6 +265,7 @@ ${proofStrip()}`;
 
 export function thanksPage() {
   const body = `
+<header class="topbar">${brand()}</header>
 <section class="thanks">
   <div class="mail">${SMALL_ICONS.mail}</div>
   <span class="script" style="font-size:24px">paid. thank you.</span>
