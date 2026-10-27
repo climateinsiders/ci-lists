@@ -27,6 +27,37 @@ const TONES = {
   'climate-vcs-474': ['#d8efe0', '#1b7a4a'],
 };
 
+
+// Flags: lipis/flag-icons SVGs (MIT), pinned version, served by jsDelivr. Round crops, no emoji (those do not render on Windows).
+const FLAG = (code) => `https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/flags/4x3/${code}.svg`;
+const LIST_FLAGS = {
+  'europe-500': ['eu'],
+  'usa-500': ['us'],
+  'uk-200': ['gb'],
+  'dach-150': ['de', 'at', 'ch'],
+  'nordics-150': ['se', 'dk', 'no', 'fi', 'is'],
+  'france-benelux-150': ['fr', 'be', 'nl', 'lu'],
+  'apac-200': ['sg', 'hk', 'au'],
+  'latam-canada-150': ['ca', 'br', 'ar'],
+};
+const COUNTRY_ISO = Object.fromEntries(Object.entries({
+  be: 'belgium', fr: 'france', de: 'germany', ch: 'switzerland', at: 'austria', nl: 'netherlands|the netherlands|holland', lu: 'luxembourg',
+  gb: 'united kingdom|uk|england|scotland|wales|great britain', ie: 'ireland', es: 'spain', pt: 'portugal', it: 'italy',
+  se: 'sweden', dk: 'denmark', no: 'norway', fi: 'finland', is: 'iceland', pl: 'poland', cz: 'czech republic|czechia', sk: 'slovakia',
+  hu: 'hungary', ro: 'romania', bg: 'bulgaria', gr: 'greece', tr: 'turkey|türkiye', ee: 'estonia', lv: 'latvia', lt: 'lithuania',
+  hr: 'croatia', si: 'slovenia', rs: 'serbia', mt: 'malta', cy: 'cyprus', mc: 'monaco', li: 'liechtenstein', ua: 'ukraine', ru: 'russia',
+  je: 'jersey', gg: 'guernsey', im: 'isle of man',
+  us: 'united states|usa|us|united states of america', ca: 'canada', mx: 'mexico', br: 'brazil', ar: 'argentina', cl: 'chile', co: 'colombia',
+  pe: 'peru', uy: 'uruguay', bo: 'bolivia', pa: 'panama', cr: 'costa rica', do: 'dominican republic', ky: 'cayman islands', bm: 'bermuda', bs: 'bahamas',
+  sg: 'singapore', hk: 'hong kong', au: 'australia', nz: 'new zealand', jp: 'japan', cn: 'china', kr: 'south korea|korea', in: 'india',
+  id: 'indonesia', my: 'malaysia', th: 'thailand', vn: 'vietnam', ph: 'philippines', tw: 'taiwan',
+  ae: 'united arab emirates|uae', sa: 'saudi arabia', qa: 'qatar', kw: 'kuwait', bh: 'bahrain', il: 'israel', eg: 'egypt', za: 'south africa', ke: 'kenya', ng: 'nigeria',
+}).flatMap(([code, names]) => names.split('|').map((nm) => [nm, code])));
+const isoFor = (country) => COUNTRY_ISO[String(country || '').trim().toLowerCase()] || null;
+
+const flagImg = (code, cls = 'fl') => `<img class="${cls}" src="${FLAG(code)}" alt="" width="40" height="40" decoding="async" onerror="this.remove()">`;
+const flagStack = (codes, cls = 'flags') => `<span class="${cls}" aria-hidden="true">${codes.map((c) => flagImg(c)).join('')}</span>`;
+
 // Social proof from climateinsiders.com/all-star-yoann (Yoann's own page).
 const PROOF = {
   logos: [
@@ -159,7 +190,8 @@ function picks(list) {
       const x = e.extra || {};
       const line2 = isFund ? [e.region, x.stage].filter(Boolean).join(' · ') : [e.title, e.firm].filter(Boolean).join(' · ');
       const line3 = isFund ? x.sector || '' : e.email ? `<code>${esc(maskEmail(e.email))}</code>` : [e.city, e.country].filter(Boolean).join(', ');
-      return `<li class="pick"><span class="avatar">${face(e, 64)}</span><span class="who"><b>${esc(isFund ? e.firm : e.name)}</b><span>${esc(line2)}</span><span>${line3}</span></span></li>`;
+      const iso = isFund ? null : isoFor(e.country);
+      return `<li class="pick"><span class="avwrap"><span class="avatar">${face(e, 64)}</span>${iso ? flagImg(iso, 'flagb') : ''}</span><span class="who"><b>${esc(isFund ? e.firm : e.name)}</b><span>${esc(line2)}</span><span>${line3}</span></span></li>`;
     })
     .join('');
 }
@@ -201,7 +233,12 @@ const KICKER_NAME = { 'lps-366': 'LPs', 'climate-vcs-474': 'Climate VCs' };
 const CHIP_NAME = { 'usa-500': 'US', 'uk-200': 'UK', 'france-benelux-150': 'France + Benelux', 'apac-200': 'APAC', 'latam-canada-150': 'Canada + LatAm', 'lps-366': 'LPs', 'climate-vcs-474': 'Climate VCs' };
 
 function chip(list) {
-  return `<button class="chip" type="button" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog"><span class="dot">${ICONS[list.icon] || ICONS.globe}</span><span class="t"><b>${esc(list.count_label)}</b> ${esc(CHIP_NAME[list.slug] || list.short_name)}</span></button>`;
+  const flags = LIST_FLAGS[list.slug];
+  const label = list.name;
+  if (flags) {
+    return `<button class="chip flagchip" type="button" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog" aria-label="${esc(label)}" title="${esc(list.card_name)}">${flagStack(flags.slice(0, 4), 'flags sm')}<span class="t"><b>${esc(list.count_label)}</b></span></button>`;
+  }
+  return `<button class="chip" type="button" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog" aria-label="${esc(label)}"><span class="dot">${ICONS[list.icon] || ICONS.globe}</span><span class="t"><b>${esc(list.count_label)}</b> ${esc(CHIP_NAME[list.slug] || list.short_name)}</span></button>`;
 }
 
 function statRow(list) {
@@ -296,7 +333,7 @@ function sheetDialog(list) {
     const nameCell = open ? esc(label) : r.name ? `${esc(first)} ${bl('surname', i)}` : bl('firm', i);
     const avatar = open ? face({ ...r, name: label }, 48) : face({ name: label }, 48);
     const firmCell = r.name ? (open ? esc(r.firm || '') : bl('firm', i)) : '';
-    return `<tr><td class="ix">${i + 1}</td><td class="nm"><span class="av">${avatar}</span>${nameCell}</td><td>${esc(r.title || x.stage || '')}</td><td>${firmCell}</td><td>${esc(r.country || r.region || '')}</td><td>${bl('email', i)}</td><td>${bl('linkedin', i)}</td></tr>`;
+    return `<tr><td class="ix">${i + 1}</td><td class="nm"><span class="av">${avatar}</span>${nameCell}</td><td>${esc(r.title || x.stage || '')}</td><td>${firmCell}</td><td class="ct">${isoFor(r.country) ? flagImg(isoFor(r.country), 'flagc') : ''}${esc(r.country || r.region || '')}</td><td>${bl('email', i)}</td><td>${bl('linkedin', i)}</td></tr>`;
   });
   return `<dialog class="preview sheetdlg" id="sheet" aria-label="All ${n(list.stats.rows)} rows">
   <div class="pvhead"><span class="script">the full list</span><h2>${n(list.stats.rows)} rows. The first ${OPEN_ROWS} in full, the rest unlock when you buy.</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
@@ -310,10 +347,10 @@ export function page(lists, featured) {
   const f = lists.find((l) => l.slug === featured) || lists[0];
   const others = lists.filter((l) => l !== f);
   const body = `
-<header class="hero">
+<header class="hero" ${toneAttr(f)}>
   <div class="title">
     ${brand()}
-    <span class="script">${featured ? `you asked for ${esc(KICKER_NAME[f.slug] || f.short_name)}. here it is.` : 'hey, founders and fund managers'}</span>
+    <div class="kick">${LIST_FLAGS[f.slug] ? flagStack(LIST_FLAGS[f.slug], 'flags lg') : `<span class="flags lg" aria-hidden="true"><span class="fl iconfl">${ICONS[f.icon] || ICONS.globe}</span></span>`}<span class="script">${featured ? `you asked for ${esc(KICKER_NAME[f.slug] || f.short_name)}. here it is.` : 'hey, founders and fund managers'}</span></div>
     <h1><span class="hl">${esc(f.name)}</span></h1>
   </div>
 </header>

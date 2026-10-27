@@ -308,3 +308,50 @@ dialog.preview .picks { grid-auto-rows: auto; flex: none; }
 .valueCol .checks li { line-height: 1.24; }
 .valueCol .checks li { font-size: 15px; }
 .valueCol .fine { font-size: 12px; line-height: 1.3; }
+
+/* ======== flags + beautify ======== */
+/* round flags, overlapping like a stack */
+.flags { display: inline-flex; align-items: center; flex: none; --fs: 26px; }
+.flags .fl { width: var(--fs); height: var(--fs); border-radius: 50%; object-fit: cover; background: #fff; border: 2px solid #fff; margin-left: calc(var(--fs) * -0.32); box-shadow: 0 2px 6px rgba(31,27,22,.28); transition: transform .2s cubic-bezier(.2,.9,.3,1.4); }
+.flags .fl:first-child { margin-left: 0; }
+.flags.lg { --fs: 32px; }
+.flags.sm { --fs: 26px; }
+.hero .kick { display: inline-flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: -2px; }
+.hero .kick .script { margin: 0; }
+.hero .kick .flags .fl:hover { transform: translateY(-3px) scale(1.12); z-index: 2; }
+
+/* soft glow in the colour of the list behind the title */
+.hero { position: relative; }
+.hero::before { content: ''; position: absolute; left: 50%; top: -30px; width: min(980px, 96vw); height: 240px; transform: translateX(-50%); background: radial-gradient(closest-side, var(--tone), transparent); opacity: .85; filter: blur(14px); z-index: -1; pointer-events: none; }
+
+/* country flag badge on each investor avatar */
+.pick .avwrap { position: relative; width: 40px; height: 40px; }
+.pick .avwrap .avatar { width: 40px; height: 40px; }
+.flagb { position: absolute; right: -5px; bottom: -4px; width: 18px; height: 18px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; background: #fff; box-shadow: 0 1px 4px rgba(31,27,22,.35); transition: transform .15s ease; }
+.pick:hover .flagb { transform: scale(1.18); }
+.flagc { width: 18px; height: 18px; border-radius: 50%; object-fit: cover; vertical-align: middle; margin-right: 8px; box-shadow: 0 0 0 1px var(--rule); background: #fff; }
+.sheettbl td.ct { white-space: nowrap; }
+
+/* flag chips for the other lists */
+.chip.flagchip { padding: 3px 15px 3px 4px; gap: 10px; }
+.chip.flagchip .t b { font-size: 16px; }
+.chip.flagchip:hover .flags .fl { transform: translateY(-2px); }
+.chip.flagchip:hover .flags .fl:nth-child(2) { transition-delay: .03s; }
+.chip.flagchip:hover .flags .fl:nth-child(3) { transition-delay: .06s; }
+
+/* polish */
+.picksCol { background: linear-gradient(180deg, #fffdf8 0%, var(--paper) 100%); }
+.valueCol { background-image: radial-gradient(120% 60% at 100% 0%, rgba(255,255,255,.55), transparent 60%); }
+.valueCol .checks svg { background: #fff; border-radius: 50%; padding: 3px; width: 20px; height: 20px; margin-top: 0; box-shadow: 0 1px 3px rgba(31,27,22,.18); }
+.btn:not(.ghost) { background-image: linear-gradient(180deg, #ff8d33 0%, var(--orange) 55%, var(--orange-deep) 100%); box-shadow: 0 8px 18px -8px rgba(255,122,26,.75), 0 2px 0 rgba(31,27,22,.18); overflow: hidden; }
+.btn:not(.ghost)::before { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.38) 50%, transparent 70%); transform: translateX(-130%); transition: transform .65s ease; pointer-events: none; }
+.btn:not(.ghost):hover::before { transform: translateX(130%); }
+.bundle .btn { background-image: none; }
+.offer.main { box-shadow: calc(6px - var(--ry-n, 0) * 1px) calc(6px + var(--rx-n, 0) * 1px) 0 var(--ink), 0 30px 60px -30px rgba(31,27,22,.35); }
+@media (max-width: 900px) { .hero::before { height: 200px; } .flags.lg { --fs: 28px; } }
+@media (prefers-reduced-motion: reduce) { .btn:not(.ghost)::before { display: none; } }
+.hero .brand { display: flex; width: fit-content; margin-left: auto; margin-right: auto; }
+.hero .kick { display: flex; width: fit-content; margin-left: auto; margin-right: auto; }
+.flags .fl.iconfl { display: grid; place-items: center; background: var(--tone); color: var(--tone-ink); }
+.flags .fl.iconfl svg { width: 62%; height: 62%; }
+@media (max-width: 900px) { .hero .kick { flex-direction: column; gap: 4px; margin-bottom: 2px; } }
