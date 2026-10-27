@@ -6,6 +6,12 @@ If the generator mangles small text (it will, sometimes), tell it "keep every la
 
 Format: 4:5 portrait (1080 x 1350) for the LinkedIn feed.
 
+## Canva test results (two renders, Oct 27)
+
+Two posters were generated with Canva's image model from these prompts: `design/canva-test-us500.png` and `design/canva-test-eu500.png` (preview size). Verdict: the composition, the paper, the tape and the polaroids come out right, and the headline, four stats and CTA banner are legible. Small handwritten callouts and sticky-note tips get mangled about a third of the time. So: ChatGPT for the final ten (it holds small text better), Canva if you need a quick variant. Either way, check every number against the list block before posting.
+
+Ink colour: the posters below use the dark green of the poster you sent. The landing page uses the All-Star kit (near-black ink #1F1B16, orange #FF7A1A). Both work together because the orange accent and cream paper are shared. If you want the posters to match the page exactly, replace "dark forest-green ink #0F3B2C" with "near-black ink #1F1B16" in the brand block.
+
 ---
 
 ## Brand block (paste first, every time)
@@ -40,7 +46,7 @@ Subline: "Named decision makers across 300+ family offices. Four regions. 18+ co
 Map: Europe. Dots on Stockholm, Copenhagen, Oslo, Helsinki, Paris, Brussels, Luxembourg, Amsterdam, Zurich, Munich, Frankfurt, Vienna, Milan, Madrid, Lisbon, Dublin.
 Polaroids: Stockholm waterfront, the Eiffel Tower, a Swiss alpine town.
 Callouts: "150 NORDICS: every row has a LinkedIn", "150 FRANCE + BENELUX: 40 within reach of Paris", "100 DACH: Germany, Austria, Switzerland", "100 ACROSS EUROPE: 18 countries, 72% partner level or above".
-Stats: "500 NAMED PEOPLE", "{FIRMS_EU} FAMILY OFFICES", "4 REGIONAL LISTS", "18+ COUNTRIES".
+Stats: "500 NAMED PEOPLE", "456 FAMILY OFFICES", "4 REGIONAL LISTS", "18+ COUNTRIES".
 Sticky notes: "NORDICS: Inbox works. So you write.", "FRANCE + BENELUX: Book the flight. One week of coffees beats a month of sending.", "DACH: Go one country at a time.", "REST OF EUROPE: Different markets, different approach. Don't blast one template everywhere."
 CTA keyword: EU500.
 
@@ -48,11 +54,11 @@ CTA keyword: EU500.
 
 Region label: "UNITED STATES".
 Headline: "500 US FAMILY" / "OFFICE CONTACTS".
-Subline: "Named decision makers at single and multi family offices. 45 states."
+Subline: "Named decision makers at 200 single and multi family offices across the US."
 Map: the United States. Dots on New York, Boston, Chicago, Miami, Dallas, Austin, Denver, Los Angeles, San Francisco, Seattle.
 Polaroids: Manhattan skyline, the Golden Gate bridge, the Austin skyline.
-Callouts: "NEW YORK: the deepest bench", "CALIFORNIA: lead with the thesis", "TEXAS + FLORIDA: new money, fast replies", "{EMAILS_US} of 500 rows have a direct email".
-Stats: "500 NAMED PEOPLE", "{FIRMS_US} FAMILY OFFICES", "{EMAILS_US} EMAILS", "45 STATES".
+Callouts: "NEW YORK: the deepest bench", "CALIFORNIA: lead with the thesis", "TEXAS + FLORIDA: new money, fast replies", "492 of 494 rows have a direct email".
+Stats: "500 NAMED PEOPLE", "200 FAMILY OFFICES", "492 EMAILS", "1 SHEET".
 Sticky notes: "EAST COAST: Email works. Keep it under 100 words.", "WEST COAST: Lead with the thesis, not the deck.", "TEXAS: Pick up the phone.", "EVERYWHERE: 12 well-matched names beat 500 cold ones."
 CTA keyword: US500.
 
@@ -63,8 +69,8 @@ Headline: "200 UK FAMILY" / "OFFICE CONTACTS".
 Subline: "Partner-level people at family offices and private wealth firms. London first."
 Map: Great Britain and Ireland. Dots on London (many), Edinburgh, Manchester, Birmingham, Bristol.
 Polaroids: Big Ben and the Thames, Edinburgh old town, a Mayfair street.
-Callouts: "LONDON: most of the list sits within two postcodes", "EDINBURGH: the quiet money", "{EMAILS_UK} rows with a direct email", "Partners, CIOs and principals, not assistants".
-Stats: "200 NAMED PEOPLE", "{FIRMS_UK} FAMILY OFFICES", "{EMAILS_UK} EMAILS", "1 COUNTRY".
+Callouts: "LONDON: most of the list sits within two postcodes", "EDINBURGH: the quiet money", "101 rows with a direct email", "Partners, CIOs and principals, not assistants".
+Stats: "200 NAMED PEOPLE", "127 FAMILY OFFICES", "101 EMAILS", "1 COUNTRY".
 Sticky notes: "LONDON: Book the coffees. Three days, twelve meetings.", "INTRO: One mutual name opens more doors than ten emails.", "TIMING: September to November, then after Easter.", "TONE: Understate. Let the numbers talk."
 CTA keyword: UK200.
 
@@ -75,8 +81,8 @@ Headline: "150 DACH FAMILY" / "OFFICE CONTACTS".
 Subline: "Germany, Switzerland and Austria. Go one country at a time."
 Map: Germany, Switzerland, Austria. Dots on Zurich, Geneva, Munich, Frankfurt, Hamburg, Berlin, Vienna.
 Polaroids: Zurich lake, Munich old town, an Austrian mountain village.
-Callouts: "ZURICH + GENEVA: the private banks' alumni", "MUNICH + FRANKFURT: industrial families", "VIENNA: small circle, warm intros", "{EMAILS_DACH} rows with a direct email".
-Stats: "150 NAMED PEOPLE", "{FIRMS_DACH} FAMILY OFFICES", "{EMAILS_DACH} EMAILS", "3 COUNTRIES".
+Callouts: "ZURICH + GENEVA: the private banks' alumni", "MUNICH + FRANKFURT: industrial families", "VIENNA: small circle, warm intros", "143 rows with a direct email".
+Stats: "150 NAMED PEOPLE", "148 FAMILY OFFICES", "143 EMAILS", "3 COUNTRIES".
 Sticky notes: "SWITZERLAND: Precision. Send the numbers, skip the vision slide.", "GERMANY: Industrial families back industrial founders. Say what you build.", "AUSTRIA: One warm intro beats everything.", "ALL THREE: Formal first names only after they offer."
 CTA keyword: DACH.
 
@@ -87,8 +93,8 @@ Headline: "150 NORDIC FAMILY" / "OFFICE CONTACTS".
 Subline: "Sweden, Denmark, Norway, Finland, Iceland. Inbox works here, so you write."
 Map: Scandinavia and Finland. Dots on Stockholm, Gothenburg, Copenhagen, Oslo, Helsinki, Reykjavik.
 Polaroids: Stockholm waterfront, Copenhagen harbour, a Norwegian fjord.
-Callouts: "SWEDEN: half the list", "DENMARK + NORWAY: shipping and energy families", "FINLAND: forestry and industrial money", "Every row has a LinkedIn. {EMAILS_NORDICS} have an email."
-Stats: "150 NAMED PEOPLE", "{FIRMS_NORDICS} FAMILY OFFICES", "{EMAILS_NORDICS} EMAILS", "5 COUNTRIES".
+Callouts: "SWEDEN: half the list", "DENMARK + NORWAY: shipping and energy families", "FINLAND: forestry and industrial money", "Every row has a LinkedIn. 127 have an email."
+Stats: "150 NAMED PEOPLE", "148 FAMILY OFFICES", "127 EMAILS", "5 COUNTRIES".
 Sticky notes: "SWEDEN: Short email, clear ask, reply within a week.", "DENMARK: They read the deck. Make page 3 count.", "NORWAY: Energy transition is the open door.", "FINLAND: Direct. No small talk needed."
 CTA keyword: NORDICS.
 
@@ -100,7 +106,7 @@ Subline: "Book the flight. One week of coffees beats a month of sending."
 Map: France, Belgium, Netherlands, Luxembourg. Dots on Paris (many), Lyon, Brussels, Antwerp, Luxembourg, Amsterdam, Rotterdam.
 Polaroids: the Eiffel Tower, the Grand Place in Brussels, Amsterdam canal houses.
 Callouts: "PARIS: 40 within one metro ride", "BRUSSELS + ANTWERP: old industrial families", "LUXEMBOURG: the fund administrators' neighbours", "AMSTERDAM: the most email-friendly of the four".
-Stats: "150 NAMED PEOPLE", "{FIRMS_FR} FAMILY OFFICES", "{EMAILS_FR} EMAILS", "4 COUNTRIES".
+Stats: "150 NAMED PEOPLE", "110 FAMILY OFFICES", "87 EMAILS", "4 COUNTRIES".
 Sticky notes: "PARIS: Lunch, not email. Ask for 45 minutes.", "BELGIUM: Family names matter. Know who they are.", "LUXEMBOURG: Structure questions first, story second.", "NETHERLANDS: Direct works. Say the number."
 CTA keyword: PARIS.
 
@@ -111,8 +117,8 @@ Headline: "200 ASIA-PACIFIC" / "FAMILY OFFICE CONTACTS".
 Subline: "Singapore, Hong Kong and Australia. Where the new money sits."
 Map: South-East Asia, Hong Kong and Australia. Dots on Singapore (many), Hong Kong (many), Sydney, Melbourne, Perth.
 Polaroids: Singapore's Marina Bay, the Hong Kong harbour, the Sydney Opera House.
-Callouts: "SINGAPORE: the fastest-growing family office hub in the world", "HONG KONG: the old guard", "AUSTRALIA: for the long game", "{EMAILS_APAC} rows with a direct email".
-Stats: "200 NAMED PEOPLE", "{FIRMS_APAC} FAMILY OFFICES", "{EMAILS_APAC} EMAILS", "3 MARKETS".
+Callouts: "SINGAPORE: the fastest-growing family office hub in the world", "HONG KONG: the old guard", "AUSTRALIA: for the long game", "186 rows with a direct email".
+Stats: "200 NAMED PEOPLE", "197 FAMILY OFFICES", "186 EMAILS", "3 MARKETS".
 Sticky notes: "SINGAPORE: Be introduced. Then be fast.", "HONG KONG: Relationships before deals. Always.", "AUSTRALIA: Mining and agri money likes hard assets.", "ALL THREE: Time zones. Send at 8am their time."
 CTA keyword: APAC.
 
@@ -123,8 +129,8 @@ Headline: "150 CANADA + LATAM" / "FAMILY OFFICE CONTACTS".
 Subline: "Toronto, Sao Paulo, Mexico City and the rest of the Americas outside the US."
 Map: the Americas with the US faded out. Dots on Toronto, Montreal, Vancouver, Sao Paulo (many), Mexico City, Bogota, Santiago, Lima, Panama City, Buenos Aires.
 Polaroids: the Toronto skyline, Sao Paulo at dusk, Mexico City's centre.
-Callouts: "CANADA: 57 contacts, Toronto first", "BRAZIL: 52 contacts, Sao Paulo", "MEXICO + COLOMBIA + CHILE: the next wave", "{EMAILS_LATAM} rows with a direct email".
-Stats: "150 NAMED PEOPLE", "{FIRMS_LATAM} FAMILY OFFICES", "{EMAILS_LATAM} EMAILS", "15 COUNTRIES".
+Callouts: "CANADA: 57 contacts, Toronto first", "BRAZIL: 52 contacts, Sao Paulo", "MEXICO + COLOMBIA + CHILE: the next wave", "125 rows with a direct email".
+Stats: "150 NAMED PEOPLE", "144 FAMILY OFFICES", "125 EMAILS", "15 COUNTRIES".
 Sticky notes: "CANADA: Polite, thorough, slow. Follow up twice.", "BRAZIL: Warm intro or nothing. Find the mutual.", "MEXICO: Family names open doors. Research them.", "EVERYWHERE: Write in their language if you can."
 CTA keyword: LATAM.
 
@@ -136,19 +142,19 @@ Subline: "Who writes the checks into funds. Built for emerging managers raising 
 Map: Europe and the US east coast, side by side. Dots on London, Paris, Zurich, Frankfurt, Amsterdam, Copenhagen, New York, Boston.
 Polaroids: a glass office tower, a signed term sheet on a desk, a Zurich street.
 Callouts: "90 FUND OF FUNDS DECISION MAKERS at 31 firms", "179 ACTIVE VENTURE LPS across the US and Europe", "97 FAMILY OFFICE ALLOCATORS who invest in funds", "Names, firms and roles. Contact paths where public."
-Stats: "366 NAMED PEOPLE", "{FIRMS_LPS} FIRMS", "19 COUNTRIES", "3 LISTS IN ONE".
+Stats: "366 NAMED PEOPLE", "122 FIRMS", "19 COUNTRIES", "3 LISTS IN ONE".
 Sticky notes: "FUND I: Anchor first. Everything else follows.", "FUNDS OF FUNDS: They read the track record page first. Put it first.", "FAMILY OFFICES: Co-invest rights get the meeting.", "ALL: Monthly update email, even before they commit."
 CTA keyword: LPS.
 
-### 10 · Climate VCs · keyword CLIMATE · lists.climateinsiders.com/climate-vcs-474
+### 10 · Climate VCs · keyword CLIMATE · lists.climateinsiders.com/climate-vcs-474 (470 funds)
 
 Region label: "CLIMATE VCS".
-Headline: "474 CLIMATE TECH" / "VC FUNDS".
+Headline: "470 CLIMATE TECH" / "VC FUNDS".
 Subline: "Every active climate fund we track, with stage, ticket size, sector and geography."
 Map: a world map in muted sage. Dots on San Francisco, New York, London, Paris, Berlin, Amsterdam, Stockholm, Zurich, Singapore, Sydney.
 Polaroids: a wind farm at dawn, a solar field, an electric truck on a highway.
 Callouts: "STAGE: pre-seed to growth, labelled per fund", "TICKET: min and max in millions of euros", "LEAD: which funds take the lead on a round", "SECTOR: energy, mobility, food, industry, carbon, built environment".
-Stats: "474 FUNDS", "{COUNTRIES_CLIMATE} HOME CITIES", "STAGE + TICKET ON EVERY ROW", "1 SHEET".
+Stats: "470 FUNDS", "80+ HOME CITIES", "STAGE + TICKET ON EVERY ROW", "1 SHEET".
 Sticky notes: "PRE-SEED: Filter by min ticket under 1m first.", "SERIES A: Only email funds that lead. The rest follow.", "GEOGRAPHY: Half the funds only invest in their home region. Check the column.", "ALL: The directory behind Climate Insiders. Updated as funds close."
 CTA keyword: CLIMATE.
 
@@ -156,4 +162,4 @@ CTA keyword: CLIMATE.
 
 ## The bundle image (optional 11th)
 
-Headline: "ALL 10 INVESTOR" / "LISTS. ONE SHEET EACH.". Subline: "{TOTAL_ROWS} rows across family offices, LPs and climate funds. Pay once, keep forever." Map: world map, dots on every city above. Stats: "{TOTAL_ROWS} ROWS", "{TOTAL_EMAILS} EMAILS", "10 LISTS", "$390 INSTEAD OF $900". CTA keyword: ALL10.
+Headline: "ALL 10 INVESTOR" / "LISTS. ONE SHEET EACH.". Subline: "2,830 rows across family offices, LPs and climate funds. Pay once, keep forever." Map: world map, dots on every city above. Stats: "2,830 ROWS", "1,670 EMAILS", "10 LISTS", "$390 INSTEAD OF $900". CTA keyword: ALL10.
