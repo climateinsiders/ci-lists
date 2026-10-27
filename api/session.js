@@ -28,6 +28,8 @@ export default async function handler(req, res) {
         : undefined,
       email: s.customer_details?.email || null,
       created: s.created,
+      amount: s.amount_total,
+      currency: s.currency,
       upsell,
       lists: lists.map((l) => ({ slug: l.slug, name: l.name, airtable_url: l.airtable_url || null })),
     });

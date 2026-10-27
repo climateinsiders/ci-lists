@@ -106,6 +106,8 @@ function maskEmail(e) {
   return `${u.slice(0, 2)}${'•'.repeat(Math.max(3, Math.min(6, u.length - 2)))}@${d}`;
 }
 
+const GA_ID = 'G-REVK9GPTEP';
+
 export function shell({ title, description, body, canonical, ogTitle, ogImage, extraHead = '' }) {
   return `<!doctype html>
 <html lang="en">
@@ -127,6 +129,8 @@ export function shell({ title, description, body, canonical, ogTitle, ogImage, e
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fraunces:opsz,wght@9..144,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());(function(){var u=new URL(location.href);['session_id','u','t'].forEach(function(k){u.searchParams.delete(k);});gtag('config','${GA_ID}',{page_location:u.href});})();</script>
 ${extraHead}
 </head>
 <body>

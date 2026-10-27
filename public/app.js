@@ -141,7 +141,15 @@
   }
   if (payDlg) payDlg.addEventListener('close', function () { destroyEmbedded(); openDialog = null; });
 
+  function track(name, params) { try { if (window.gtag) window.gtag('event', name, params || {}); } catch (e) {} }
+  function trackPurchase(id, j) {
+    if (!id || !j || !j.amount) return;
+    var key = 'ga_purchase_' + id;
+    try { if (localStorage.getItem(key)) return; localStorage.setItem(key, '1'); } catch (e) {}
+    track('purchase', { transaction_id: id, value: j.amount / 100, currency: (j.currency || 'usd').toUpperCase(), items: (j.lists || []).map(function (l) { return { item_id: l.slug, item_name: l.name }; }).concat(j.upsell ? [{ item_id: 'all-investors', item_name: 'All investors upgrade' }] : []) });
+  }
   function startCheckout(payload, btn) {
+    track('begin_checkout', { currency: 'USD', items: [{ item_id: payload.upsell ? 'all-investors' : (payload.bundle ? 'all' : payload.slug) }] });
     // The label never changes (a longer text made the button grow past its box); a spinner shows progress.
     if (btn) { btn.disabled = true; btn.classList.add('is-loading'); btn.setAttribute('aria-busy', 'true'); }
     var done = function () { if (btn) { btn.disabled = false; btn.classList.remove('is-loading'); btn.removeAttribute('aria-busy'); } };
@@ -226,6 +234,7 @@
       return li;
     };
     var renderWelcome = function (j) {
+      trackPurchase(wsid, j);
       confetti();
       var ul = document.getElementById('access');
       ul.innerHTML = '';
@@ -273,6 +282,7 @@
 
     function render(j) {
       confetti();
+      trackPurchase(sid, j);
       var ul = document.getElementById('mylists');
       ul.innerHTML = '';
       (j.lists || []).forEach(function (l) {
