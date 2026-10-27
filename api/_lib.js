@@ -128,9 +128,9 @@ export async function sendEmail({ to, subject, text, html, attachments = [], tag
     method: 'POST',
     headers: { Authorization: `Bearer ${env('RESEND_API_KEY')}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      from: env('EMAIL_FROM', 'Yoann Berno <yoann@vcboom.com>'),
+      from: env('EMAIL_FROM', 'Yoann Berno <yoann@climateinsiders.com>'),
       to: [to],
-      reply_to: env('EMAIL_REPLY_TO', 'yoann@vcboom.com'),
+      reply_to: env('EMAIL_REPLY_TO', 'yoann@climateinsiders.com'),
       subject,
       text,
       html,

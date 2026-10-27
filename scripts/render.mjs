@@ -303,7 +303,7 @@ export function thanksPage() {
   <div class="mail">${SMALL_ICONS.mail}</div>
   <span class="script" style="font-size:24px">paid. thank you.</span>
   <h1>It's on its way.</h1>
-  <p>Check your inbox in two minutes. You'll get the Airtable link and the CSV, from Yoann at VC Boom. Not there? Look in promotions.</p>
+  <p>Check your inbox in two minutes. You'll get the Airtable link and the CSV from yoann@climateinsiders.com. Not there? Look in promotions.</p>
   <p class="small">One rule before you write to anyone: pick the twelve that fit your sector and stage. Leave the rest alone. Nothing after ten minutes? Reply to your Stripe receipt and I'll sort it.</p>
   <p><a class="btn ghost" href="/">Back to the lists</a></p>
 </section>`;
