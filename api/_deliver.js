@@ -19,7 +19,7 @@ export async function send(to, { subject, text }, { token, attachments = [], tag
 }
 
 // E0: the CSVs, the Airtable links, three rules, and (single lists only) the upgrade P.S.
-export async function deliverPurchase({ email, slugs, bundle, upgrade, token, amountCents }) {
+export async function deliverPurchase({ email, slugs, bundle, upgrade, token, amountCents, name, sessionId, upsell }) {
   const allLists = await getActiveLists();
   const chosen = allLists.filter((l) => slugs.includes(l.slug));
   if (!chosen.length) throw new Error('No lists matched the purchase');
@@ -32,7 +32,7 @@ export async function deliverPurchase({ email, slugs, bundle, upgrade, token, am
   }
   if (bundle) attachments.push({ filename: 'climate-insiders-follow-up-sequence.txt', content: FOLLOWUP_SEQUENCE });
 
-  const msg = deliveryEmail({ chosen, allLists, bundle, upgrade, token, amountCents });
+  const msg = deliveryEmail({ chosen, allLists, bundle, upgrade, token, amountCents, name, sessionId, upsell });
   const sent = await send(email, msg, { token, attachments, tag: 'list_delivery' });
   return sent.id;
 }

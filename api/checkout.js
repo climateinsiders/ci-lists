@@ -94,6 +94,8 @@ export default async function handler(req, res) {
       allow_promotion_codes: upgradeToken ? undefined : true,
       customer_email: customerEmail,
       customer_creation: 'always',
+      // First name, so every email can start with it.
+      custom_fields: [{ key: 'first_name', label: { type: 'custom', custom: 'First name' }, type: 'text', text: { maximum_length: 40 } }],
       invoice_creation: { enabled: true },
       metadata: {
         product: 'investor-lists',

@@ -14,6 +14,7 @@
 import { siteUrl, fmtUsd, UNIQUE_INVESTORS, UNIQUE_EMAILS, BUNDLE_PRICE_CENTS } from './_lib.js';
 
 const n = (x) => Number(x).toLocaleString('en-US');
+const hi = (name) => (name ? `Hi ${name},` : 'Hi,');
 const daysLeft = (iso) => Math.max(1, Math.ceil((new Date(iso) - Date.now()) / 86400000));
 
 function footer(token) {
@@ -27,10 +28,10 @@ function links(chosen) {
 }
 
 // E0, right after payment. Data first, then one idea: specificity beats volume.
-export function deliveryEmail({ chosen, allLists, bundle, token, amountCents }) {
+export function deliveryEmail({ chosen, allLists, bundle, token, amountCents, name, sessionId, upsell }) {
   const one = chosen.length === 1 ? chosen[0] : null;
   const subject = bundle ? 'all ten, as promised' : `your ${one.short_name.toLowerCase()} list`;
-  const text = `Hi,
+  const text = `${hi(name)}
 
 ${bundle ? `All ten lists, ${n(UNIQUE_INVESTORS)} investors. Links below, CSVs attached, and the follow-up sequence I promised is in there too.` : `It's yours. Link below, CSV attached in case you live in Sheets.`}
 
@@ -50,16 +51,16 @@ So please don't send ${bundle ? n(UNIQUE_INVESTORS) : n(chosen.reduce((a, l) => 
 
 In two days I'll send you the email I'd write if I were raising tomorrow.
 
-Yoann${!bundle && amountCents > 0 ? `
+Yoann${!bundle && !upsell && amountCents > 0 && sessionId ? `
 
-ps. if you end up raising outside ${one.short_name === 'For fund managers' || one.short_name === 'Climate VCs' ? 'this list' : one.short_name}, the ${fmtUsd(amountCents)} you just paid counts toward the other nine for 10 days. ${siteUrl()}/all?u=${token}` : ''}${footer(token)}`;
+ps. most rounds end up pulling money from more than one country, so one list is rarely the whole story. Everything else I have is on your order page, at a price that only shows up there, for the next 24 hours: ${siteUrl()}/thanks?session_id=${sessionId}` : ''}${footer(token)}`;
   return { subject, text };
 }
 
 // E1, day 2. The artifact: the email itself, with the reasoning written in the margins.
-export function templateEmail({ token }) {
+export function templateEmail({ token, name }) {
   const subject = "the email i'd send";
-  const text = `Hi,
+  const text = `${hi(name)}
 
 Promised you this. It's short on purpose.
 
@@ -97,10 +98,10 @@ ps. silence after five days is normal. I'll send you the follow-up in a few days
 }
 
 // E2, day 4. The offer. Single-list buyers only. Plain, no hype, one reason it matters.
-export function offerEmail({ token, quote, allLists }) {
+export function offerEmail({ token, quote, allLists, name }) {
   const credit = fmtUsd(BUNDLE_PRICE_CENTS - quote.price);
   const subject = `about the other ${allLists.length - 1} lists`;
-  const text = `Hi,
+  const text = `${hi(name)}
 
 Something I saw on the investor side again and again: the round rarely closes where it starts.
 
@@ -126,10 +127,10 @@ Yoann${footer(token)}`;
 }
 
 // E3, day 7. The follow-up email. Value first. Last call only if the credit is still open.
-export function followupEmail({ token, quote, bundle }) {
+export function followupEmail({ token, quote, bundle, name }) {
   const subject = 'if they went quiet';
   const lastCall = !bundle && quote && quote.active;
-  const text = `Hi,
+  const text = `${hi(name)}
 
 It's been about a week. If you sent your 12, my guess is a couple replied and the rest went quiet.
 
