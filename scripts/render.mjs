@@ -260,21 +260,21 @@ ${sheetDialog(f)}`;
   });
 }
 
-// The grand slam offer, shown twice: as the right column and as a pop-up on arrival.
+// The grand slam offer: a stack of what they get, then one button.
 function slamCard() {
+  const item = (name, sub) => `<li><span class="ck">${SMALL_ICONS.check}</span><span><b>${name}</b><small>${sub}</small></span><em>included</em></li>`;
   return `<div class="slam">
   <span class="tag">buyers only · one-time offer</span>
-  <div class="clock" data-clock><span class="digits"><b data-h>24</b>:<b data-m>00</b>:<b data-s>00</b></span><small>left to claim this. Then it is gone.</small></div>
-  <h2>All <span class="hl">${n(UPSELL_INVESTORS)}</span> investors. <span class="px">$${UPSELL}</span></h2>
-  <ul class="checks">
-    <li>${SMALL_ICONS.check}<span><b>${n(UPSELL_INVESTORS)} investors</b> instead of the 500 you just bought.</span></li>
-    <li>${SMALL_ICONS.check}<span><b>Under 1¢ per investor.</b> One payment of $${UPSELL}.</span></li>
-    <li>${SMALL_ICONS.check}<span>Yours for good. Wrong row? Reply, I fix it.</span></li>
-    <li>${SMALL_ICONS.check}<span>Only shown to buyers, once. Not on the site, not by email.</span></li>
+  <h2>Get <span class="hl">all ${n(UPSELL_INVESTORS)} investors</span> and the full kit.</h2>
+  <ul class="stack">
+    ${item(`The ${n(UPSELL_INVESTORS)} investors list`, `Instead of the 500 you just bought. Under 1¢ per investor.`)}
+    ${item('Cold outreach kit', 'Everything you need to write to them.')}
+    ${item('Fundraising kit', 'Everything you need to run the raise.')}
   </ul>
-  <button class="btn big" data-upsell>Yes, give me all ${n(UPSELL_INVESTORS)} · $${UPSELL}</button>
+  <div class="clock" data-clock><span class="digits"><b data-h>24</b>:<b data-m>00</b>:<b data-s>00</b></span><small>left to claim this. Buyers only, shown once, then it is gone.</small></div>
+  <button class="btn big" data-upsell>Yes, give me everything · $${UPSELL}</button>
+  <p class="fine">One payment of $${UPSELL}. Yours for good.</p>
   <p class="fine" data-expired hidden>This offer has closed.</p>
-  <button class="skip" type="button" data-skip>No thanks, I'll stick with my list</button>
 </div>`;
 }
 
@@ -300,14 +300,12 @@ export function thanksPage() {
         <li><b>Book the flight.</b> The Nordics reply to email. France, Benelux and DACH reply to a coffee.</li>
       </ol>
     </div>
+    <div class="proofs">${quote(0)}${quote(2)}</div>
   </div>
   <div class="valueCol slamCol" id="slamcol">${slamCard()}</div>
 </section>
 
 <p class="thanks-small small">Nothing after ten minutes? Email <a href="mailto:yoann@climateinsiders.com">yoann@climateinsiders.com</a> with your receipt.</p>
-<dialog class="preview slamdlg" id="slam-dialog" aria-label="One-time offer">
-  <div class="pvhead"><span class="script">wait, one thing</span><h2>Before you go</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
-  <div class="slamwrap">${slamCard()}</div>
-</dialog>`;
+<canvas id="confetti" aria-hidden="true"></canvas>`;
   return shell({ title: 'You are in · Climate Insiders Investor Lists', description: 'Your list is ready.', canonical: `${SITE}/thanks`, body });
 }

@@ -91,11 +91,42 @@
       });
   });
 
+  // ---- confetti: one or two seconds across the whole page ----
+  function confetti() {
+    var cv = document.getElementById('confetti');
+    if (!cv || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var ctx = cv.getContext('2d'), dpr = window.devicePixelRatio || 1;
+    var W = cv.width = innerWidth * dpr, H = cv.height = innerHeight * dpr;
+    var colors = ['#ff7a1a', '#1f1b16', '#ffc878', '#1b7a4a', '#2f5da8', '#e8690f', '#b3263f'];
+    var ps = [];
+    for (var i = 0; i < 220; i++) {
+      var fromLeft = i % 2 === 0;
+      ps.push({
+        x: (fromLeft ? 0.1 : 0.9) * W + (Math.random() - 0.5) * W * 0.2, y: H * (0.75 + Math.random() * 0.1),
+        vx: (fromLeft ? 1 : -1) * (Math.random() * 9 + 3) * dpr, vy: -(Math.random() * 18 + 8) * dpr,
+        w: (Math.random() * 8 + 5) * dpr, h: (Math.random() * 5 + 3) * dpr,
+        r: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.4, c: colors[i % colors.length],
+      });
+    }
+    var t0 = performance.now(), DUR = 2400;
+    setTimeout(function () { ctx.clearRect(0, 0, W, H); cv.style.display = 'none'; }, DUR + 400);
+    (function frame(now) {
+      var t = now - t0;
+      ctx.clearRect(0, 0, W, H);
+      var fade = t > DUR - 700 ? Math.max(0, (DUR - t) / 700) : 1;
+      ps.forEach(function (p) {
+        p.vy += 0.45 * dpr; p.vx *= 0.992; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+        ctx.save(); ctx.globalAlpha = fade; ctx.translate(p.x, p.y); ctx.rotate(p.r);
+        ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore();
+      });
+      if (t < DUR) requestAnimationFrame(frame); else ctx.clearRect(0, 0, W, H);
+    })(t0);
+  }
+
   // ---- after purchase: your list + the one-time offer ----
   var after = document.getElementById('after');
   if (after) {
     var sid = q.get('session_id') || '';
-    var dlg = document.getElementById('slam-dialog');
     var clocks = document.querySelectorAll('[data-clock]');
     var deadline = 0, timer = null;
     var pad2 = function (n) { return (n < 10 ? '0' : '') + n; };
@@ -112,12 +143,12 @@
         clearInterval(timer);
         document.querySelectorAll('.slam [data-upsell]').forEach(function (b) { b.hidden = true; });
         document.querySelectorAll('.slam [data-expired]').forEach(function (b) { b.hidden = false; });
-        if (dlg && dlg.open) dlg.close();
       }
       return left;
     }
 
     function render(j) {
+      confetti();
       var ul = document.getElementById('mylists');
       ul.innerHTML = '';
       (j.lists || []).forEach(function (l) {
@@ -134,11 +165,7 @@
       if (j.upsell || !j.created) { after.classList.add('done'); return; }
       deadline = j.created * 1000 + 24 * 3600 * 1000;
       timer = setInterval(tick, 1000);
-      if (tick() > 0) {
-        var seen = false;
-        try { seen = sessionStorage.getItem('ci_slam_seen') === '1'; sessionStorage.setItem('ci_slam_seen', '1'); } catch (e) {}
-        if (!seen && dlg) setTimeout(function () { openD(dlg); }, 1200);
-      }
+      tick();
     }
 
     // On localhost there is no API, so the design can be previewed with sample data.
@@ -149,7 +176,6 @@
       .catch(function () { document.getElementById('mylists').innerHTML = '<li class="ph">We could not load your list here. It is in your inbox, or email yoann@climateinsiders.com.</li>'; });
 
     document.addEventListener('click', function (ev) {
-      if (ev.target.closest('[data-skip]')) { ev.preventDefault(); if (dlg && dlg.open) closeD(); return; }
       var b = ev.target.closest('[data-upsell]');
       if (!b) return;
       ev.preventDefault();
