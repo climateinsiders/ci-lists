@@ -33,8 +33,8 @@ export default async function handler(req, res) {
             currency: 'usd',
             unit_amount: UPSELL_PRICE_CENTS,
             product_data: {
-              name: 'All 47,000 investors (Climate Insiders)',
-              description: `${rest.map((l) => l.short_name).join(', ')}. CSV + Airtable, delivered by email.`,
+              name: `All ${UNIQUE_INVESTORS.toLocaleString('en-US')} investors (Climate Insiders)`,
+              description: `${rest.map((l) => l.short_name).join(', ')}. Airtable + Excel, delivered by email.`,
             },
           },
         },
@@ -63,7 +63,7 @@ export default async function handler(req, res) {
             unit_amount: amount,
             product_data: {
               name,
-              description: `${UNIQUE_INVESTORS.toLocaleString('en-US')} investors across ${lists.length} lists. Airtable + CSV, delivered by email.`,
+              description: `${UNIQUE_INVESTORS.toLocaleString('en-US')} investors across ${lists.length} lists. Airtable + Excel, delivered by email.`,
             },
           },
         },
@@ -80,7 +80,7 @@ export default async function handler(req, res) {
           price_data: {
             currency: 'usd',
             unit_amount: list.price_cents,
-            product_data: { name: list.name, description: `${list.tagline} Airtable + CSV, delivered by email.` },
+            product_data: { name: list.name, description: `${list.tagline} Airtable + Excel, delivered by email.` },
           },
         },
       ];

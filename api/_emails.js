@@ -23,7 +23,7 @@ function footer(token) {
 
 function links(chosen) {
   return chosen
-    .map((l) => (l.airtable_url ? `${l.short_name}: ${l.airtable_url}` : `${l.short_name}: Airtable link follows later today, CSV attached`))
+    .map((l) => (l.airtable_url ? `${l.short_name}: ${l.airtable_url}` : `${l.short_name}: Airtable link follows later today, the Excel file is attached`))
     .join('\n');
 }
 
@@ -33,7 +33,7 @@ export function deliveryEmail({ chosen, allLists, bundle, token, amountCents, na
   const subject = bundle ? 'all ten, as promised' : `your ${one.short_name.toLowerCase()} list`;
   const text = `${hi(name)}
 
-${bundle ? `All ten lists, ${n(UNIQUE_INVESTORS)} investors. Links below, CSVs attached, and the follow-up sequence I promised is in there too.` : `It's yours. Link below, CSV attached in case you live in Sheets.`}
+${bundle ? `All ten lists, ${n(UNIQUE_INVESTORS)} investors. Links below, one Excel file per list attached, and the follow-up sequence I promised is in there too.` : `It's yours. Airtable link below, and the Excel file is attached if you'd rather work offline. Status dropdowns are already in it.`}
 
 ${links(chosen)}
 
