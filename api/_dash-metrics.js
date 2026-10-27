@@ -58,7 +58,7 @@ const lc = (s) => (s === null || s === undefined ? '' : String(s).trim().toLower
 const personKey = (e) => lc(e.profile_url) || lc(e.person_name) || `anon-${e.id || Math.random()}`;
 const ratio = (a, b) => (b ? a / b : null);
 
-export function buildDashboard({ purchases = [], posts = [], events = [], lists = [], now = new Date() }) {
+export function buildDashboard({ purchases = [], posts = [], events = [], lists = [], visits = [], now = new Date() }) {
   const listName = Object.fromEntries(lists.map((l) => [l.slug, l.name]));
   const listByKeyword = Object.fromEntries(lists.filter((l) => l.keyword).map((l) => [lc(l.keyword), l.slug]));
   const sales = purchases
@@ -119,6 +119,10 @@ export function buildDashboard({ purchases = [], posts = [], events = [], lists 
   }
 
   const sum = (a, f) => a.reduce((x, r) => x + (typeof f === 'function' ? f(r) : r[f] || 0), 0);
+  // Visits: rows of (day, path, source, campaign, visits). A visit counts for a post when its campaign = the post keyword.
+  const V = visits.map((v) => ({ ...v, t: Date.parse(`${v.day}T12:00:00Z`), n: v.visits || 0 }));
+  for (const v of V) { v.post = v.campaign ? postFor(v.campaign, v.t) || postForList(v.campaign, v.t) : null; }
+  for (const p of P) p.visits = sum(V.filter((v) => v.post === p), 'n');
   const leadsIn = (evs) => new Set(evs.map((e) => e.who)).size;
 
   // ---- top cards ----
@@ -139,6 +143,9 @@ export function buildDashboard({ purchases = [], posts = [], events = [], lists 
     dms: E.filter((e) => e.event_type === 'dm').length,
     events: E.length,
     leads,
+    visits: sum(V, 'n'),
+    linkedin_visits: sum(V.filter((v) => v.source === 'linkedin'), 'n'),
+    visit_conversion: ratio(sales.length, sum(V, 'n')),
     conversion: ratio(sales.length, leads),
     currency: (sales[0]?.currency || 'usd').toUpperCase(),
   };
@@ -153,6 +160,7 @@ export function buildDashboard({ purchases = [], posts = [], events = [], lists 
     const ws = sales.filter((s) => inWeek(s.t, wk));
     const we = E.filter((e) => inWeek(e.t, wk));
     const wp = P.filter((p) => p.posted_at && weekOf(p.posted_at) === wk);
+    const wv = sum(V.filter((v) => weekOf(v.day) === wk), 'n');
     const l = leadsIn(we);
     const g = sum(ws, 'amount_cents');
     const { year, week } = isoWeekNo(wk);
@@ -161,8 +169,8 @@ export function buildDashboard({ purchases = [], posts = [], events = [], lists 
       posts: wp.length, impressions: sum(wp, 'impressions'),
       comments: we.filter((e) => e.event_type === 'comment').length,
       dms: we.filter((e) => e.event_type === 'dm').length,
-      leads: l, sales: ws.length, gross: g, net: sum(ws, 'net'),
-      conversion: ratio(ws.length, l), rev_per_lead: ratio(g, l),
+      leads: l, visits: wv, sales: ws.length, gross: g, net: sum(ws, 'net'),
+      conversion: ratio(ws.length, l), rev_per_lead: ratio(g, l), visit_conversion: ratio(ws.length, wv),
     });
   }
   weeks.reverse();
@@ -179,8 +187,8 @@ export function buildDashboard({ purchases = [], posts = [], events = [], lists 
       comments_captured: captured,
       comments: Math.max(captured, p.comments_count || 0),
       dms: p.events.filter((e) => e.event_type === 'dm').length,
-      leads: l, sales: p.sales.length, gross: g, net: sum(p.sales, 'net'),
-      conversion: ratio(p.sales.length, l), rev_per_lead: ratio(g, l),
+      leads: l, visits: p.visits, sales: p.sales.length, gross: g, net: sum(p.sales, 'net'),
+      conversion: ratio(p.sales.length, l), rev_per_lead: ratio(g, l), visit_conversion: ratio(p.sales.length, p.visits),
       rpm: p.impressions ? (g / p.impressions) * 1000 : null,
     };
   }).sort((a, b) => b.gross - a.gross || (b.rev_per_lead || 0) - (a.rev_per_lead || 0));

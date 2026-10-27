@@ -308,6 +308,7 @@ const JS = `
       card('This week', money(t.this_week.gross), t.this_week.sales + ' sales, last week ' + money(t.last_week.gross) + ' ' + delta(t.this_week.gross, t.last_week.gross)),
       card('Comments + DMs', num(t.comments + t.dms), num(t.comments) + ' comments, ' + num(t.dms) + ' DMs'),
       card('Leads', num(t.leads), 'unique people'),
+      card('Site visits', num(t.visits), num(t.linkedin_visits) + ' from LinkedIn, ' + pct(t.visit_conversion) + ' buy'),
       card('Conversion', pct(t.conversion), 'sales / leads'),
     ].join('');
     $('#takeaways').innerHTML = d.takeaways.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') || '<li>Not enough data yet.</li>';
@@ -316,9 +317,9 @@ const JS = `
     $('#ch-rev').innerHTML = bars(wk.map(function (w) { return { l: w.label, v: w.gross / 100, t: w.label + ': ' + money(w.gross) + ', ' + w.sales + ' sales' }; }), function (v) { return '$' + Math.round(v).toLocaleString('en-US'); }, 'var(--orange)');
     $('#ch-leads').innerHTML = bars(wk.map(function (w) { return { l: w.label, v: w.leads, t: w.label + ': ' + w.leads + ' leads (' + w.comments + ' comments, ' + w.dms + ' DMs)' }; }), function (v) { return Math.round(v).toLocaleString('en-US'); }, 'var(--ink)');
 
-    table('#t-weeks', ['Week', 'Posts', 'Impr.', 'Comments', 'DMs', 'Leads', 'Sales', 'Gross', 'Net', 'Conv.', '$ / lead'], d.weeks.map(function (w) {
+    table('#t-weeks', ['Week', 'Posts', 'Impr.', 'Comments', 'DMs', 'Leads', 'Visits', 'Sales', 'Gross', 'Net', 'Conv.', '$ / lead'], d.weeks.map(function (w) {
       var empty = !w.posts && !w.leads && !w.sales;
-      return { cls: empty ? 'quiet' : '', cells: ['<b>' + w.label + '</b> <span class="muted">' + fmtDay(w.week) + '</span>', num(w.posts), num(w.impressions || null), num(w.comments), num(w.dms), num(w.leads), num(w.sales), money(w.gross), money(w.net), pct(w.conversion), money2(w.rev_per_lead)] };
+      return { cls: empty ? 'quiet' : '', cells: ['<b>' + w.label + '</b> <span class="muted">' + fmtDay(w.week) + '</span>', num(w.posts), num(w.impressions || null), num(w.comments), num(w.dms), num(w.leads), num(w.visits), num(w.sales), money(w.gross), money(w.net), pct(w.conversion), money2(w.rev_per_lead)] };
     }));
     renderPosts();
     var u = d.unattributed;
@@ -338,7 +339,7 @@ const JS = `
 
   var POSTCOLS = [
     ['title', 'Post'], ['posted_at', 'Date'], ['keyword', 'Keyword'], ['impressions', 'Impr.'], ['comments', 'Comments'], ['dms', 'DMs'],
-    ['leads', 'Leads'], ['sales', 'Sales'], ['gross', 'Revenue'], ['conversion', 'Conv.'], ['rev_per_lead', '$ / lead'], ['rpm', '$ / 1k impr.'], [null, '']
+    ['leads', 'Leads'], ['visits', 'Visits'], ['sales', 'Sales'], ['gross', 'Revenue'], ['conversion', 'Conv.'], ['rev_per_lead', '$ / lead'], ['rpm', '$ / 1k impr.'], [null, '']
   ];
   function renderPosts() {
     var d = state.data, s = state.sort;
@@ -352,11 +353,11 @@ const JS = `
       var best = p.id === d.best_post_id;
       var title = (p.url ? '<a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.title) + '</a>' : esc(p.title)) + (best ? '<span class="tag">best</span>' : '') + (p.list_name ? '<br><span class="muted small">' + esc(p.list_name) + '</span>' : '');
       var cm = num(p.comments) + (p.comments_captured && p.comments_count != null && p.comments_captured !== p.comments_count ? ' <span class="muted small" title="captured / LinkedIn">(' + p.comments_captured + '/' + p.comments_count + ')</span>' : '');
-      return '<tr class="' + (best ? 'best' : '') + '"><td class="t">' + title + '</td><td class="l">' + fmtDay(p.posted_at) + '</td><td class="l">' + (p.keyword ? '<span class="kw">' + esc(p.keyword) + '</span>' : '-') + '</td><td>' + num(p.impressions) + '</td><td>' + cm + '</td><td>' + num(p.dms) + '</td><td>' + num(p.leads) + '</td><td>' + num(p.sales) + '</td><td><b>' + money(p.gross) + '</b></td><td>' + pct(p.conversion) + '</td><td>' + money2(p.rev_per_lead) + '</td><td>' + money2(p.rpm) + '</td><td><button class="linkbtn" type="button" data-edit="' + p.id + '">Edit</button></td></tr>';
+      return '<tr class="' + (best ? 'best' : '') + '"><td class="t">' + title + '</td><td class="l">' + fmtDay(p.posted_at) + '</td><td class="l">' + (p.keyword ? '<span class="kw">' + esc(p.keyword) + '</span>' : '-') + '</td><td>' + num(p.impressions) + '</td><td>' + cm + '</td><td>' + num(p.dms) + '</td><td>' + num(p.leads) + '</td><td>' + num(p.visits) + '</td><td>' + num(p.sales) + '</td><td><b>' + money(p.gross) + '</b></td><td>' + pct(p.conversion) + '</td><td>' + money2(p.rev_per_lead) + '</td><td>' + money2(p.rpm) + '</td><td><button class="linkbtn" type="button" data-edit="' + p.id + '">Edit</button></td></tr>';
     }).join('');
     var u = d.unattributed;
-    if (u.sales || u.events) body += '<tr class="quiet"><td class="t">No post matched</td><td></td><td></td><td></td><td></td><td></td><td>' + num(u.leads) + '</td><td>' + num(u.sales) + '</td><td>' + money(u.gross) + '</td><td></td><td></td><td></td><td></td></tr>';
-    $('#t-posts').innerHTML = '<thead><tr>' + th + '</tr></thead><tbody>' + (body || '<tr><td colspan="13" class="muted">No posts yet. Add one.</td></tr>') + '</tbody>';
+    if (u.sales || u.events) body += '<tr class="quiet"><td class="t">No post matched</td><td></td><td></td><td></td><td></td><td></td><td>' + num(u.leads) + '</td><td></td><td>' + num(u.sales) + '</td><td>' + money(u.gross) + '</td><td></td><td></td><td></td><td></td></tr>';
+    $('#t-posts').innerHTML = '<thead><tr>' + th + '</tr></thead><tbody>' + (body || '<tr><td colspan="14" class="muted">No posts yet. Add one.</td></tr>') + '</tbody>';
   }
   $('#t-posts').addEventListener('click', function (e) {
     var h = e.target.closest('th[data-k]');

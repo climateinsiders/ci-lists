@@ -7,7 +7,7 @@ import { buildDashboard } from './_dash-metrics.js';
 
 // Mission Control API, one function for every dashboard call: /api/dash?op=<op>
 //   GET  me | data
-//   POST login | reset-request | set-password | logout | post | post-delete | import-leads
+//   POST visit (public) | login | reset-request | set-password | logout | post | post-delete | import-leads
 // Everything except login, reset-request and set-password needs the session cookie.
 const MAX_LOGIN_FAILS = 10; // per email per hour
 const MAX_IP_FAILS = 40; // per IP per hour
@@ -36,6 +36,7 @@ export default async function handler(req, res) {
     } catch {
       return json(res, 400, { error: 'Bad JSON' });
     }
+    if (op === 'visit') return visit(res, body);
     if (op === 'login') return login(req, res, body);
     if (op === 'reset-request') return resetRequest(req, res, body);
     if (op === 'set-password') return setPassword(req, res, body);
@@ -185,9 +186,20 @@ async function data(req, res) {
     db('paid_lists?select=slug,name,keyword&order=sort_order.asc'),
     db('ops_tokens?purpose=eq.turnward_webhook&select=token&limit=1'),
   ]);
-  const out = buildDashboard({ purchases, posts, events, lists, now: new Date() });
+  const visits = await dbAll('page_visits?select=day,path,source,campaign,visits').catch(() => []);
+  const out = buildDashboard({ purchases, posts, events, lists, visits, now: new Date() });
   out.me = user.email;
   out.list_options = lists.map((l) => ({ slug: l.slug, name: l.name }));
   out.webhook_url = tok?.[0] ? `${siteUrl()}/api/turnward-webhook?key=${tok[0].token}` : null;
   return json(res, 200, out);
+}
+
+// Public, cookie-free visit counter: one row per day, page and LinkedIn tag. No personal data.
+const clean = (v, max = 40) => String(v || '').toLowerCase().replace(/[^a-z0-9_.-]/g, '').slice(0, max);
+async function visit(res, body) {
+  const path = String(body.path || '/').slice(0, 60);
+  if (!/^\/[a-z0-9-]*$/.test(path) || /^\/(dashboard|thanks|welcome|api)/.test(path)) return json(res, 204, {});
+  const day = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Lisbon' });
+  await db('rpc/bump_visit', { method: 'POST', body: { p_day: day, p_path: path, p_source: clean(body.utm_source), p_campaign: clean(body.utm_campaign) }, prefer: 'return=minimal' });
+  return json(res, 200, { ok: true });
 }

@@ -1,16 +1,34 @@
 // Dialogs, hover effects, buy button, rotating testimonials, post-purchase upsell, attribution. No framework.
 (function () {
   var q = new URLSearchParams(location.search);
-  var attribution = {
-    utm_source: q.get('utm_source') || '',
-    utm_campaign: q.get('utm_campaign') || '',
-    utm_content: q.get('utm_content') || '',
-    ref: q.get('ref') || document.referrer || '',
-  };
+  // Attribution: this URL first, then the previous page on our own site (people hop from the
+  // LinkedIn landing page to another list), then the last tagged visit in the past 30 days.
+  var pick = function (p) { return { utm_source: p.get('utm_source') || '', utm_campaign: p.get('utm_campaign') || '', utm_content: p.get('utm_content') || '' }; };
+  var attribution = pick(q);
+  attribution.ref = q.get('ref') || document.referrer || '';
+  if (!attribution.utm_source && !attribution.utm_campaign && document.referrer) {
+    try {
+      var r = new URL(document.referrer);
+      if (r.hostname === location.hostname) { var fromRef = pick(r.searchParams); if (fromRef.utm_source || fromRef.utm_campaign) { fromRef.ref = attribution.ref; attribution = fromRef; } }
+    } catch (e) {}
+  }
   try {
-    var saved = JSON.parse(sessionStorage.getItem('ci_attr') || 'null');
-    if (saved && !attribution.utm_source && !attribution.utm_campaign) attribution = saved;
-    else sessionStorage.setItem('ci_attr', JSON.stringify(attribution));
+    var saved = JSON.parse(localStorage.getItem('ci_attr') || sessionStorage.getItem('ci_attr') || 'null');
+    var fresh = saved && saved.t && Date.now() - saved.t < 30 * 864e5;
+    if (attribution.utm_source || attribution.utm_campaign) {
+      attribution.t = Date.now();
+      localStorage.setItem('ci_attr', JSON.stringify(attribution));
+    } else if (fresh) {
+      attribution = { utm_source: saved.utm_source, utm_campaign: saved.utm_campaign, utm_content: saved.utm_content, ref: saved.ref || attribution.ref };
+    }
+  } catch (e) {}
+  delete attribution.t;
+
+  // Count the visit for Mission Control (page + LinkedIn tag only, no cookies).
+  try {
+    if (!/^\/(dashboard|thanks|welcome)/.test(location.pathname)) {
+      fetch('/api/dash?op=visit', { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ path: location.pathname.replace(/\/$/, '') || '/', utm_source: attribution.utm_source, utm_campaign: attribution.utm_campaign }) }).catch(function () {});
+    }
   } catch (e) {}
 
   var toast = document.getElementById('toast');
