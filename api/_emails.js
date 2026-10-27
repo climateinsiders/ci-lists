@@ -37,7 +37,7 @@ ${bundle ? `All ten lists, ${n(UNIQUE_INVESTORS)} investors. Links below, one Ex
 
 ${links(chosen)}
 
-Small thing before you dive in: in Airtable, click "Copy base" (top right). You get your own copy with a Status column. Saves you building a tracker.
+Small thing before you dive in: the Excel file already has Status, Last touch and Notes columns, and a Pipeline tab that counts your replies. Saves you building a tracker.
 
 Now the part that matters more than the list.
 
