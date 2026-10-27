@@ -172,7 +172,7 @@
       var ul = document.getElementById('access');
       ul.innerHTML = '';
       var a = j.access || {};
-      ul.appendChild(rowFor('The 47,000 investors database', 'Direct access, yours for good', a.database_url, 'Open the database ↗', true));
+      ul.appendChild(rowFor('The full investors database', 'Direct access, yours for good', a.database_url, 'Open the database ↗', true));
       ul.appendChild(rowFor('Cold outreach kit', '', a.outreach_kit_url, 'Open the kit ↗'));
       ul.appendChild(rowFor('Fundraising kit', '', a.fundraising_kit_url, 'Open the kit ↗'));
       ul.appendChild(rowFor('Climate Insiders newsletter', '1 year, 22,000+ readers', a.newsletter_url, 'Open ↗'));
