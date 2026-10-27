@@ -142,7 +142,7 @@ export function card(list, i, { featured = false } = {}) {
   <span class="num">${pad(i + 1)}</span>
   ${featured ? '' : `<span class="lock" title="Buy to unlock">${SMALL_ICONS.lock}</span>`}
   ${art}
-  <span class="cta">${featured ? `<span class="price">${usd(list.price_cents)}</span><span class="btn">See the top 10 and buy</span>` : `<span class="peek">See the top 10 →</span>`}</span>
+  <span class="cta">${featured ? `<span class="price">${usd(list.price_cents)}</span><span class="btn">See the top 10<span class="more"> and buy</span></span>` : `<span class="peek">See the top 10 →</span>`}</span>
 </button>`;
 }
 
