@@ -493,7 +493,7 @@ export function thanksPage() {
       <ol>
         <li><b>Filter first.</b> Pick the twelve that fit your sector and stage. Twelve well-matched names beat five hundred cold ones.</li>
         <li><b>One email per person,</b> under 110 words, one specific line about them. A short second note 4 to 5 days later.</li>
-        <li><b>Book the flight.</b> The Nordics reply to email. France, Benelux and DACH reply to a coffee.</li>
+        <li><b>Track it.</b> Use the Status column in the Excel file so you always know who replied and who to chase.</li>
       </ol>
     </div>
     <div class="proofs"><div class="raised"><small>They raised from</small><span class="wms">${WORDMARKS}</span></div><div class="pair">${quote(0)}${quote(2)}</div></div>
