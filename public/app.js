@@ -33,14 +33,14 @@
     });
   }
 
-  // ---- keep the value stack inside its box: shrink the bullets a little if a list has long text ----
+  // ---- keep the value stack inside its box: only if a list has long text, shrink the bullets a little (spacing never changes) ----
   function fitValue() {
     var v = document.querySelector('.offer.main:not(.after) .valueCol');
     if (!v) return;
     var items = v.querySelectorAll('.checks li');
     items.forEach(function (li) { li.style.fontSize = ''; });
     if (innerWidth < 901) return;
-    var fs = 15;
+    var fs = 15.5;
     while (v.scrollHeight > v.clientHeight + 1 && fs > 12) {
       fs -= 0.5;
       items.forEach(function (li) { li.style.fontSize = fs + 'px'; });
