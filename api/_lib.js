@@ -4,6 +4,11 @@
 export const BUNDLE_PRICE_CENTS = 39000;
 export const LIST_PRICE_CENTS = 9000;
 export const UPSELL_PRICE_CENTS = 39000; // grand slam offer: the 47,000-investor database, shown on /thanks for 24h
+export const MIN_UPGRADE_CENTS = 5000;
+export const UPGRADE_DAYS = 10; // the "$90 counts" credit window
+// Unique across all 10 lists (Europe 500 overlaps the regional lists). Update if the data changes.
+export const UNIQUE_INVESTORS = 2426;
+export const UNIQUE_EMAILS = 1363;
 
 export function env(name, fallback) {
   const v = process.env[name];
@@ -21,7 +26,7 @@ export function siteUrl() {
 // ---------- Supabase (PostgREST, service role) ----------
 async function sb(path, { method = 'GET', body, prefer } = {}) {
   const url = `${env('SUPABASE_URL')}/rest/v1/${path}`;
-  const key = env('SUPABASE_SERVICE_ROLE_KEY');
+  const key = (process.env.SUPABASE_SERVICE_ROLE_KEY || env('SUPABASE_SECRET_KEY'));
   const res = await fetch(url, {
     method,
     headers: {
@@ -57,8 +62,8 @@ export async function getEntries(slug, { sampleOnly = false } = {}) {
       `${env('SUPABASE_URL')}/rest/v1/paid_list_entries?select=${sel}&slug=eq.${encodeURIComponent(slug)}${filter}&order=sort_order.asc`,
       {
         headers: {
-          apikey: env('SUPABASE_SERVICE_ROLE_KEY'),
-          Authorization: `Bearer ${env('SUPABASE_SERVICE_ROLE_KEY')}`,
+          apikey: (process.env.SUPABASE_SERVICE_ROLE_KEY || env('SUPABASE_SECRET_KEY')),
+          Authorization: `Bearer ${(process.env.SUPABASE_SERVICE_ROLE_KEY || env('SUPABASE_SECRET_KEY'))}`,
           Range: `${from}-${from + page - 1}`,
         },
       },
@@ -119,7 +124,7 @@ export function toCsv(entries, list) {
 }
 
 // ---------- Resend ----------
-export async function sendEmail({ to, subject, text, html, attachments = [], tags = [] }) {
+export async function sendEmail({ to, subject, text, html, attachments = [], tags = [], headers }) {
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env('RESEND_API_KEY')}`, 'Content-Type': 'application/json' },
@@ -132,6 +137,7 @@ export async function sendEmail({ to, subject, text, html, attachments = [], tag
       html,
       attachments: attachments.map((a) => ({ filename: a.filename, content: Buffer.from(a.content, 'utf8').toString('base64') })),
       tags,
+      ...(headers ? { headers } : {}),
     }),
   });
   if (!res.ok) throw new Error(`Resend -> ${res.status} ${await res.text()}`);
@@ -140,9 +146,9 @@ export async function sendEmail({ to, subject, text, html, attachments = [], tag
 
 export function textToHtml(text) {
   const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const linkify = (s) => s.replace(/(https?:\/\/[^\s)]+)/g, '<a href="$1" style="color:#0E3B2C">$1</a>');
-  const paras = text.trim().split(/\n{2,}/).map((p) => `<p style="margin:0 0 16px">${linkify(esc(p)).replace(/\n/g, '<br>')}</p>`);
-  return `<div style="font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.55;color:#1a1a1a;max-width:560px">${paras.join('')}</div>`;
+  const linkify = (s) => s.replace(/(https?:\/\/[^\s)]+)/g, '<a href="$1">$1</a>');
+  const paras = text.trim().split(/\n{2,}/).map((p) => `<p style="margin:0 0 14px">${linkify(esc(p)).replace(/\n/g, '<br>')}</p>`);
+  return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#222">${paras.join('')}</div>`;
 }
 
 // ---------- Stripe (REST, form-encoded) ----------
@@ -197,6 +203,22 @@ export function json(res, status, data) {
 
 export function isEmail(s) {
   return typeof s === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s.trim());
+}
+
+// What has this email already paid for, and what would the bundle cost them now?
+export async function upgradeQuote(token) {
+  if (!token || !/^[a-f0-9]{16,64}$/.test(token)) return null;
+  const [p] = await selectRows('list_purchases', `token=eq.${token}&select=email,created_at`);
+  if (!p) return null;
+  const all = await selectRows('list_purchases', `email=ilike.${encodeURIComponent(p.email)}&delivered_at=not.is.null&select=slugs,bundle,amount_cents,created_at&order=created_at.asc`);
+  const bundleOwned = all.some((r) => r.bundle);
+  const owned = [...new Set(all.flatMap((r) => r.slugs))];
+  const paid = all.filter((r) => !r.bundle).reduce((a, r) => a + r.amount_cents, 0);
+  const first = new Date(all[0]?.created_at || p.created_at);
+  const expiresAt = new Date(first.getTime() + UPGRADE_DAYS * 86400000);
+  const active = !bundleOwned && Date.now() < expiresAt.getTime();
+  const price = active ? Math.max(BUNDLE_PRICE_CENTS - paid, MIN_UPGRADE_CENTS) : BUNDLE_PRICE_CENTS;
+  return { email: p.email, owned, paid, bundleOwned, active, price, expiresAt: expiresAt.toISOString() };
 }
 
 export function fmtUsd(cents) {

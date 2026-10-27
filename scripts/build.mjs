@@ -2,15 +2,15 @@
 import { mkdir, writeFile, readFile, cp, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { page, thanksPage } from './render.mjs';
+import { page, allPage, thanksPage } from './render.mjs';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const dist = path.join(root, 'dist');
-const local = process.argv.includes('--local') || !process.env.SUPABASE_URL;
+const local = process.argv.includes('--local') || !process.env.SUPABASE_URL || !(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY);
 
 async function sb(pathq) {
   const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY;
   if (!url || !key) throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required to build (or run with --local)');
   const res = await fetch(`${url}/rest/v1/${pathq}`, { headers: { apikey: key, Authorization: `Bearer ${key}` } });
   if (!res.ok) throw new Error(`Supabase ${pathq} -> ${res.status} ${await res.text()}`);
@@ -79,11 +79,13 @@ async function main() {
     await mkdir(path.join(dist, l.slug), { recursive: true });
     await writeFile(path.join(dist, l.slug, 'index.html'), page(lists, l.slug));
   }
+  await mkdir(path.join(dist, 'all'), { recursive: true });
+  await writeFile(path.join(dist, 'all', 'index.html'), allPage(lists));
   await mkdir(path.join(dist, 'thanks'), { recursive: true });
   await writeFile(path.join(dist, 'thanks', 'index.html'), thanksPage());
   await writeFile(
     path.join(dist, 'sitemap.xml'),
-    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['', ...lists.map((l) => l.slug)]
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['', 'all', ...lists.map((l) => l.slug)]
       .map((p) => `  <url><loc>https://lists.climateinsiders.com/${p}</loc></url>`)
       .join('\n')}\n</urlset>\n`,
   );

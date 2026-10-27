@@ -72,6 +72,31 @@
     setInterval(function () { rq[qi].classList.remove('on'); qi = (qi + 1) % rq.length; rq[qi].classList.add('on'); }, 5500);
   }
 
+  // ---- upgrade pricing on /all?u=<token> (from the follow-up emails) ----
+  var upgrade = q.get('u') || '';
+  if (upgrade && /^[a-f0-9]{16,64}$/.test(upgrade)) {
+    fetch('/api/upgrade-quote?t=' + upgrade).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      if (!d) return;
+      (d.owned || []).forEach(function (slug) {
+        var c = document.querySelector('.card[data-open="' + slug + '"]');
+        if (c) c.classList.add('is-owned');
+      });
+      var price = document.getElementById('bundle-price');
+      var sub = document.getElementById('bundle-sub');
+      var kicker = document.getElementById('all-kicker');
+      if (d.bundleOwned) {
+        if (kicker) kicker.textContent = 'you have all ten. nice.';
+        return;
+      }
+      if (d.active && price) {
+        var days = Math.max(1, Math.ceil((new Date(d.expiresAt) - Date.now()) / 86400000));
+        price.textContent = 'All 10 lists, $' + Math.round(d.price / 100);
+        if (sub) sub.textContent = 'What you paid counts. Offer open ' + days + ' more day' + (days > 1 ? 's' : '') + '.';
+        if (kicker) kicker.textContent = 'your earlier purchase counts toward the bundle';
+      }
+    }).catch(function () {});
+  }
+
   // ---- checkout ----
   document.addEventListener('click', function (ev) {
     var b = ev.target.closest('[data-buy]');
@@ -82,7 +107,7 @@
     btns.forEach(function (x) { x.disabled = true; });
     b.dataset.label = b.textContent;
     b.textContent = 'Opening checkout…';
-    post('/api/checkout', slug === 'all' ? { bundle: true, attribution: attribution } : { slug: slug, attribution: attribution })
+    post('/api/checkout', slug === 'all' ? { bundle: true, upgrade: upgrade, attribution: attribution } : { slug: slug, attribution: attribution })
       .then(function (j) { location.href = j.url; })
       .catch(function (e) {
         say(e.message, 7000);

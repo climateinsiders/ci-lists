@@ -3,6 +3,8 @@ import { ICONS, SMALL_ICONS } from './icons.mjs';
 const SITE = 'https://lists.climateinsiders.com';
 const UPSELL = 390;
 const UPSELL_INVESTORS = 47000;
+const BUNDLE = 390;
+const UNIQUE_INVESTORS = 2426; // unique across all lists; keep in sync with api/_lib.js
 const AS = 'https://allstar-ci.vercel.app/p';
 const WF = 'https://cdn.prod.website-files.com/657b1ee1812a034008e87de8';
 
@@ -122,6 +124,29 @@ function toneAttr(list) {
   return `style="--tone:${bg};--tone-ink:${ink}"`;
 }
 
+// The card is a small version of the LinkedIn poster. When `image_url` is set, that poster is shown instead.
+export function card(list, i, { featured = false, open = false } = {}) {
+  const faces = (list.sample || []).slice(0, 3).map((e) => `<span class="face">${face(e, 64)}</span>`).join('');
+  const [first, ...rest] = list.card_name.split(' ');
+  const art = list.image_url
+    ? `<img class="poster" src="${esc(list.image_url)}" alt="${esc(list.name)}">`
+    : `<span class="poster-html">
+        <span class="eyebrow"><b>${esc(list.short_name)}</b></span>
+        <span class="count">${esc(list.count_label)}</span>
+        <span class="headline"><span class="hl">${esc(first)}</span> ${esc(rest.join(' '))}</span>
+        <span class="art">${ICONS[list.icon] || ICONS.globe}</span>
+        <span class="faces">${faces}</span>
+      </span>`;
+  return `<button class="card${featured ? ' featured' : open ? ' open' : ' locked'}" type="button" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog" aria-label="${esc(list.name)}">
+  <span class="tape"></span>
+  <span class="num">${pad(i + 1)}</span>
+  ${featured || open ? '' : `<span class="lock" title="Buy to unlock">${SMALL_ICONS.lock}</span>`}
+  <span class="owned">yours</span>
+  ${art}
+  <span class="cta">${featured || open ? `<span class="price">${usd(list.price_cents)}</span><span class="btn">See the top 10</span>` : `<span class="peek">See the top 10 →</span>`}</span>
+</button>`;
+}
+
 function picks(list) {
   const isFund = list.slug === 'climate-vcs-474';
   return (list.sample || [])
@@ -182,6 +207,16 @@ function statRow(list) {
     st.countries ? [n(st.countries), 'countries'] : null,
   ].filter(Boolean);
   return `<ul class="stats">${items.map(([v, l]) => `<li><b>${v}</b> ${l}</li>`).join('')}</ul>`;
+}
+
+function bundleBar(lists) {
+  const full = lists.reduce((a, l) => a + l.price_cents / 100, 0);
+  const total = lists.reduce((a, l) => a + (l.stats.rows || 0), 0);
+  return `<div class="bundle" id="all">
+  <span class="tag">best value</span>
+  <span class="txt"><b id="bundle-price">All ${lists.length} lists, $${BUNDLE}</b> <s>$${full}</s><small id="bundle-sub">${n(UNIQUE_INVESTORS)} investors. Every region, the LPs and the climate funds.</small></span>
+  <button class="btn" data-buy="all">Get all ${lists.length}</button>
+</div>`;
 }
 
 // The offer: top 10 on the left, the value stack and the buy button on the right.
@@ -277,6 +312,55 @@ function slamCard() {
   <button class="btn big" data-upsell>Yes, give me everything · $${UPSELL}</button>
   <p class="fine" data-expired hidden>This offer has closed.</p>
 </div>`;
+}
+
+// /all keeps the original card + side-by-side preview dialog (styled by all.css).
+function legacyPreview(list, i) {
+  const isFund = list.slug === 'climate-vcs-474';
+  return `<dialog class="preview" id="p-${esc(list.slug)}" data-slug="${esc(list.slug)}" aria-labelledby="t-${esc(list.slug)}">
+<div class="sheet" ${toneAttr(list)}>
+  <button class="close" type="button" data-close aria-label="Close">×</button>
+  <div class="left">
+    <span class="script">${esc(list.short_name)}</span>
+    <h2 id="t-${esc(list.slug)}">${esc(list.name)}</h2>
+    ${valuePoints(list)}
+    <div class="bigprice">${usd(list.price_cents)}<small>one time · yours forever</small></div>
+    <button class="btn big" data-buy="${esc(list.slug)}">Buy this list</button>
+    <p class="fine">Stripe checkout. Card, Apple Pay, Google Pay. Receipt and invoice by email. Or all 10 for $${BUNDLE}: <a href="#" data-buy="all">get the bundle</a>.</p>
+  </div>
+  <div class="right">
+    <div class="head"><h3>Top 10 picks<span class="script">straight from the sheet</span></h3><small>${n(list.stats.rows)} in the full list</small></div>
+    <ul class="picks">${picks(list)}</ul>
+    <p class="more">… and ${n(Math.max(0, list.stats.rows - 10))} more with the full ${isFund ? 'details' : 'emails and LinkedIn'}.</p>
+    ${quote(i)}
+  </div>
+</div>
+</dialog>`;
+}
+
+// /all: every list as a card, the bundle up top. Upsell emails land here (?u=<token> turns on upgrade pricing).
+export function allPage(lists) {
+  const body = `
+<header class="topbar">${brand()}</header>
+<section class="hero">
+  <div>
+    <span class="script" id="all-kicker">all ten, side by side</span>
+    <h1>Every <span class="hl">investor list</span>.</h1>
+  </div>
+  ${bundleBar(lists)}
+</section>
+<section class="grid all" id="lists">
+${lists.map((l, i) => card(l, i, { open: true })).join('\n')}
+</section>
+${proofStrip()}
+${lists.map((l, i) => legacyPreview(l, i)).join('\n')}`;
+  return shell({
+    title: 'All 10 investor lists · Climate Insiders',
+    description: `${n(UNIQUE_INVESTORS)} investors across 10 lists: family offices in every region, LPs and climate VC funds. $${BUNDLE} for all ten.`,
+    canonical: `${SITE}/all`,
+    body,
+    extraHead: '<meta name="x-page" content="all"><link rel="stylesheet" href="/all.css">',
+  });
 }
 
 export function thanksPage() {
