@@ -271,10 +271,10 @@ function slamCard() {
     ${item('Cold outreach kit', 'Everything you need to write to them.')}
     ${item('Fundraising kit', 'Everything you need to run the raise.')}
     ${item('Airtable + CSV, free fixes', 'Delivered like your first list. Wrong row? Reply, I fix it.')}
+    ${item('1 year of the Climate Insiders newsletter', 'Read by 22,000+ readers.')}
   </ul>
   <div class="clock" data-clock><span class="digits"><b data-h>24</b>:<b data-m>00</b>:<b data-s>00</b></span><small>left to claim this. Buyers only, shown once, then it is gone.</small></div>
   <button class="btn big" data-upsell>Yes, give me everything · $${UPSELL}</button>
-  <p class="fine">One payment of $${UPSELL}. Yours for good.</p>
   <p class="fine" data-expired hidden>This offer has closed.</p>
 </div>`;
 }
