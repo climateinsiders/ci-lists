@@ -351,3 +351,10 @@ dialog.preview .picks { grid-auto-rows: auto; flex: none; }
 .flags .fl.iconfl { display: grid; place-items: center; background: var(--tone); color: var(--tone-ink); }
 .flags .fl.iconfl svg { width: 62%; height: 62%; }
 @media (max-width: 900px) { .hero .kick { flex-direction: column; gap: 4px; margin-bottom: 2px; } }
+
+/* flags sit to the left of the title, not the kicker line */
+.hero h1 { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.hero h1 .flags { --fs: 40px; }
+.hero h1 .flags .fl { border-width: 2.5px; }
+.hero .kick .flags { display: none; }
+@media (max-width: 900px) { .hero h1 { display: block; } .hero h1 .flags { --fs: 32px; display: flex; width: fit-content; margin: 0 auto 8px; } }
