@@ -27,7 +27,8 @@ export default async function handler(req, res) {
   const s = event.data.object;
   // The VC Boom Stripe account also sells other things. Only handle our sessions.
   if (s.metadata?.product !== 'investor-lists') return json(res, 200, { ignored: 'other product' });
-  if (s.payment_status !== 'paid') return json(res, 200, { ignored: 'unpaid' });
+  // 'no_payment_required' = a 100% coupon (used for testing). Still deliver.
+  if (!['paid', 'no_payment_required'].includes(s.payment_status)) return json(res, 200, { ignored: 'unpaid' });
 
   const email = (s.customer_details?.email || s.customer_email || '').trim();
   const slugs = (s.metadata?.slugs || '').split(',').filter(Boolean);
@@ -48,7 +49,7 @@ export default async function handler(req, res) {
         email,
         slugs,
         bundle,
-        amount_cents: s.amount_total,
+        amount_cents: s.amount_total || 0,
         currency: s.currency,
         attribution: {
           utm_source: s.metadata?.utm_source || null,

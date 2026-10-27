@@ -14,6 +14,10 @@ export default async function handler(req, res) {
   const auth = req.headers.authorization || '';
   if (auth !== `Bearer ${env('CRON_SECRET')}`) return json(res, 401, { error: 'unauthorized' });
 
+  // ?fast=1&email=you@x.com sends that buyer's next email now, ignoring the day schedule. For testing.
+  const qs = new URL(req.url, 'http://x').searchParams;
+  const fast = qs.get('fast') === '1';
+  const only = (qs.get('email') || '').toLowerCase();
   const lists = await getActiveLists();
   const log = { sent: 0, skipped: 0, errors: 0 };
 
@@ -23,14 +27,15 @@ export default async function handler(req, res) {
   );
   for (const p of due) {
     const age = (Date.now() - new Date(p.created_at).getTime()) / DAY;
-    if (age < SCHEDULE[p.followup_step]) { log.skipped++; continue; }
+    if (only && p.email.toLowerCase() !== only) { log.skipped++; continue; }
+    if (!fast && age < SCHEDULE[p.followup_step]) { log.skipped++; continue; }
     try {
       let next = p.followup_step + 1;
       if (p.followup_step === 1) {
         await send(p.email, templateEmail({ token: p.token, bundle: p.bundle }), { token: p.token, tag: 'list_e1' });
       } else if (p.followup_step === 2) {
         const quote = await upgradeQuote(p.token);
-        if (!p.bundle && quote && quote.active) {
+        if (!p.bundle && quote && quote.active && quote.paid > 0) {
           await send(p.email, offerEmail({ token: p.token, quote, allLists: lists }), { token: p.token, tag: 'list_e2' });
         }
       } else if (p.followup_step === 3) {

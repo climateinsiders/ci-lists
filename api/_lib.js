@@ -145,9 +145,9 @@ export async function sendEmail({ to, subject, text, html, attachments = [], tag
 
 export function textToHtml(text) {
   const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const linkify = (s) => s.replace(/(https?:\/\/[^\s)]+)/g, '<a href="$1" style="color:#0E3B2C">$1</a>');
-  const paras = text.trim().split(/\n{2,}/).map((p) => `<p style="margin:0 0 16px">${linkify(esc(p)).replace(/\n/g, '<br>')}</p>`);
-  return `<div style="font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.55;color:#1a1a1a;max-width:560px">${paras.join('')}</div>`;
+  const linkify = (s) => s.replace(/(https?:\/\/[^\s)]+)/g, '<a href="$1">$1</a>');
+  const paras = text.trim().split(/\n{2,}/).map((p) => `<p style="margin:0 0 14px">${linkify(esc(p)).replace(/\n/g, '<br>')}</p>`);
+  return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#222">${paras.join('')}</div>`;
 }
 
 // ---------- Stripe (REST, form-encoded) ----------

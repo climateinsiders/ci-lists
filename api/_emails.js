@@ -1,207 +1,223 @@
-// Every email the buyer gets, in one place. Plain text first (it reads like a person wrote it),
-// rendered to light HTML by textToHtml. Rules: no em dashes, short lines, one idea each, signed Yoann.
+// Every email a buyer gets, in one place.
+//
+// How these are written (keep it this way when editing):
+// - One idea per email. Not a listicle. If it needs "three rules", it's two emails.
+// - Sounds like Yoann typing on a laptop in Lisbon, not a brand. Lowercase subjects, short lines,
+//   the odd fragment. No "Quick one", no "Here's the thing", no "game-changer", no em dashes.
+// - Only true stories. The facts used below come from Yoann's own public page:
+//   co-founded Climentum Capital (EUR 150M climate fund), 47 investments, helped Keiran
+//   at Entocycle close his Series A (Climentum led it).
+// Yoann to confirm before launch (these are his habits/opinions, written in his voice):
+//   E0 "The cold emails I actually answered all did one thing..."
+//   E2 "the round rarely closes where it starts", Climentum being Copenhagen-based, the 14-day refund.
+// - Plain text, rendered as a plain Gmail-looking email (see textToHtml). No logos, no buttons.
 import { siteUrl, fmtUsd, UNIQUE_INVESTORS, UNIQUE_EMAILS, BUNDLE_PRICE_CENTS } from './_lib.js';
 
 const n = (x) => Number(x).toLocaleString('en-US');
+const daysLeft = (iso) => Math.max(1, Math.ceil((new Date(iso) - Date.now()) / 86400000));
 
 function footer(token) {
-  return `\n\n--\nYou bought an investor list from Climate Insiders (payments by VC Boom).\nNo more emails: ${siteUrl()}/api/unsubscribe?t=${token}`;
+  return `\n\n\n\nYou're getting this because you bought a list from me. Don't want the follow-ups? ${siteUrl()}/api/unsubscribe?t=${token}`;
 }
 
-function linksBlock(chosen) {
+function links(chosen) {
   return chosen
-    .map((l) => `${l.name}\n${l.airtable_url ? `Airtable: ${l.airtable_url}` : 'Airtable link coming in a separate email today.'}`)
-    .join('\n\n');
+    .map((l) => (l.airtable_url ? `${l.short_name}: ${l.airtable_url}` : `${l.short_name}: Airtable link follows later today, CSV attached`))
+    .join('\n');
 }
 
-// E0: right after payment. Gets them to the data in one click, then three rules.
-export function deliveryEmail({ chosen, allLists, bundle, upgrade, token, amountCents }) {
+// E0, right after payment. Data first, then one idea: specificity beats volume.
+export function deliveryEmail({ chosen, allLists, bundle, token, amountCents }) {
   const one = chosen.length === 1 ? chosen[0] : null;
-  const subject = bundle ? `All ${allLists.length} lists are yours` : `Your ${one.short_name} list`;
+  const subject = bundle ? 'all ten, as promised' : `your ${one.short_name.toLowerCase()} list`;
   const text = `Hi,
 
-${bundle ? `All ${allLists.length} lists are yours. ${n(UNIQUE_INVESTORS)} investors.` : 'Here it is.'}
+${bundle ? `All ten lists, ${n(UNIQUE_INVESTORS)} investors. Links below, CSVs attached, and the follow-up sequence I promised is in there too.` : `It's yours. Link below, CSV attached in case you live in Sheets.`}
 
-${linksBlock(chosen)}
+${links(chosen)}
 
-CSV attached too, if you live in Sheets or a CRM.
+Small thing before you dive in: in Airtable, click "Copy base" (top right). You get your own copy with a Status column. Saves you building a tracker.
 
-One tip for Airtable: hit "Copy base" top right. Your copy has a Status and a Notes column. That is your outreach tracker, done.
+Now the part that matters more than the list.
 
-Before you write to anyone, three things I learned on the other side of the table, after 47 investments:
+I spent years on the fund side, co-founded Climentum, made 47 investments. The cold emails I actually answered all did one thing. They named one of our portfolio companies and told me in a sentence why they were the next one.
 
-1. Pick 12, not ${bundle ? n(UNIQUE_INVESTORS) : n(chosen.reduce((a, l) => a + (l.stats?.rows || 0), 0) || 150)}. Filter by country, read each firm's last 3 deals. If you can't say why they'd care in one line, skip them.
+That's it. Ten minutes of homework per investor.
 
-2. First email, 4 lines. What you do, the number that proves it, why them, a 20 minute ask. No deck attached. The deck is the reward for the reply.
+Almost nobody does it, because it doesn't scale. Which is exactly why it works.
 
-3. Family offices move on trust. Before you send, check LinkedIn for one mutual. One intro beats ten cold emails.
+So please don't send ${bundle ? n(UNIQUE_INVESTORS) : n(chosen.reduce((a, l) => a + (l.stats?.rows || 0), 0) || 150)} emails this week. Pick 12. Do the ten minutes on each.
 
-In two days I'll send you the exact email I'd write if I were raising today.
+In two days I'll send you the email I'd write if I were raising tomorrow.
 
-Yoann${!bundle ? `
+Yoann${!bundle && amountCents > 0 ? `
 
-P.S. Raising from more than one region? Your ${fmtUsd(amountCents)} counts toward all ${allLists.length} lists for the next 10 days: ${siteUrl()}/all?u=${token}` : ''}${footer(token)}`;
+ps. if you end up raising outside ${one.short_name === 'For fund managers' || one.short_name === 'Climate VCs' ? 'this list' : one.short_name}, the ${fmtUsd(amountCents)} you just paid counts toward the other nine for 10 days. ${siteUrl()}/all?u=${token}` : ''}${footer(token)}`;
   return { subject, text };
 }
 
-// E1, day 2: the artifact. The 4-line email, with why each line is there.
-export function templateEmail({ token, bundle }) {
-  const subject = 'The 4-line email';
+// E1, day 2. The artifact: the email itself, with the reasoning written in the margins.
+export function templateEmail({ token }) {
+  const subject = "the email i'd send";
   const text = `Hi,
 
-Promised you the email. Here it is.
+Promised you this. It's short on purpose.
 
----
 
-Subject: [Company]: [one number] in [timeframe]
+
+Subject: [Company], [one number] in [timeframe]
 
 Hi [first name],
 
-[Company] [does what] for [who]. [The number: revenue, pilots, signed LOIs].
-Raising [amount] [stage], [X] already committed.
-Writing to you because [their deal or thesis, one line, specific].
-20 minutes next week?
+[Company] does [what] for [who]. [One number that proves it.]
+Raising [amount] [stage], [X] already in.
+Writing because [their portfolio company] tells me you get [your space].
+20 min next week?
 
-[Your name]
+[You]
 
----
 
-Why each line is there:
 
-The number goes in the subject. They decide in the inbox, not in the email.
+Four lines. A few notes on why.
 
-"Already committed" is the strongest line in any raise. Nobody wants to be first. If you have zero, write who is in diligence.
+The number goes in the subject line because that's where they decide. Most investors triage on their phone between meetings. If the subject doesn't earn the open, nothing below it exists.
 
-The "why you" line is the only one you can't copy and paste. It's also the one they read twice. One portfolio company, one quote from a podcast, one fund thesis. Pick one.
+"Already in" is the line that does the heavy lifting. Nobody likes being first into a round. If no one has committed yet, say who's in diligence. If no one is, leave the line out rather than fake it.
 
-What to leave out: the deck, the TAM slide, the word "revolutionary".
+The third line is the ten minutes of homework I mentioned. It's the only line they can't get from anyone else, and it's the one that gets read twice.
 
-Send it to your 12 this week. Track replies in the Status column.
+No deck attached. The deck is what you send after they reply.
+
+Send it to your 12. Then, the hard part: wait.
 
 Yoann
 
-P.S. Silence after 5 days is normal. In three days I'll send you the follow-up that gets the reply.${footer(token)}`;
+ps. silence after five days is normal. I'll send you the follow-up in a few days.${footer(token)}`;
   return { subject, text };
 }
 
-// E2, day 4: the offer. Only for people who bought a single list.
+// E2, day 4. The offer. Single-list buyers only. Plain, no hype, one reason it matters.
 export function offerEmail({ token, quote, allLists }) {
-  const price = fmtUsd(quote.price);
   const credit = fmtUsd(BUNDLE_PRICE_CENTS - quote.price);
-  const days = Math.max(1, Math.ceil((new Date(quote.expiresAt) - Date.now()) / 86400000));
-  const subject = `Your ${credit} counts`;
+  const subject = `about the other ${allLists.length - 1} lists`;
   const text = `Hi,
 
-Quick one.
+Something I saw on the investor side again and again: the round rarely closes where it starts.
 
-Almost no round I've seen closed in one region. A Paris seed ends up with a Swiss family office. An Austin Series A gets its lead from Singapore. The money is where it is, not where you are.
+Entocycle is a London company. When Keiran raised his Series A, the lead came from Climentum, the fund I co-founded in Copenhagen. Different country, different network, and it closed.
 
-So here's what I'll do for the next ${days} days.
+You can't plan for that with one region.
 
-All ${allLists.length} lists. ${n(UNIQUE_INVESTORS)} investors. ${n(UNIQUE_EMAILS)} direct emails.
-The ${credit} you paid counts. You pay ${price}, not ${fmtUsd(BUNDLE_PRICE_CENTS)}.
+So here's an offer, plainly, open for ${daysLeft(quote.expiresAt)} more days:
 
-What's in it:
+All ${allLists.length} lists. ${n(UNIQUE_INVESTORS)} investors, ${n(UNIQUE_EMAILS)} of them with a direct email.
+Your ${credit} counts. You pay ${fmtUsd(quote.price)} instead of ${fmtUsd(BUNDLE_PRICE_CENTS)}.
 
-- Family offices in Europe, the US, the UK, DACH, the Nordics, France and Benelux, Asia-Pacific, Canada and LatAm
-- 366 LPs and funds of funds. The people who back your VCs. Gold if you ever raise a fund
-- 470 climate VC funds with stage, ticket size and who leads
-- Every list in Airtable and CSV, fixed when a row goes stale
-- Bonus: my 3-email follow-up sequence, the one I'd send after silence
+That's family offices across Europe, the US, the UK, DACH, the Nordics, France and Benelux, Asia-Pacific, Canada and LatAm. Plus 366 LPs and funds of funds (the people who back the VCs), and 470 climate funds with stage and ticket size.
 
-If it's not useful, reply within 14 days and I'll refund the lot. No questions.
+I'll also send you the three-email follow-up sequence I'd use after silence.
 
-See all ${allLists.length} lists: ${siteUrl()}/all?u=${token}
+If it doesn't help your raise, reply within 14 days and I'll refund it.
+
+${siteUrl()}/all?u=${token}
 
 Yoann${footer(token)}`;
   return { subject, text };
 }
 
-// E3, day 7: the follow-up. Value first, last call for single-list buyers.
+// E3, day 7. The follow-up email. Value first. Last call only if the credit is still open.
 export function followupEmail({ token, quote, bundle }) {
-  const subject = "If they didn't reply";
+  const subject = 'if they went quiet';
   const lastCall = !bundle && quote && quote.active;
   const text = `Hi,
 
-Day 7. If you sent your 12, you probably have 2 replies and 10 silences.
+It's been about a week. If you sent your 12, my guess is a couple replied and the rest went quiet.
 
-That's normal. Investors read on their phone, between meetings, and forget. The second email is where most replies come from.
+Don't read anything into the quiet. Investors read on their phone, mean to reply, and then their day happens. The second email is where a lot of the replies come from.
 
-Here's the follow-up. Send it 5 to 7 days after the first one, in the same thread.
+Here's mine. Same thread as the first, five to seven days later:
 
----
+
 
 Hi [first name],
 
-One update since my last note: [new number, new customer, new investor in].
+One thing changed since I wrote: [new customer, new number, new investor in].
 
-Still think [their fund] is the right fit because [same reason, shorter].
+Still think you'd get it because of [the same reason, shorter].
 
 Worth a call?
 
-[Your name]
+[You]
 
----
 
-Three rules:
 
-New information or don't send it. "Just bumping this" tells them nothing changed.
+The only rule: it has to carry something new. "Just bumping this" tells them nothing happened, and that's the opposite of what you want them to think.
 
-Same thread. They see the first email under it, so you don't repeat yourself.
-
-Two follow-ups max. After that, move on and come back when you have a bigger number.
+Two follow-ups, then stop. Come back in three months with a bigger number. They'll remember you sent the good email.
 
 Yoann${lastCall ? `
 
-P.S. Last call on the upgrade. Your earlier purchase still counts for ${Math.max(1, Math.ceil((new Date(quote.expiresAt) - Date.now()) / 86400000))} more days: all ${n(UNIQUE_INVESTORS)} investors for ${fmtUsd(quote.price)}. ${siteUrl()}/all?u=${token}` : ''}${footer(token)}`;
+ps. last few days on the upgrade. What you paid still counts: all ${n(UNIQUE_INVESTORS)} investors for ${fmtUsd(quote.price)}. ${siteUrl()}/all?u=${token}` : ''}${footer(token)}`;
   return { subject, text };
 }
 
-// Sample requesters, day 1: they saw 10 rows, they didn't buy.
+// Sample requesters, day 1. They saw 10 rows and didn't buy. One honest test, no pressure.
 export function sampleNudgeEmail({ list }) {
-  const subject = `The other ${n(Math.max(0, (list.stats?.rows || 0) - 10))}`;
+  const rest = Math.max(0, (list.stats?.rows || 0) - 10);
+  const subject = 'did the 10 rows help?';
   const text = `Hi,
 
-Yesterday you got 10 rows from the ${list.short_name} list.
+You grabbed 10 rows from the ${list.short_name} list yesterday.
 
-Quick test before you decide: pick the 2 names that fit you best and look up their last 3 deals. If even one of them backed a company like yours, the full list pays for itself with one reply.
+Here's a two-minute way to decide if the other ${n(rest)} are worth it. Pick the two names closest to what you're building. Look up their last three deals.
 
-The full ${list.short_name} list, ${fmtUsd(list.price_cents)}: ${siteUrl()}/${list.slug}
-All ${n(UNIQUE_INVESTORS)} investors across 10 lists, ${fmtUsd(BUNDLE_PRICE_CENTS)}: ${siteUrl()}/all
+If one of them backed something that looks like you, that's your first email. And the full list probably has another dozen like them.
+
+${list.short_name}, ${fmtUsd(list.price_cents)}: ${siteUrl()}/${list.slug}
+or all ten, ${fmtUsd(BUNDLE_PRICE_CENTS)}: ${siteUrl()}/all
+
+Either way, good luck with the raise.
 
 Yoann
 
-P.S. Not raising right now? Reply "later" and I'll stop here.`;
+ps. not raising yet? Just reply "later" and I'll leave you alone.`;
   return { subject, text };
 }
 
-// Bonus file attached to bundle deliveries (promised in the offer email).
-export const FOLLOWUP_SEQUENCE = `THE 3-EMAIL FOLLOW-UP SEQUENCE
-Climate Insiders. Use it after a first email that got silence.
+// Attached to bundle deliveries (promised in the offer email).
+export const FOLLOWUP_SEQUENCE = `The three-email sequence
+from Yoann, Climate Insiders
 
-EMAIL 1. Day 0. The first note (the 4-line email)
-Subject: [Company]: [one number] in [timeframe]
-Hi [first name],
-[Company] [does what] for [who]. [The number].
-Raising [amount] [stage], [X] already committed.
-Writing to you because [their deal or thesis, one line].
-20 minutes next week?
+Use it after a first email that got silence. Same thread every time.
 
-EMAIL 2. Day 5 to 7. Same thread. New information only.
+
+1. Day 0, the first note
+
+Subject: [Company], [one number] in [timeframe]
+
 Hi [first name],
-One update since my last note: [new number, customer or investor].
-Still think [their fund] fits because [same reason, shorter].
+[Company] does [what] for [who]. [One number that proves it.]
+Raising [amount] [stage], [X] already in.
+Writing because [their portfolio company] tells me you get [your space].
+20 min next week?
+
+
+2. Day 5 to 7, one new fact
+
+Hi [first name],
+One thing changed since I wrote: [new customer, number or investor].
+Still think you'd get it because of [same reason, shorter].
 Worth a call?
 
-EMAIL 3. Day 14. Same thread. The easy out.
-Hi [first name],
-Guessing the timing is off. No problem.
-If [one specific thing they'd want to see: first revenue, a lead, a pilot result] happens, can I come back to you?
-Either way, thanks for reading.
 
-RULES
-- Never "just bumping this". Every follow-up carries one new fact.
-- Same thread, so they see what came before.
-- Stop after email 3. Come back in 3 months with a bigger number.
-- The "easy out" in email 3 gets more replies than email 2. People like being let off the hook.
+3. Day 14, the easy out
+
+Hi [first name],
+Guessing the timing's off, no problem at all.
+If [the one thing they'd want to see: first revenue, a lead, a pilot result] happens, can I come back to you?
+
+
+Why the third one works: people like being let off the hook. It's the email that gets the most "actually, let's talk" replies.
+
+After that, stop. Come back in three months with a bigger number.
 `;
