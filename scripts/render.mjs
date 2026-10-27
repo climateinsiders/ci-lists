@@ -382,7 +382,7 @@ ${others.map(preview).join('\n')}
 ${sheetDialog(f)}`;
   const title = featured ? `${f.name} · Climate Insiders` : 'Investor lists for founders and fund managers · Climate Insiders';
   const description = featured
-    ? `${f.tagline} ${n(f.stats.rows)} rows, checked by hand and up to date. ${usd(f.price_cents)} one time, Excel and Airtable.`
+    ? `${f.tagline} ${n(f.stats.rows)} rows, checked by hand. ${usd(f.price_cents)} one time.`
     : `Hand-checked investor lists for founders and fund managers: family offices in Europe, the US, UK, DACH, the Nordics, APAC and LatAm, plus LPs and climate VCs.`;
   const url = featured ? `${SITE}/${f.slug}` : `${SITE}/`;
   const ogImage = f.image_url || (featured ? `${SITE}/og/${f.slug}.png` : `${SITE}/og.png`);
