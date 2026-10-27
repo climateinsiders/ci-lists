@@ -3,6 +3,11 @@
 
 export const BUNDLE_PRICE_CENTS = 39000;
 export const LIST_PRICE_CENTS = 9000;
+export const MIN_UPGRADE_CENTS = 5000;
+export const UPGRADE_DAYS = 10; // the "$90 counts" credit window
+// Unique across all 10 lists (Europe 500 overlaps the regional lists). Update if the data changes.
+export const UNIQUE_INVESTORS = 2426;
+export const UNIQUE_EMAILS = 1363;
 
 export function env(name, fallback) {
   const v = process.env[name];
@@ -118,19 +123,20 @@ export function toCsv(entries, list) {
 }
 
 // ---------- Resend ----------
-export async function sendEmail({ to, subject, text, html, attachments = [], tags = [] }) {
+export async function sendEmail({ to, subject, text, html, attachments = [], tags = [], headers }) {
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env('RESEND_API_KEY')}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      from: env('EMAIL_FROM', 'Yoann Berno <yoann@climateinsiders.com>'),
+      from: env('EMAIL_FROM', 'Yoann Berno <yoann@vcboom.com>'),
       to: [to],
-      reply_to: env('EMAIL_REPLY_TO', 'yoann@climateinsiders.com'),
+      reply_to: env('EMAIL_REPLY_TO', 'yoann@vcboom.com'),
       subject,
       text,
       html,
       attachments: attachments.map((a) => ({ filename: a.filename, content: Buffer.from(a.content, 'utf8').toString('base64') })),
       tags,
+      ...(headers ? { headers } : {}),
     }),
   });
   if (!res.ok) throw new Error(`Resend -> ${res.status} ${await res.text()}`);
@@ -196,6 +202,22 @@ export function json(res, status, data) {
 
 export function isEmail(s) {
   return typeof s === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s.trim());
+}
+
+// What has this email already paid for, and what would the bundle cost them now?
+export async function upgradeQuote(token) {
+  if (!token || !/^[a-f0-9]{16,64}$/.test(token)) return null;
+  const [p] = await selectRows('list_purchases', `token=eq.${token}&select=email,created_at`);
+  if (!p) return null;
+  const all = await selectRows('list_purchases', `email=ilike.${encodeURIComponent(p.email)}&delivered_at=not.is.null&select=slugs,bundle,amount_cents,created_at&order=created_at.asc`);
+  const bundleOwned = all.some((r) => r.bundle);
+  const owned = [...new Set(all.flatMap((r) => r.slugs))];
+  const paid = all.filter((r) => !r.bundle).reduce((a, r) => a + r.amount_cents, 0);
+  const first = new Date(all[0]?.created_at || p.created_at);
+  const expiresAt = new Date(first.getTime() + UPGRADE_DAYS * 86400000);
+  const active = !bundleOwned && Date.now() < expiresAt.getTime();
+  const price = active ? Math.max(BUNDLE_PRICE_CENTS - paid, MIN_UPGRADE_CENTS) : BUNDLE_PRICE_CENTS;
+  return { email: p.email, owned, paid, bundleOwned, active, price, expiresAt: expiresAt.toISOString() };
 }
 
 export function fmtUsd(cents) {

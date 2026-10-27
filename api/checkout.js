@@ -1,28 +1,43 @@
-import { getActiveLists, stripe, readJson, json, siteUrl, BUNDLE_PRICE_CENTS } from './_lib.js';
+import { getActiveLists, stripe, readJson, json, siteUrl, upgradeQuote, BUNDLE_PRICE_CENTS, UNIQUE_INVESTORS } from './_lib.js';
 
-// POST /api/checkout  { slug: "europe-500" }  or  { bundle: true }
-// Creates a Stripe Checkout session and returns its URL.
+// POST /api/checkout
+//   { slug: "europe-500" }              one list, $90
+//   { bundle: true }                    all 10, $390
+//   { bundle: true, upgrade: "<token>" } all 10, minus what this buyer already paid (within the credit window)
+// Payments go to the VC Boom Stripe account (STRIPE_SECRET_KEY).
 export default async function handler(req, res) {
   if (req.method !== 'POST') return json(res, 405, { error: 'POST only' });
   try {
     const body = await readJson(req);
     const lists = await getActiveLists();
     const attribution = body.attribution && typeof body.attribution === 'object' ? body.attribution : {};
-    let lineItems, slugs, bundle, origin;
+    let lineItems, slugs, bundle, origin, customerEmail, upgradeToken = '';
 
     if (body.bundle) {
       bundle = true;
       slugs = lists.map((l) => l.slug);
-      origin = '#all';
+      origin = '/all';
+      let amount = BUNDLE_PRICE_CENTS;
+      let name = `All ${lists.length} investor lists`;
+      if (body.upgrade) {
+        const q = await upgradeQuote(String(body.upgrade));
+        if (q && q.bundleOwned) return json(res, 400, { error: 'You already have all 10 lists. Check your inbox for the Airtable links.' });
+        if (q && q.active) {
+          amount = q.price;
+          name = `All ${lists.length} investor lists (upgrade, your earlier purchase counts)`;
+          customerEmail = q.email;
+          upgradeToken = String(body.upgrade);
+        }
+      }
       lineItems = [
         {
           quantity: 1,
           price_data: {
             currency: 'usd',
-            unit_amount: BUNDLE_PRICE_CENTS,
+            unit_amount: amount,
             product_data: {
-              name: 'All 10 investor lists (Climate Insiders)',
-              description: `${lists.map((l) => l.short_name).join(', ')}. CSV + Airtable, delivered by email.`,
+              name,
+              description: `${UNIQUE_INVESTORS.toLocaleString('en-US')} investors across ${lists.length} lists. Airtable + CSV, delivered by email.`,
             },
           },
         },
@@ -39,7 +54,7 @@ export default async function handler(req, res) {
           price_data: {
             currency: 'usd',
             unit_amount: list.price_cents,
-            product_data: { name: list.name, description: `${list.tagline} CSV + Airtable, delivered by email.` },
+            product_data: { name: list.name, description: `${list.tagline} Airtable + CSV, delivered by email.` },
           },
         },
       ];
@@ -50,13 +65,15 @@ export default async function handler(req, res) {
       line_items: lineItems,
       success_url: `${siteUrl()}/thanks?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl()}${origin}`,
-      allow_promotion_codes: true,
-      billing_address_collection: 'auto',
+      allow_promotion_codes: upgradeToken ? undefined : true,
+      customer_email: customerEmail,
       customer_creation: 'always',
       invoice_creation: { enabled: true },
       metadata: {
+        product: 'investor-lists',
         slugs: slugs.join(','),
         bundle: bundle ? '1' : '0',
+        upgrade: upgradeToken,
         utm_source: String(attribution.utm_source || ''),
         utm_campaign: String(attribution.utm_campaign || ''),
         utm_content: String(attribution.utm_content || ''),
@@ -67,6 +84,6 @@ export default async function handler(req, res) {
     return json(res, 200, { url: session.url });
   } catch (err) {
     console.error(err);
-    return json(res, 500, { error: 'Could not start checkout. Email yoann@climateinsiders.com and I will send a payment link.' });
+    return json(res, 500, { error: 'Checkout did not open. Try again in a minute.' });
   }
 }

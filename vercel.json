@@ -3,8 +3,26 @@
   "outputDirectory": "dist",
   "cleanUrls": true,
   "trailingSlash": false,
-  "functions": { "api/*.js": { "maxDuration": 30 } },
+  "functions": {
+    "api/*.js": {
+      "maxDuration": 30
+    }
+  },
   "headers": [
-    { "source": "/(.*)", "headers": [ { "key": "X-Frame-Options", "value": "SAMEORIGIN" } ] }
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
+      ]
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron-emails",
+      "schedule": "0 9 * * *"
+    }
   ]
 }

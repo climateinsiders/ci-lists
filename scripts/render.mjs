@@ -2,6 +2,7 @@ import { ICONS, SMALL_ICONS } from './icons.mjs';
 
 const SITE = 'https://lists.climateinsiders.com';
 const BUNDLE = 390;
+const UNIQUE_INVESTORS = 2426; // unique across all lists; keep in sync with api/_lib.js
 const AS = 'https://allstar-ci.vercel.app/p';
 const WF = 'https://cdn.prod.website-files.com/657b1ee1812a034008e87de8';
 
@@ -125,7 +126,7 @@ function toneAttr(list) {
 }
 
 // The card is a small version of the LinkedIn poster. When `image_url` is set, that poster is shown instead.
-export function card(list, i, { featured = false } = {}) {
+export function card(list, i, { featured = false, open = false } = {}) {
   const faces = (list.sample || []).slice(0, 3).map((e) => `<span class="face">${face(e, 64)}</span>`).join('');
   const [first, ...rest] = list.card_name.split(' ');
   const art = list.image_url
@@ -137,12 +138,13 @@ export function card(list, i, { featured = false } = {}) {
         <span class="art">${ICONS[list.icon] || ICONS.globe}</span>
         <span class="faces">${faces}</span>
       </span>`;
-  return `<button class="card${featured ? ' featured' : ' locked'}" type="button" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog" aria-label="${esc(list.name)}">
+  return `<button class="card${featured ? ' featured' : open ? ' open' : ' locked'}" type="button" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog" aria-label="${esc(list.name)}">
   <span class="tape"></span>
   <span class="num">${pad(i + 1)}</span>
-  ${featured ? '' : `<span class="lock" title="Buy to unlock">${SMALL_ICONS.lock}</span>`}
+  ${featured || open ? '' : `<span class="lock" title="Buy to unlock">${SMALL_ICONS.lock}</span>`}
+  <span class="owned">yours</span>
   ${art}
-  <span class="cta">${featured ? `<span class="price">${usd(list.price_cents)}</span><span class="btn">See the top 10 and buy</span>` : `<span class="peek">See the top 10 →</span>`}</span>
+  <span class="cta">${featured || open ? `<span class="price">${usd(list.price_cents)}</span><span class="btn">See the top 10</span>` : `<span class="peek">See the top 10 →</span>`}</span>
 </button>`;
 }
 
@@ -231,7 +233,7 @@ function bundleBar(lists) {
   const total = lists.reduce((a, l) => a + (l.stats.rows || 0), 0);
   return `<div class="bundle" id="all">
   <span class="tag">best value</span>
-  <span class="txt"><b>All ${lists.length} lists, $${BUNDLE}</b> <s>$${full}</s><small>${n(total)} investors. Every region, the LPs and the climate funds.</small></span>
+  <span class="txt"><b id="bundle-price">All ${lists.length} lists, $${BUNDLE}</b> <s>$${full}</s><small id="bundle-sub">${n(UNIQUE_INVESTORS)} investors. Every region, the LPs and the climate funds.</small></span>
   <button class="btn" data-buy="all">Get all ${lists.length}</button>
 </div>`;
 }
@@ -271,14 +273,38 @@ ${lists.map((l, i) => preview(l, lists, i)).join('\n')}`;
   });
 }
 
+// /all: every list as a card, the bundle up top. Upsell emails land here (?u=<token> turns on upgrade pricing).
+export function allPage(lists) {
+  const body = `
+<section class="hero">
+  <div>
+    <span class="script" id="all-kicker">all ten, side by side</span>
+    <h1>Every <span class="hl">investor list</span>.</h1>
+  </div>
+  ${bundleBar(lists)}
+</section>
+<section class="grid all" id="lists">
+${lists.map((l, i) => card(l, i, { open: true })).join('\n')}
+</section>
+${proofStrip()}
+${lists.map((l, i) => preview(l, lists, i)).join('\n')}`;
+  return shell({
+    title: 'All 10 investor lists · Climate Insiders',
+    description: `${n(UNIQUE_INVESTORS)} investors across 10 lists: family offices in every region, LPs and climate VC funds. $${BUNDLE} for all ten.`,
+    canonical: `${SITE}/all`,
+    body,
+    extraHead: '<meta name="x-page" content="all">',
+  });
+}
+
 export function thanksPage() {
   const body = `
 <section class="thanks">
   <div class="mail">${SMALL_ICONS.mail}</div>
   <span class="script" style="font-size:24px">paid. thank you.</span>
   <h1>It's on its way.</h1>
-  <p>Your list is being emailed to the address you used at checkout. Give it two minutes, then check the promotions tab if it's not in the inbox.</p>
-  <p class="small">One rule before you write to anyone: pick the twelve that fit your sector and stage. Leave the rest alone. Nothing after ten minutes? Email <a href="mailto:yoann@climateinsiders.com">yoann@climateinsiders.com</a> with your receipt.</p>
+  <p>Check your inbox in two minutes. You'll get the Airtable link and the CSV, from Yoann at VC Boom. Not there? Look in promotions.</p>
+  <p class="small">One rule before you write to anyone: pick the twelve that fit your sector and stage. Leave the rest alone. Nothing after ten minutes? Reply to your Stripe receipt and I'll sort it.</p>
   <p><a class="btn ghost" href="/">Back to the lists</a></p>
 </section>`;
   return shell({ title: 'Thank you · Climate Insiders Investor Lists', description: 'Your list is on its way.', canonical: `${SITE}/thanks`, body });
