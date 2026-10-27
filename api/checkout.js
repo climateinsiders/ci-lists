@@ -86,11 +86,13 @@ export default async function handler(req, res) {
       ];
     }
 
-    const session = await stripe('checkout/sessions', {
+    // Embedded checkout stays on our page (needs STRIPE_PUBLISHABLE_KEY); otherwise the hosted Stripe page is used.
+    const embedded = Boolean(body.embedded && process.env.STRIPE_PUBLISHABLE_KEY);
+    const after = `${siteUrl()}/${body.upsell ? 'welcome' : 'thanks'}?session_id={CHECKOUT_SESSION_ID}`;
+    const params = (uiMode) => ({
       mode: 'payment',
       line_items: lineItems,
-      success_url: `${siteUrl()}/${body.upsell ? 'welcome' : 'thanks'}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl()}${origin}`,
+      ...(embedded ? { ui_mode: uiMode, redirect_on_completion: 'if_required', return_url: after } : { success_url: after, cancel_url: `${siteUrl()}${origin}` }),
       allow_promotion_codes: upgradeToken ? undefined : true,
       customer_email: customerEmail,
       customer_creation: 'always',
@@ -109,7 +111,16 @@ export default async function handler(req, res) {
         ref: String(attribution.ref || ''),
       },
     });
+    let session;
+    try {
+      session = await stripe('checkout/sessions', params('embedded'));
+    } catch (err) {
+      // Newer Stripe API versions call the embedded mode "embedded_page".
+      if (embedded && /ui_mode/i.test(String(err.message))) session = await stripe('checkout/sessions', params('embedded_page'));
+      else throw err;
+    }
 
+    if (embedded) return json(res, 200, { client_secret: session.client_secret, publish_key: process.env.STRIPE_PUBLISHABLE_KEY });
     return json(res, 200, { url: session.url });
   } catch (err) {
     console.error(err);

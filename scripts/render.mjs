@@ -102,6 +102,10 @@ ${extraHead}
 ${body}
 ${footer()}
 </div>
+<dialog class="preview paydlg" id="pay" aria-label="Secure checkout">
+  <div class="pvhead"><span class="script">secure checkout</span><h2>Pay with Stripe</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
+  <div class="paybody"><div id="checkout"><p class="loading">Opening secure checkout…</p></div></div>
+</dialog>
 <div id="toast" class="toast" role="status"></div>
 <script src="/app.js" defer></script>
 </body>

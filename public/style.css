@@ -76,8 +76,6 @@ button { font: inherit; cursor: pointer; }
 /* ---- the offer: top 10 on the left, value stack and buy on the right ---- */
 .offer { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 400px; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 22px; box-shadow: 6px 6px 0 var(--ink); overflow: hidden; }
 .offer.main { margin-top: 18px; transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); box-shadow: calc(6px - var(--ry-n, 0) * 1px) calc(6px + var(--rx-n, 0) * 1px) 0 var(--ink); transition: transform .18s ease-out, box-shadow .18s ease-out; will-change: transform; }
-.offer.main::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255,122,26,.13), transparent 60%); opacity: 0; transition: opacity .25s ease; }
-.offer.main:hover::after { opacity: 1; }
 .picksCol { padding: 16px 22px 12px; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
 .valueCol { padding: 16px 24px 20px; background: var(--tone); border-left: 1.5px solid var(--ink); display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow: auto; }
 .valueCol .script { font-size: 32px; line-height: 1; margin-top: 12px; }
@@ -288,3 +286,8 @@ dialog.preview .picks { grid-auto-rows: auto; flex: none; }
 #access .btn { padding: 8px 14px; font-size: 13px; }
 .slam .next.start ol { gap: 5px; }
 @media (min-width: 901px) { #welcome .proofs { gap: 14px; padding-top: 12px; } #welcome .proofs .quote blockquote { font-size: 13.5px; } }
+
+/* ---- embedded Stripe checkout, in a dialog on the same page ---- */
+.paydlg { max-width: min(560px, 96vw); }
+.paybody { background: #fff; padding: 14px 16px 18px; overflow: auto; min-height: 240px; }
+.paybody .loading { text-align: center; color: var(--muted); padding: 60px 0; font-size: 14px; }

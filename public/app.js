@@ -43,11 +43,11 @@
     if (o) { ev.preventDefault(); openD(document.getElementById('p-' + o.getAttribute('data-open'))); return; }
     if (ev.target.closest('[data-sheet]')) { ev.preventDefault(); openD(document.getElementById('sheet')); return; }
     if (ev.target.closest('[data-close]')) { ev.preventDefault(); closeD(); return; }
-    if (ev.target.tagName === 'DIALOG') closeD(); // backdrop click
+    if (ev.target.tagName === 'DIALOG' && ev.target.id !== 'pay') closeD(); // backdrop click (never while paying)
   });
   document.addEventListener('cancel', function (ev) { if (ev.target.tagName === 'DIALOG') { ev.preventDefault(); closeD(); } }, true);
 
-  // ---- main offer follows the cursor: soft tilt + orange spotlight ----
+  // ---- main offer follows the cursor: soft tilt ----
   var main = document.querySelector('.offer.main');
   if (main && window.matchMedia('(hover: hover) and (min-width: 901px)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     main.addEventListener('mousemove', function (e) {
@@ -57,8 +57,6 @@
       main.style.setProperty('--rx', ((0.5 - y) * 1.6).toFixed(2) + 'deg');
       main.style.setProperty('--ry-n', ((x - 0.5) * 2).toFixed(2));
       main.style.setProperty('--rx-n', ((0.5 - y) * 2).toFixed(2));
-      main.style.setProperty('--mx', (x * 100).toFixed(1) + '%');
-      main.style.setProperty('--my', (y * 100).toFixed(1) + '%');
     });
     main.addEventListener('mouseleave', function () {
       ['--rx', '--ry', '--rx-n', '--ry-n'].forEach(function (k) { main.style.setProperty(k, k.indexOf('-n') > 0 ? '0' : '0deg'); });
@@ -97,23 +95,54 @@
     }).catch(function () {});
   }
 
-  // ---- checkout ----
+  // ---- checkout: Stripe Embedded Checkout in a dialog, no page change ----
+  var payDlg = document.getElementById('pay'), embedded = null, stripeJs = null;
+  function loadStripe() {
+    if (window.Stripe) return Promise.resolve();
+    return stripeJs || (stripeJs = new Promise(function (resolve, reject) {
+      var sc = document.createElement('script');
+      sc.src = 'https://js.stripe.com/v3/';
+      sc.onload = resolve;
+      sc.onerror = function () { stripeJs = null; reject(new Error('Could not load the payment form. Check your connection and try again.')); };
+      document.head.appendChild(sc);
+    }));
+  }
+  function destroyEmbedded() {
+    if (embedded) { try { embedded.destroy(); } catch (e) {} embedded = null; }
+    var m = document.getElementById('checkout'); if (m) m.innerHTML = '';
+  }
+  if (payDlg) payDlg.addEventListener('close', function () { destroyEmbedded(); openDialog = null; });
+
+  function startCheckout(payload, btn) {
+    var label = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Opening checkout…'; }
+    var done = function () { if (btn) { btn.disabled = false; btn.textContent = label; } };
+    post('/api/checkout', Object.assign({ embedded: !!payDlg, attribution: attribution }, payload))
+      .then(function (j) {
+        if (j.url || !j.client_secret) { location.href = j.url; return; } // hosted fallback
+        var sessionId = j.client_secret.split('_secret_')[0];
+        return loadStripe().then(function () {
+          return window.Stripe(j.publish_key).initEmbeddedCheckout({
+            clientSecret: j.client_secret,
+            onComplete: function () { location.href = '/' + (payload.upsell ? 'welcome' : 'thanks') + '?session_id=' + encodeURIComponent(sessionId); },
+          });
+        }).then(function (c) {
+          destroyEmbedded();
+          embedded = c;
+          openD(payDlg);
+          c.mount('#checkout');
+          done();
+        });
+      })
+      .catch(function (e) { say(e.message, 7000); done(); });
+  }
+
   document.addEventListener('click', function (ev) {
     var b = ev.target.closest('[data-buy]');
     if (!b) return;
     ev.preventDefault();
     var slug = b.getAttribute('data-buy');
-    var btns = document.querySelectorAll('[data-buy]');
-    btns.forEach(function (x) { x.disabled = true; });
-    b.dataset.label = b.textContent;
-    b.textContent = 'Opening checkout…';
-    post('/api/checkout', slug === 'all' ? { bundle: true, upgrade: upgrade, attribution: attribution } : { slug: slug, attribution: attribution })
-      .then(function (j) { location.href = j.url; })
-      .catch(function (e) {
-        say(e.message, 7000);
-        btns.forEach(function (x) { x.disabled = false; });
-        b.textContent = b.dataset.label;
-      });
+    startCheckout(slug === 'all' ? { bundle: true, upgrade: upgrade } : { slug: slug }, b);
   });
 
   // ---- confetti: one or two seconds across the whole page ----
@@ -245,11 +274,7 @@
       var b = ev.target.closest('[data-upsell]');
       if (!b) return;
       ev.preventDefault();
-      var label = b.textContent;
-      b.disabled = true; b.textContent = 'Opening checkout…';
-      post('/api/checkout', { upsell: true, session_id: sid, attribution: attribution })
-        .then(function (j) { location.href = j.url; })
-        .catch(function (e) { say(e.message, 7000); b.disabled = false; b.textContent = label; });
+      startCheckout({ upsell: true, session_id: sid }, b);
     });
   }
 })();
