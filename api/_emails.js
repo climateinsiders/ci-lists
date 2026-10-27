@@ -9,7 +9,7 @@
 //   at Entocycle close his Series A (Climentum led it).
 // Yoann to confirm before launch (these are his habits/opinions, written in his voice):
 //   E0 "The cold emails I actually answered all did one thing..."
-//   E2 "the round rarely closes where it starts", Climentum being Copenhagen-based, the 14-day refund.
+//   E2 "the round rarely closes where it starts", Climentum being Copenhagen-based.
 // - Plain text, rendered as a plain Gmail-looking email (see textToHtml). No logos, no buttons.
 import { siteUrl, fmtUsd, UNIQUE_INVESTORS, UNIQUE_EMAILS, BUNDLE_PRICE_CENTS } from './_lib.js';
 
@@ -18,7 +18,7 @@ const hi = (name) => (name ? `Hi ${name},` : 'Hi,');
 const daysLeft = (iso) => Math.max(1, Math.ceil((new Date(iso) - Date.now()) / 86400000));
 
 function footer(token) {
-  return `\n\n\n\nYou're getting this because you bought a list from me. Don't want the follow-ups? ${siteUrl()}/api/unsubscribe?t=${token}`;
+  return `\n\n\n\nYou're getting this because you bought a list from me. Don't want the follow-ups? ${siteUrl()}/api/unsubscribe?t=${token}\nTerms of purchase and licence: ${siteUrl()}/terms`;
 }
 
 function links(chosen) {
@@ -114,11 +114,9 @@ So here's an offer, plainly, open for ${daysLeft(quote.expiresAt)} more days:
 All ${allLists.length} lists. ${n(UNIQUE_INVESTORS)} investors, ${n(UNIQUE_EMAILS)} of them with a direct email.
 Your ${credit} counts. You pay ${fmtUsd(quote.price)} instead of ${fmtUsd(BUNDLE_PRICE_CENTS)}.
 
-That's family offices across Europe, the US, the UK, DACH, the Nordics, France and Benelux, Asia-Pacific, Canada and LatAm. Plus 366 LPs and funds of funds (the people who back the VCs), and 470 climate funds with stage and ticket size.
+That's family offices across Europe, the US, the UK, DACH, the Nordics, France and Benelux, Asia-Pacific, Canada and LatAm. Plus 366 LPs and funds of funds (the people who back the VCs), and 470 climate funds with stage and ticket size where we have it.
 
 I'll also send you the three-email follow-up sequence I'd use after silence.
-
-If it doesn't help your raise, reply within 14 days and I'll refund it.
 
 ${siteUrl()}/all?u=${token}
 

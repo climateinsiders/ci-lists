@@ -97,6 +97,8 @@ export default async function handler(req, res) {
       customer_email: customerEmail,
       customer_creation: 'always',
       // First name, so every email can start with it.
+      // Shown above the pay button: the no-refund / instant-delivery consent (EU withdrawal waiver).
+      custom_text: { submit: { message: `By paying you agree to the Terms (${siteUrl()}/terms) and ask for immediate delivery of this digital product. You lose the right of withdrawal once it is delivered. All sales are final, no refunds.` } },
       custom_fields: [{ key: 'first_name', label: { type: 'custom', custom: 'First name' }, type: 'text', text: { maximum_length: 40 } }],
       invoice_creation: { enabled: true },
       metadata: {

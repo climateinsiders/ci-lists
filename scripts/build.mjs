@@ -3,6 +3,7 @@ import { mkdir, writeFile, readFile, cp, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { page, allPage, thanksPage, welcomePage } from './render.mjs';
+import { termsPage } from './terms.mjs';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const dist = path.join(root, 'dist');
@@ -84,6 +85,8 @@ async function main() {
   await mkdir(path.join(dist, 'thanks'), { recursive: true });
   await writeFile(path.join(dist, 'thanks', 'index.html'), thanksPage());
   await mkdir(path.join(dist, 'welcome'), { recursive: true });
+  await mkdir(path.join(dist, 'terms'), { recursive: true });
+  await writeFile(path.join(dist, 'terms', 'index.html'), termsPage());
   await writeFile(path.join(dist, 'welcome', 'index.html'), welcomePage());
   await writeFile(
     path.join(dist, 'sitemap.xml'),

@@ -119,7 +119,7 @@ function brand() {
 function footer() {
   return `<footer class="foot">
   <span>© Climate Insiders</span>
-  <span><a href="https://climateinsiders.com">climateinsiders.com</a></span>
+  <span><a href="/terms">Terms, no refunds, privacy</a> · <a href="https://climateinsiders.com">climateinsiders.com</a></span>
 </footer>`;
 }
 
@@ -236,7 +236,7 @@ function offerBlock(list, { sheet = false } = {}) {
       <div class="bigprice">${usd(list.price_cents)}<small>one time · yours forever</small></div>
       <button class="btn big" data-buy="${esc(list.slug)}">Get the list</button>
     </div>
-    <p class="fine">Stripe checkout. Card, Apple Pay, Google Pay. Airtable + Excel by email in 2 minutes, receipt and invoice included.</p>
+    <p class="fine">Stripe checkout. Card, Apple Pay, Google Pay. Airtable + Excel by email in 2 minutes, receipt and invoice included. Digital product, all sales final, see <a href="/terms">terms</a>.</p>
     <span class="script">what you get</span>
     ${valuePoints(list)}
   </div>`;
@@ -330,7 +330,7 @@ function legacyPreview(list, i) {
     ${valuePoints(list)}
     <div class="bigprice">${usd(list.price_cents)}<small>one time · yours forever</small></div>
     <button class="btn big" data-buy="${esc(list.slug)}">Buy this list</button>
-    <p class="fine">Stripe checkout. Card, Apple Pay, Google Pay. Receipt and invoice by email. Or all 10 for $${BUNDLE}: <a href="#" data-buy="all">get the bundle</a>.</p>
+    <p class="fine">Stripe checkout. Card, Apple Pay, Google Pay. Receipt and invoice by email. All sales final, see <a href="/terms">terms</a>. Or all 10 for $${BUNDLE}: <a href="#" data-buy="all">get the bundle</a>.</p>
   </div>
   <div class="right">
     <div class="head"><h3>Top 10 picks<span class="script">straight from the sheet</span></h3><small>${n(list.stats.rows)} in the full list</small></div>
