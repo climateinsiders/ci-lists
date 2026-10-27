@@ -4,6 +4,8 @@ import { deliverSample } from './_deliver.js';
 // POST /api/sample  { email, slug, attribution }
 // Emails 10 real rows from the list and records the lead.
 export default async function handler(req, res) {
+  // Disabled: the free sample is no longer offered, and an open endpoint that emails any address can be abused.
+  if (process.env.SAMPLE_ENABLED !== '1') return json(res, 410, { error: 'Gone' });
   if (req.method !== 'POST') return json(res, 405, { error: 'POST only' });
   try {
     const body = await readJson(req);

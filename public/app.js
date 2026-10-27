@@ -220,7 +220,7 @@
     (/^cs_/.test(wsid) ? fetch('/api/session?session_id=' + encodeURIComponent(wsid)).then(function (r) { return r.ok ? r.json() : Promise.reject(); }) : Promise.reject())
       .catch(function () { if (location.hostname === 'localhost') return wdemo; throw 0; })
       .then(renderWelcome)
-      .catch(function () { document.getElementById('access').innerHTML = '<li class="ph">We could not load your access here. Check your inbox, or email yoann@climateinsiders.com.</li>'; });
+      .catch(function () { document.getElementById('access').innerHTML = '<li class="ph">We could not load your access here. Check your inbox, or reply to your receipt email.</li>'; });
   }
 
   // ---- after purchase: your list + the one-time offer ----
@@ -273,7 +273,7 @@
     (/^cs_/.test(sid) ? fetch('/api/session?session_id=' + encodeURIComponent(sid)).then(function (r) { return r.ok ? r.json() : Promise.reject(); }) : Promise.reject())
       .catch(function () { if (location.hostname === 'localhost') return demo; throw 0; })
       .then(render)
-      .catch(function () { document.getElementById('mylists').innerHTML = '<li class="ph">We could not load your list here. It is in your inbox, or email yoann@climateinsiders.com.</li>'; });
+      .catch(function () { document.getElementById('mylists').innerHTML = '<li class="ph">We could not load your list here. It is in your inbox, or reply to your receipt email.</li>'; });
 
     document.addEventListener('click', function (ev) {
       var b = ev.target.closest('[data-upsell]');
