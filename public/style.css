@@ -142,12 +142,10 @@ dialog.preview .picks { grid-auto-rows: auto; flex: none; }
 .sheettbl tbody tr:hover td { background: rgba(255,122,26,.08); }
 .pvfoot { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 22px; border-top: 1.5px solid var(--ink); background: var(--paper); flex: none; font-size: 13px; color: var(--ink-2); }
 
-/* ---- one screen on a computer: no page scroll ---- */
-@media (min-width: 901px) and (min-height: 660px) {
-  html:has(.offer.main), html:has(.offer.main) body { height: 100%; overflow: hidden; }
-  html:has(.offer.main) .wrap { height: 100vh; display: flex; flex-direction: column; }
-  .offer.main { flex: 1; min-height: 0; }
-}
+/* The page scrolls normally. The offer card always gets its natural height, so rows never get squeezed or clipped. */
+.offer.main .picks { grid-auto-rows: auto; flex: none; }
+.offer.main .pick { min-height: 58px; padding: 7px 10px; }
+.offer.main .valueCol { overflow: visible; }
 @media (max-width: 900px) {
   .hero .sub { font-size: 15px; }
   .offer { grid-template-columns: minmax(0, 1fr); }
