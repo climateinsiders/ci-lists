@@ -2,7 +2,7 @@ import { ICONS, SMALL_ICONS } from './icons.mjs';
 
 const SITE = 'https://lists.climateinsiders.com';
 const UPSELL = 390;
-const UPSELL_INVESTORS = 47000;
+const UPSELL_INVESTORS = 2426; // same as UNIQUE_INVESTORS: every unique investor across the 10 lists
 const BUNDLE = 390;
 const UNIQUE_INVESTORS = 2426; // unique across all lists; keep in sync with api/_lib.js
 const AS = 'https://allstar-ci.vercel.app/p';
@@ -214,7 +214,7 @@ function bundleBar(lists) {
   const total = lists.reduce((a, l) => a + (l.stats.rows || 0), 0);
   return `<div class="bundle" id="all">
   <span class="tag">best value</span>
-  <span class="txt"><b id="bundle-price">All ${lists.length} lists, $${BUNDLE}</b> <s>$${full}</s><small id="bundle-sub">${n(UNIQUE_INVESTORS)} investors. Every region, the LPs and the climate funds.</small></span>
+  <span class="txt"><b id="bundle-price">All ${lists.length} lists, $${BUNDLE}</b> <s>$${full}</s><small id="bundle-sub">${n(UNIQUE_INVESTORS)} investors, hand-checked and up to date. Every region, the LPs and the climate funds.</small></span>
   <button class="btn" data-buy="all">Get all ${lists.length}</button>
 </div>`;
 }
@@ -232,7 +232,7 @@ function offerBlock(list, { sheet = false } = {}) {
       <div class="bigprice">${usd(list.price_cents)}<small>one time · yours forever</small></div>
       <button class="btn big" data-buy="${esc(list.slug)}">Get the list</button>
     </div>
-    <p class="fine">Stripe checkout. Card, Apple Pay, Google Pay. CSV by email in 2 minutes, receipt and invoice included.</p>
+    <p class="fine">Stripe checkout. Card, Apple Pay, Google Pay. Airtable + Excel by email in 2 minutes, receipt and invoice included.</p>
     <span class="script">what you get</span>
     ${valuePoints(list)}
   </div>`;
@@ -302,10 +302,10 @@ function slamCard() {
   <span class="tag">buyers only · one-time offer</span>
   <h2>Get <span class="hl">all ${n(UPSELL_INVESTORS)} investors</span> and the full kit.</h2>
   <ul class="stack">
-    ${item(`The ${n(UPSELL_INVESTORS)} investors list`, `Instead of the 500 you just bought. Under 1¢ per investor.`)}
+    ${item(`All ${n(UPSELL_INVESTORS)} investors, every list`, `Hand-checked, deduplicated, up to date. Family offices, LPs and climate funds that are actively investing, not a scraped directory.`)}
     ${item('Cold outreach kit', 'Everything you need to write to them.')}
     ${item('Fundraising kit', 'Everything you need to run the raise.')}
-    ${item('Airtable + CSV, free fixes', 'Delivered like your first list. Wrong row? Reply, I fix it.')}
+    ${item('Airtable + Excel, free fixes', 'Delivered like your first list. Wrong row? Reply, I fix it.')}
     ${item('1 year of the Climate Insiders newsletter', 'Read by 22,000+ readers.')}
   </ul>
   <div class="clock" data-clock><span class="digits"><b data-h>24</b>:<b data-m>00</b>:<b data-s>00</b></span><small>left to claim this. Buyers only, shown once, then it is gone.</small></div>

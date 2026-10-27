@@ -31,6 +31,8 @@ export default async function handler(req, res) {
   if (!['paid', 'no_payment_required'].includes(s.payment_status)) return json(res, 200, { ignored: 'unpaid' });
 
   const email = (s.customer_details?.email || s.customer_email || '').trim();
+  const rawName = s.custom_fields?.find((f) => f.key === 'first_name')?.text?.value || (s.customer_details?.name || '').split(' ')[0] || '';
+  const firstName = rawName.trim().split(/\s+/)[0].replace(/^./, (c) => c.toUpperCase()).slice(0, 40) || null;
   const slugs = (s.metadata?.slugs || '').split(',').filter(Boolean);
   const bundle = s.metadata?.bundle === '1';
   const upgrade = Boolean(s.metadata?.upgrade);
@@ -47,6 +49,7 @@ export default async function handler(req, res) {
         stripe_session_id: s.id,
         stripe_payment_intent: s.payment_intent || null,
         email,
+        first_name: firstName,
         slugs,
         bundle,
         amount_cents: s.amount_total || 0,
@@ -65,7 +68,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    await deliverPurchase({ email, slugs, bundle, upgrade, token: row.token, amountCents: s.amount_total });
+    await deliverPurchase({ email, slugs, bundle, upgrade, token: row.token, amountCents: s.amount_total, name: firstName, sessionId: s.id, upsell: s.metadata?.upsell === '1' });
     const now = new Date().toISOString();
     // Only the newest purchase per email runs the sequence, so nobody gets two copies.
     await updateRows('list_purchases', `email=ilike.${encodeURIComponent(email)}&id=neq.${row.id}`, { followup_step: 99 });

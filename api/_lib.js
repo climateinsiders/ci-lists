@@ -3,7 +3,7 @@
 
 export const BUNDLE_PRICE_CENTS = 39000;
 export const LIST_PRICE_CENTS = 9000;
-export const UPSELL_PRICE_CENTS = 39000; // grand slam offer: the 47,000-investor database, shown on /thanks for 24h
+export const UPSELL_PRICE_CENTS = 39000; // grand slam offer on /thanks for 24h: every list the buyer doesn't own yet
 export const MIN_UPGRADE_CENTS = 5000;
 export const UPGRADE_DAYS = 10; // the "$90 counts" credit window
 // Unique across all 10 lists (Europe 500 overlaps the regional lists). Update if the data changes.
@@ -135,7 +135,7 @@ export async function sendEmail({ to, subject, text, html, attachments = [], tag
       subject,
       text,
       html,
-      attachments: attachments.map((a) => ({ filename: a.filename, content: Buffer.from(a.content, 'utf8').toString('base64') })),
+      attachments: attachments.map((a) => ({ filename: a.filename, content: (Buffer.isBuffer(a.content) ? a.content : Buffer.from(a.content, 'utf8')).toString('base64') })),
       tags,
       ...(headers ? { headers } : {}),
     }),
@@ -146,7 +146,7 @@ export async function sendEmail({ to, subject, text, html, attachments = [], tag
 
 export function textToHtml(text) {
   const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const linkify = (s) => s.replace(/(https?:\/\/[^\s)]+)/g, '<a href="$1">$1</a>');
+  const linkify = (s) => s.replace(/(https?:\/\/[^\s)]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
   const paras = text.trim().split(/\n{2,}/).map((p) => `<p style="margin:0 0 14px">${linkify(esc(p)).replace(/\n/g, '<br>')}</p>`);
   return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#222">${paras.join('')}</div>`;
 }

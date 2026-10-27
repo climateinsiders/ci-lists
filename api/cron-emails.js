@@ -23,7 +23,7 @@ export default async function handler(req, res) {
 
   const due = await selectRows(
     'list_purchases',
-    'delivered_at=not.is.null&unsubscribed_at=is.null&followup_step=gte.1&followup_step=lte.3&select=id,email,token,bundle,followup_step,created_at&order=created_at.asc&limit=200',
+    'delivered_at=not.is.null&unsubscribed_at=is.null&followup_step=gte.1&followup_step=lte.3&select=id,email,first_name,token,bundle,followup_step,created_at&order=created_at.asc&limit=200',
   );
   for (const p of due) {
     const age = (Date.now() - new Date(p.created_at).getTime()) / DAY;
@@ -32,15 +32,15 @@ export default async function handler(req, res) {
     try {
       let next = p.followup_step + 1;
       if (p.followup_step === 1) {
-        await send(p.email, templateEmail({ token: p.token, bundle: p.bundle }), { token: p.token, tag: 'list_e1' });
+        await send(p.email, templateEmail({ token: p.token, bundle: p.bundle, name: p.first_name }), { token: p.token, tag: 'list_e1' });
       } else if (p.followup_step === 2) {
         const quote = await upgradeQuote(p.token);
         if (!p.bundle && quote && quote.active && quote.paid > 0) {
-          await send(p.email, offerEmail({ token: p.token, quote, allLists: lists }), { token: p.token, tag: 'list_e2' });
+          await send(p.email, offerEmail({ token: p.token, quote, allLists: lists, name: p.first_name }), { token: p.token, tag: 'list_e2' });
         }
       } else if (p.followup_step === 3) {
         const quote = p.bundle ? null : await upgradeQuote(p.token);
-        await send(p.email, followupEmail({ token: p.token, quote, bundle: p.bundle }), { token: p.token, tag: 'list_e3' });
+        await send(p.email, followupEmail({ token: p.token, quote, bundle: p.bundle, name: p.first_name }), { token: p.token, tag: 'list_e3' });
         next = 4;
       }
       await updateRows('list_purchases', `id=eq.${p.id}`, { followup_step: next, last_email_at: new Date().toISOString() });

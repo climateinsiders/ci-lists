@@ -224,7 +224,7 @@
         if (l.airtable_url) {
           var a = document.createElement('a'); a.className = 'btn'; a.href = l.airtable_url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Open in Airtable ↗'; acts.appendChild(a);
         }
-        var d = document.createElement('a'); d.className = 'btn ghost'; d.href = '/api/download?session_id=' + encodeURIComponent(sid) + '&slug=' + encodeURIComponent(l.slug); d.textContent = 'Download CSV ↓'; acts.appendChild(d);
+        var d = document.createElement('a'); d.className = 'btn ghost'; d.href = '/api/download?session_id=' + encodeURIComponent(sid) + '&slug=' + encodeURIComponent(l.slug); d.textContent = 'Download Excel ↓'; acts.appendChild(d);
         li.appendChild(acts); ul.appendChild(li);
       });
       if (j.email) document.getElementById('sentto').textContent = 'also emailed to ' + j.email;
