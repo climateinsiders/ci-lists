@@ -50,6 +50,12 @@
   window.addEventListener('resize', fitValue);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitValue);
 
+  // ---- mobile: a buy bar stays at the bottom until the real buy button is on screen ----
+  var stickyBar = document.getElementById('stickybuy'), buyTarget = document.querySelector('.offer.main .valueCol .buy');
+  if (stickyBar && buyTarget && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (es) { stickyBar.classList.toggle('show', !es[0].isIntersecting); }).observe(buyTarget);
+  }
+
   // ---- dialogs: other lists + the spreadsheet ----
   var openDialog = null;
   function openD(d) {
@@ -152,6 +158,7 @@
           destroyEmbedded();
           embedded = c;
           openD(payDlg);
+          var pb = payDlg.querySelector('.paybody'); if (pb) pb.scrollTop = 0;
           c.mount('#checkout');
           done();
         });

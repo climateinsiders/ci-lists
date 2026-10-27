@@ -111,7 +111,7 @@ export function shell({ title, description, body, canonical, ogTitle, ogImage, e
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${esc(canonical)}">
@@ -286,6 +286,7 @@ function preview(list) {
   return `<dialog class="preview" id="p-${esc(list.slug)}" aria-label="${esc(list.name)}">
   <div class="pvhead"><span class="script">${esc(list.short_name)}</span><h2>${esc(list.name)}</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
   <section class="offer" ${toneAttr(list)}>${offerBlock(list)}</section>
+  <div class="pvfoot pvbuy"><span><b>${usd(list.price_cents)}</b> one time · yours forever</span><button class="btn" data-buy="${esc(list.slug)}">Get the list</button></div>
 </dialog>`;
 }
 
@@ -356,6 +357,7 @@ export function page(lists, featured) {
 </header>
 
 <section class="offer main" id="offer" ${toneAttr(f)}>${offerBlock(f, { sheet: true })}</section>
+<div class="stickybuy" id="stickybuy"><span class="sp"><b>${usd(f.price_cents)}</b><small>one time · yours forever</small></span><button class="btn" data-buy="${esc(f.slug)}">Get the list</button></div>
 
 <section class="chips"><span class="lbl">+ ${others.length} more lists</span><span class="row">${others.slice(0, 6).map(chip).join('')}</span></section>
 ${proofStrip()}
