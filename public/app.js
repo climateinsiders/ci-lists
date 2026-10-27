@@ -62,6 +62,13 @@
     setTimeout(function () { open(featured.content, false); }, 250);
   }
 
+  // ---- rotating testimonials ----
+  var rq = document.querySelectorAll('.rq');
+  if (rq.length > 1) {
+    var qi = 0;
+    setInterval(function () { rq[qi].classList.remove('on'); qi = (qi + 1) % rq.length; rq[qi].classList.add('on'); }, 5500);
+  }
+
   // ---- checkout ----
   document.addEventListener('click', function (ev) {
     var b = ev.target.closest('[data-buy]');

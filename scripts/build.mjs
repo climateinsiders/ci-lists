@@ -26,7 +26,7 @@ async function loadLists() {
   for (const l of lists) {
     const [stats] = await sb(`rpc/paid_list_stats?slug=${l.slug}`).catch(() => [null]);
     l.stats = stats || (await computeStats(l.slug));
-    l.sample = await sb(`paid_list_entries?slug=eq.${l.slug}&is_sample=eq.true&order=sort_order.asc&select=name,title,firm,country,region,city,email,website,extra`);
+    l.sample = await sb(`paid_list_entries?slug=eq.${l.slug}&is_sample=eq.true&order=sort_order.asc&select=name,title,firm,country,region,city,email,website,extra,photo_url,logo_url`);
   }
   return lists;
 }
