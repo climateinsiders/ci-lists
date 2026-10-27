@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import { env, readRaw, json, insertRow, updateRows, selectRows } from './_lib.js';
 import { deliverPurchase } from './_deliver.js';
+import { notifySale } from './_slack.js';
 
 export const config = { api: { bodyParser: false } };
 
@@ -73,6 +74,20 @@ export default async function handler(req, res) {
     // Only the newest purchase per email runs the sequence, so nobody gets two copies.
     await updateRows('list_purchases', `email=ilike.${encodeURIComponent(email)}&id=neq.${row.id}`, { followup_step: 99 });
     await updateRows('list_purchases', `id=eq.${row.id}`, { delivered_at: now, delivery_error: null, followup_step: 1, last_email_at: now });
+    // Real-time sale ping to Slack. Runs once per purchase (a retried webhook returns above).
+    await notifySale({
+      rowId: row.id,
+      sessionId: s.id,
+      paymentIntent: s.payment_intent,
+      amountCents: s.amount_total,
+      email,
+      firstName,
+      slugs,
+      bundle,
+      upgrade,
+      upsell: s.metadata?.upsell === '1',
+      attribution: { utm_source: s.metadata?.utm_source, utm_campaign: s.metadata?.utm_campaign, country: s.customer_details?.address?.country },
+    });
     return json(res, 200, { ok: true });
   } catch (err) {
     console.error(err);

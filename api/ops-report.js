@@ -13,6 +13,13 @@ export default async function handler(req, res) {
     const [tok] = await selectRows('ops_tokens', `token=eq.${key}&purpose=eq.sales_report&select=token`);
     if (!tok) return json(res, 403, { error: 'no' });
     res.setHeader('Cache-Control', 'no-store');
+    // ?slack_test=1 sends one test message to the real-time sale channel (checks SLACK_WEBHOOK_URL).
+    if (url.searchParams.get('slack_test') === '1') {
+      const hook = process.env.SLACK_WEBHOOK_URL;
+      if (!hook) return json(res, 200, { slack: 'SLACK_WEBHOOK_URL not set' });
+      const r = await fetch(hook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: ':white_check_mark: Sale alerts are connected. Every investor-list sale will post here the moment Stripe confirms it.' }) });
+      return json(res, 200, { slack: r.ok ? 'sent' : `failed ${r.status}` });
+    }
 
     const rows = await selectRows(
       'list_purchases',
