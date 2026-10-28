@@ -309,8 +309,7 @@ export function xlsxFilename(list) {
 }
 
 // entries: rows from getEntries (already ordered: most complete first)
-// sample: { total, priceLabel, url } turns it into the free "top 10" sheet that points at the full list.
-export function toXlsx(entries, list, { name, date = new Date(), sample = null } = {}) {
+export function toXlsx(entries, list, { name, date = new Date() } = {}) {
   const st = new Styles();
   const isFunds = entries.some((e) => e.extra && (e.extra.stage || e.extra.sector));
   const listTab = String(list.short_name || list.name || 'List').replace(/[\\/?*[\]:]/g, '').slice(0, 28);
@@ -368,13 +367,13 @@ export function toXlsx(entries, list, { name, date = new Date(), sample = null }
   const countries = new Set(entries.map((e) => clean(e.country)).filter(Boolean)).size;
 
   sh.row(1, 40);
-  sh.set(0, 1, sample ? `Free sample: top ${entries.length} of ${list.name}` : `${list.name}`, bandTitle);
+  sh.set(0, 1, `${list.name}`, bandTitle);
   sh.fillRow(1, 1, lastCol, bandTitle);
   sh.merge(0, 1, lastCol, 1);
   const subBits = [
     'Climate Insiders Investor Lists',
     name ? `prepared for ${name}, ${fmtDate(date)}` : fmtDate(date),
-    sample ? `${entries.length} of ${sample.total} rows` : isFunds ? `${entries.length} funds` : `${entries.length} contacts, ${withEmail} with a direct email`,
+    isFunds ? `${entries.length} funds` : `${entries.length} contacts, ${withEmail} with a direct email`,
     'most complete rows first',
   ];
   sh.row(2, 22);
@@ -519,10 +518,10 @@ export function toXlsx(entries, list, { name, date = new Date(), sample = null }
   cv.row(2, 18);
   cv.set(1, 2, 'CLIMATE INSIDERS INVESTOR LISTS', pg({ font: { size: 9, bold: true, color: C.orangeDeep } }));
   cv.row(3, 44);
-  cv.set(1, 3, sample ? `Free sample: top ${entries.length}` : list.name, pg({ font: { name: DISPLAY, size: 24, bold: true }, v: 'bottom' }));
+  cv.set(1, 3, list.name, pg({ font: { name: DISPLAY, size: 24, bold: true }, v: 'bottom' }));
   cv.merge(1, 3, 4, 3);
   cv.row(4, 20);
-  cv.set(1, 4, sample ? `${list.name}. The full list has ${sample.total} rows.` : clean(list.tagline), pg({ font: { size: 11, color: C.ink2 } }));
+  cv.set(1, 4, clean(list.tagline), pg({ font: { size: 11, color: C.ink2 } }));
   cv.merge(1, 4, 4, 4);
   cv.row(5, 18);
   cv.set(1, 5, name ? `Prepared for ${name} on ${fmtDate(date)}` : `Prepared on ${fmtDate(date)}`, pg({ font: { size: 10, italic: true, color: C.muted } }));
@@ -587,15 +586,8 @@ export function toXlsx(entries, list, { name, date = new Date(), sample = null }
   cv.set(1, 21, `Click the ${sheetName} tab below to start. The Status cell on every row is a dropdown.`, pg({ font: { size: 10, color: C.ink2 } }));
   cv.merge(1, 21, 4, 21);
   cv.row(22, 22);
-  if (sample) {
-    cv.set(1, 22, `Want the other ${Math.max(0, sample.total - entries.length)} rows? Full list, ${sample.priceLabel}, one time:`, pg({ font: { size: 10, bold: true, color: C.ink } }));
-    cv.merge(1, 22, 4, 22);
-    cv.row(23, 18);
-    cv.set(1, 23, sample.url.replace(/^https?:\/\//, ''), pg({ font: { size: 10, color: C.orangeDeep, underline: true } }), { link: sample.url });
-  } else {
-    cv.set(1, 22, 'Found a wrong row? Reply to the email it came with and I fix it.', pg({ font: { size: 10, color: C.ink2 } }));
-    cv.merge(1, 22, 4, 22);
-  }
+  cv.set(1, 22, 'Found a wrong row? Reply to the email it came with and I fix it.', pg({ font: { size: 10, color: C.ink2 } }));
+  cv.merge(1, 22, 4, 22);
   cv.row(24, 24);
   cv.set(1, 24, 'Yoann', pg({ font: { name: 'Segoe Script', size: 16, color: C.orangeDeep } }));
   cv.set(1, 25, 'Climate Insiders', pg({ font: { size: 9, color: C.muted } }));

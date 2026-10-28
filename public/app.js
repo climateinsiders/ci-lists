@@ -51,24 +51,6 @@
     });
   }
 
-  // ---- free top 10 by email: the form under every list's picks ----
-  document.addEventListener('submit', function (ev) {
-    var f = ev.target.closest && ev.target.closest('form[data-sample]');
-    if (!f) return;
-    ev.preventDefault();
-    var input = f.querySelector('input[name=email]'), btn = f.querySelector('button[type=submit]'), msg = f.querySelector('.sfmsg');
-    var email = (input.value || '').trim();
-    f.classList.remove('err');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { f.classList.add('err'); msg.textContent = 'That email does not look right.'; input.focus(); return; }
-    btn.disabled = true; msg.textContent = 'Sending…';
-    post('/api/sample', { email: email, slug: f.getAttribute('data-sample'), website: (f.querySelector('input[name=website]') || {}).value || '', attribution: attribution })
-      .then(function (r) {
-        f.classList.add('done');
-        msg.textContent = r.already ? 'Already on its way. Check your inbox (and spam) for ' + email + '.' : 'Sent to ' + email + '. Check your inbox, and spam just in case.';
-      })
-      .catch(function (e) { btn.disabled = false; f.classList.add('err'); msg.textContent = e.message; });
-  });
-
   // ---- keep the value stack inside its box: only if a list has long text, shrink the bullets a little (spacing never changes) ----
   function fitValue() {
     var v = document.querySelector('.offer.main:not(.after) .valueCol');

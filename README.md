@@ -18,7 +18,6 @@ Zero dependencies. Static pages are generated at build time from Supabase; serve
 api/checkout.js         POST {slug}, {bundle:true} or {upsell:true, session_id} -> Stripe Checkout URL
 api/session.js          GET ?session_id -> lists the buyer does not own yet
 api/stripe-webhook.js   checkout.session.completed -> record + deliver CSVs
-api/sample.js           POST {email, slug} -> top-10 Excel by email, lead recorded (per-IP + per-email throttle; SAMPLE_ENABLED=0 turns it off)
 api/_lib.js             Supabase REST, Resend, Stripe REST, CSV
 api/_deliver.js         Delivery and sample email copy
 scripts/build.mjs       Builds dist/ (home, 10 list pages, thanks, sitemap)

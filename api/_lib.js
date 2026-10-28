@@ -1,6 +1,5 @@
 // Shared helpers for the serverless functions. Zero dependencies: Stripe, Resend and
 // Supabase are all called over plain HTTPS.
-import { pickSample } from './_pick.js';
 
 
 export const BUNDLE_PRICE_CENTS = 69000; // all 10 lists on /all
@@ -60,7 +59,7 @@ export async function getList(slug) {
 }
 
 export async function getEntries(slug, { sampleOnly = false } = {}) {
-  const sel = 'sort_order,name,title,firm,country,region,city,linkedin_url,email,website,extra,is_sample,photo_url,logo_url';
+  const sel = 'sort_order,name,title,firm,country,region,city,linkedin_url,email,website,extra';
   const filter = '';
   const out = [];
   let from = 0;
@@ -82,8 +81,6 @@ export async function getEntries(slug, { sampleOnly = false } = {}) {
     if (rows.length < page) break;
     from += page;
   }
-  // the free sample: the 10 best rows by the shared rule, numbered 1 to 10
-  if (sampleOnly) return pickSample(out).map((e, i) => ({ ...e, sort_order: i + 1 }));
   return out;
 }
 

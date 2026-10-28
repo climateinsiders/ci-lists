@@ -247,15 +247,6 @@ function statRow(list) {
   return `<ul class="stats">${items.map(([v, l]) => `<li><b>${v}</b> ${l}</li>`).join('')}</ul>`;
 }
 
-// One slim line under the top 10: the same ten, as an Excel, for an email. Wired up in app.js.
-function sampleForm(list) {
-  return `<form class="sampleform" data-sample="${esc(list.slug)}" novalidate>
-      <label for="sf-${esc(list.slug)}">Get these 10 as a free Excel, with full emails and LinkedIn</label>
-      <span class="sfrow"><input id="sf-${esc(list.slug)}" type="email" name="email" placeholder="you@company.com" autocomplete="email" inputmode="email" required><input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"><button class="btn small" type="submit">Send me the 10</button></span>
-      <small class="sfmsg" role="status" aria-live="polite"></small>
-    </form>`;
-}
-
 // The offer: top 10 on the left, the value stack and the buy button on the right.
 function offerBlock(list, { sheet = false } = {}) {
   const isFund = list.slug === 'climate-vcs-474';
@@ -263,7 +254,6 @@ function offerBlock(list, { sheet = false } = {}) {
     <div class="head"><h3>Top 10 picks<span class="script">straight from the sheet</span></h3>${sheet ? `<button class="viewall" type="button" data-sheet>View all ${n(list.stats.rows)} <span aria-hidden="true">↗</span></button>` : `<small>${n(list.stats.rows)} in the full list</small>`}</div>
     <ul class="picks">${picks(list)}</ul>
     <p class="more">… and ${n(Math.max(0, list.stats.rows - 10))} more with the full ${isFund ? 'details' : (list.stats.emails || 0) / Math.max(1, list.stats.rows || 1) >= 0.4 ? 'emails and LinkedIn' : 'names, firms and roles'}.</p>
-    ${sampleForm(list)}
   </div>
   <div class="valueCol">
     <div class="buy">
@@ -288,6 +278,7 @@ function preview(list) {
 // After that, surname and firm are replaced by blurred placeholders, so the page can't be scraped
 // into the product. Email and LinkedIn are always placeholders, never the data.
 const OPEN_ROWS = 20;
+const FREE_ROWS = 10; // the first ten rows are free in full: email and LinkedIn included
 const BLUR = {
   email: ['firstname@familyoffice.com', 'name@capitalpartners.eu', 'info.direct@holdings.com', 'first.last@wealth.com'],
   linkedin: ['linkedin.com/in/firstname-lastname', 'linkedin.com/in/name-surname-42'],
@@ -328,12 +319,12 @@ function sheetDialog(list) {
     const nameCell = open ? esc(label) : r.name ? `${esc(first)} ${bl('surname', i)}` : bl('firm', i);
     const avatar = open ? face({ ...r, name: label }, 48) : face({ name: label }, 48);
     const firmCell = r.name ? (open ? esc(r.firm || '') : bl('firm', i)) : '';
-    return `<tr><td class="ix">${i + 1}</td><td class="nm"><span class="av">${avatar}</span>${nameCell}</td><td>${esc(r.title || x.stage || '')}</td><td>${firmCell}</td><td class="ct">${isoFor(r.country) ? flagImg(isoFor(r.country), 'flagc') : ''}${esc(r.country || r.region || '')}</td><td>${bl('email', i)}</td><td>${bl('linkedin', i)}</td></tr>`;
+    return `<tr><td class="ix">${i + 1}</td><td class="nm"><span class="av">${avatar}</span>${nameCell}</td><td>${esc(r.title || x.stage || '')}</td><td>${firmCell}</td><td class="ct">${isoFor(r.country) ? flagImg(isoFor(r.country), 'flagc') : ''}${esc(r.country || r.region || '')}</td><td>${i < FREE_ROWS && r.email ? `<a class="free" href="mailto:${esc(r.email)}">${esc(r.email)}</a>` : bl('email', i)}</td><td>${i < FREE_ROWS && r.linkedin_url ? `<a class="free" href="${esc(r.linkedin_url)}" target="_blank" rel="noopener">View profile</a>` : bl('linkedin', i)}</td></tr>`;
   });
   return `<dialog class="preview sheetdlg" id="sheet" aria-label="All ${n(list.stats.rows)} rows">
-  <div class="pvhead"><span class="script">the full list</span><h2>${n(list.stats.rows)} rows. The first ${OPEN_ROWS} in full, the rest unlock when you buy.</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
+  <div class="pvhead"><span class="script">the full list</span><h2>${n(list.stats.rows)} rows. The first ${FREE_ROWS} are free, in full. The rest unlock when you buy.</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
   <div class="grid-wrap"><table class="sheettbl"><thead><tr><th class="ix">#</th><th>Name</th><th>Title</th><th>Firm</th><th>Country</th><th>Email</th><th>LinkedIn</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>
-  <div class="pvfoot"><span>Full names, firms, direct emails and LinkedIn profiles unlock when you buy.</span><button class="btn" data-buy="${esc(list.slug)}">Unlock all ${n(list.stats.rows)} for ${usd(list.price_cents)}</button></div>
+  <div class="pvfoot"><span>The first ${FREE_ROWS} are yours, emails and LinkedIn included. The other ${n(Math.max(0, list.stats.rows - FREE_ROWS))} unlock when you buy.</span><button class="btn" data-buy="${esc(list.slug)}">Unlock all ${n(list.stats.rows)} for ${usd(list.price_cents)}</button></div>
 </dialog>`;
 }
 

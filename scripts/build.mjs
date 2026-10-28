@@ -31,10 +31,13 @@ async function loadLists() {
   for (const l of lists) {
     const [stats] = await sb(`rpc/paid_list_stats?slug=${l.slug}`).catch(() => [null]);
     l.stats = stats || (await computeStats(l.slug));
-    l.rows = await sb(`paid_list_entries?slug=eq.${l.slug}&order=sort_order.asc&select=name,title,firm,country,region,extra,website,photo_url,logo_url`);
+    l.rows = await sb(`paid_list_entries?slug=eq.${l.slug}&order=sort_order.asc&select=sort_order,name,title,firm,country,region,extra,website,photo_url,logo_url`);
     // the free top 10: same rule as the emailed Excel (api/_pick.js), so page and inbox show the same ten
     const cand = await sb(`paid_list_entries?slug=eq.${l.slug}&order=sort_order.asc&select=sort_order,name,title,firm,country,region,city,email,linkedin_url,website,extra,photo_url,logo_url,is_sample`);
     l.sample = pickSample(cand);
+    // the sheet preview opens with those same ten, in full (email + LinkedIn); the rest follow in list order
+    const free = new Set(l.sample.map((e) => e.sort_order));
+    l.rows = [...l.sample, ...l.rows.filter((r) => !free.has(r.sort_order))];
     const ss = sampleStats(cand);
     console.log(`sample ${l.slug}: ${ss.picked_complete}/${ss.picked} with email + LinkedIn (${ss.complete_rows} complete rows in the list)`);
   }
@@ -48,7 +51,7 @@ function fixtureRows(l) {
   const titles = ['Managing Partner', 'Chief Investment Officer', 'Co-Founder & CEO', 'Head of Investments', 'Principal'];
   const firms = ['Northgate Family Office', 'Alder Capital', 'Meridian Holdings', 'Vantage Wealth', 'Harbour & Co'];
   const countries = ['Germany', 'France', 'Switzerland', 'Sweden', 'Netherlands'];
-  const rows = l.sample.map((e) => ({ name: e.name, title: e.title, firm: e.firm, country: e.country, region: e.region, extra: e.extra, website: e.website, photo_url: e.photo_url, logo_url: e.logo_url }));
+  const rows = l.sample.map((e) => ({ email: e.email, linkedin_url: e.linkedin_url || (e.email ? `https://www.linkedin.com/in/${String(e.name).toLowerCase().replace(/[^a-z]+/g, "-")}` : null), name: e.name, title: e.title, firm: e.firm, country: e.country, region: e.region, extra: e.extra, website: e.website, photo_url: e.photo_url, logo_url: e.logo_url }));
   const stages = ['Seed', 'Series A', 'Seed, Series A', 'Series A, Series B'];
   const sectors = ['Energy', 'Food and agritech', 'Transport and mobility', 'Climate software'];
   for (let i = rows.length; i < l.stats.rows; i++) {
