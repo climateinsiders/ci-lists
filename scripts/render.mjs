@@ -3,7 +3,7 @@ import { ICONS, SMALL_ICONS } from './icons.mjs';
 const SITE = 'https://lists.climateinsiders.com';
 const UPSELL = 390;
 const UPSELL_INVESTORS = 2426; // same as UNIQUE_INVESTORS: every unique investor across the 10 lists
-const BUNDLE = 690; // keep in sync with BUNDLE_PRICE_CENTS in api/_lib.js
+const BUNDLE = 390; // keep in sync with BUNDLE_PRICE_CENTS in api/_lib.js
 const UNIQUE_INVESTORS = 2426; // unique across all lists; keep in sync with api/_lib.js
 const AS = 'https://allstar-ci.vercel.app/p';
 const WF = 'https://cdn.prod.website-files.com/657b1ee1812a034008e87de8';

@@ -258,7 +258,7 @@
           var cur = document.querySelector('.js-price');
           var all = document.createElement('button');
           all.type = 'button'; all.className = 'btn ghost'; all.setAttribute('data-buy', 'all');
-          all.textContent = 'Or all 10 lists · ' + (cur ? cur.textContent : '$690');
+          all.textContent = 'Or all 10 lists · ' + (cur ? cur.textContent : '$390');
           foot.appendChild(all);
         }
         document.body.appendChild(d);
