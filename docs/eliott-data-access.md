@@ -1,6 +1,6 @@
 # Investor data access for list research (Eliott)
 
-Read and edit access to the core investor database, for choosing, enriching and building the next lists. No inserts, no deletes. You can't see VC Boom users, decks, emails, payments or tokens. Only what's below.
+Read, edit and add access to the core investor database, for choosing, enriching and building the next lists. No deletes. You can't see VC Boom users, decks, emails, payments or tokens. Only what's below.
 
 ## Connect
 
@@ -41,7 +41,7 @@ select country, count(*) from investors where type = 'Corporate VC' group by 1 o
 
 ## Enriching (Apollo, LinkedIn, web)
 
-Edit through two views. You can update fields; you cannot insert or delete rows.
+Edit and add through two views. You can update fields and insert new rows; you cannot delete rows.
 
 | View | You can read | You can update |
 |---|---|---|
@@ -57,7 +57,17 @@ set contact_email = 'jane@fund.com', contact_phone = '+44 20 ...', enrichment_so
 where id = '<uuid from investors>';
 ```
 
-Every edit is logged in `edit_log` (who, when, before and after; old emails stay hidden), so anything can be reviewed or rolled back.
+```sql
+-- add a new investor you found
+insert into investor_edits (name, firm, type, country, linkedin_url, contact_email, enrichment_source, enriched_at)
+values ('Jane Doe', 'Doe Family Office', 'Family Office', 'Germany', 'https://www.linkedin.com/in/...', 'jane@doe.com', 'apollo', now());
+
+-- add a row to a live list (it shows up on the site and in buyers' files after the next rebuild, so be sure)
+insert into list_entry_edits (slug, sort_order, name, title, firm, country, linkedin_url, email)
+values ('europe-500', 501, 'Jane Doe', 'Principal', 'Doe Family Office', 'Germany', 'https://www.linkedin.com/in/...', 'jane@doe.com');
+```
+
+Every edit and new row is logged in `edit_log` (who, when, before and after; old emails stay hidden), so anything can be reviewed or rolled back.
 
 ## Proposing a new list
 
