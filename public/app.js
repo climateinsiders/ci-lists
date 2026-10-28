@@ -138,31 +138,98 @@
         if (tally && save) save.textContent = 'You save $' + (Number(tally.getAttribute('data-full')) - Math.round(d.price / 100)) + ' compared to buying each list on its own.';
         if (credit) { credit.hidden = false; credit.textContent = 'What you paid counts toward this. Offer open ' + days + ' more day' + (days > 1 ? 's' : '') + '.'; }
         if (kicker) kicker.textContent = 'your earlier purchase counts toward the bundle';
+        if (typeof fitStack === 'function') setTimeout(fitStack, 0);
       }
     }).catch(function () {});
   }
 
-  // ---- /all: pointing at a card or a row lights up its twin and fans the deck ----
+  // ---- /all: the "stack everything you get" column grows with the window height (never past its box) ----
+  var fitStack = function () {
+    var box = document.querySelector('.offer.allcard');
+    var v = box && box.querySelector('.valueCol'), st = v && v.querySelector('.vstack');
+    if (!st) return;
+    var reset = function () { st.style.zoom = ''; st.style.flex = ''; box.style.removeProperty('--z'); };
+    reset();
+    if (innerWidth < 901) return;
+    var cs = getComputedStyle(v);
+    var avail = v.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    // the column also gets wider as it grows, so the names stay readable; measure again after each step
+    var z = 1;
+    for (var i = 0; i < 3; i++) {
+      st.style.flex = 'none';
+      var natural = st.offsetHeight; // layout height without the zoom, already reflowed at the current width
+      st.style.flex = '';
+      var next = Math.max(1, Math.min(1.28, (avail - 2) / natural));
+      if (Math.abs(next - z) < 0.005) break;
+      z = next;
+      st.style.zoom = z > 1.01 ? z.toFixed(3) : '';
+      box.style.setProperty('--z', z.toFixed(3));
+    }
+    if (z <= 1.01) reset();
+  };
+  if (document.querySelector('.allcard')) {
+    window.addEventListener('resize', fitStack);
+    window.addEventListener('load', fitStack);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitStack);
+    setTimeout(fitStack, 0);
+  }
+
+  // ---- /all: point at a card (or a row) and its top 10 shows under the deck; click opens the full list ----
   var allCard = document.querySelector('.offer.allcard');
   if (allCard) {
     var deck = document.getElementById('deck');
+    var panel = document.getElementById('peekpanel');
+    // the panel keeps the last list you pointed at, so you can move down and click it
+    var showPeek = function (slug) {
+      if (!panel) return;
+      panel.querySelectorAll('.pp').forEach(function (p) { p.classList.toggle('on', p.getAttribute('data-for') === slug); });
+      allCard.querySelectorAll('.dcard').forEach(function (c) { c.classList.toggle('sel', c.getAttribute('data-slug') === slug); });
+    };
     var light = function (slug) {
       allCard.querySelectorAll('[data-slug]').forEach(function (e) { e.classList.toggle('hl', !!slug && e.getAttribute('data-slug') === slug); });
       if (deck) deck.classList.toggle('open', !!slug);
+      if (slug) showPeek(slug);
     };
-    // how the top 10 shows when you point at a card: burst (cards pop out), drawer (side panel), inside (the card turns into the list)
-    var peek = 'burst';
-    try { peek = q.get('peek') || localStorage.getItem('ci_peek') || 'burst'; } catch (e) {}
-    if (['burst', 'drawer', 'inside'].indexOf(peek) < 0) peek = 'burst';
-    var setPeek = function (m) {
-      if (deck) deck.setAttribute('data-peek', m);
-      allCard.querySelectorAll('.peeksw button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-peek') === m); });
-      try { localStorage.setItem('ci_peek', m); } catch (e) {}
-    };
-    setPeek(peek);
-    allCard.addEventListener('click', function (ev) { var b = ev.target.closest('.peeksw button'); if (b) { ev.preventDefault(); ev.stopPropagation(); setPeek(b.getAttribute('data-peek')); } }, true);
+    showPeek('europe-500');
     allCard.addEventListener('mouseover', function (ev) { var t = ev.target.closest('[data-slug]'); if (t) light(t.getAttribute('data-slug')); });
     allCard.addEventListener('mouseout', function (ev) { var t = ev.target.closest('[data-slug]'); if (t && !t.contains(ev.relatedTarget)) light(''); });
+    allCard.addEventListener('focusin', function (ev) { var t = ev.target.closest('[data-slug]'); if (t) showPeek(t.getAttribute('data-slug')); });
+
+    // the full list: the blurred sheet of that list's own page, fetched the first time and kept
+    var openSheet = function (slug) {
+      var id = 'sheet-' + slug, ready = document.getElementById(id);
+      if (ready) { openD(ready); return; }
+      document.body.style.cursor = 'progress';
+      fetch('/' + slug).then(function (r) { if (!r.ok) throw new Error('no page'); return r.text(); }).then(function (html) {
+        var src = new DOMParser().parseFromString(html, 'text/html').getElementById('sheet');
+        if (!src) throw new Error('no sheet');
+        var d = document.importNode(src, true);
+        d.id = id;
+        var foot = d.querySelector('.pvfoot');
+        if (foot) {
+          var cur = document.querySelector('.js-price');
+          var all = document.createElement('button');
+          all.type = 'button'; all.className = 'btn ghost'; all.setAttribute('data-buy', 'all');
+          all.textContent = 'Or all 10 lists · ' + (cur ? cur.textContent : '$390');
+          foot.appendChild(all);
+        }
+        document.body.appendChild(d);
+        openD(d);
+      }).catch(function () { location.href = '/' + slug; }).then(function () { document.body.style.cursor = ''; });
+    };
+    allCard.addEventListener('click', function (ev) {
+      var t = ev.target.closest('[data-open]');
+      var pp = ev.target.closest('.pp');
+      var slug = t ? t.getAttribute('data-open') : pp ? pp.getAttribute('data-for') : '';
+      if (!slug) return;
+      ev.preventDefault(); ev.stopPropagation();
+      openSheet(slug);
+    }, true);
+    allCard.addEventListener('keydown', function (ev) {
+      if (ev.key !== 'Enter' && ev.key !== ' ') return;
+      var pp = ev.target.closest('.pp');
+      if (pp) { ev.preventDefault(); openSheet(pp.getAttribute('data-for')); }
+    });
   }
 
   // ---- checkout: Stripe Embedded Checkout in a dialog, no page change ----
