@@ -39,7 +39,9 @@ export default async function handler(req, res) {
     }
     const items = eventsFromBody(body);
     if (!items.length) return json(res, 200, { received: 0, inserted: 0 });
-    const out = await storeEvents(items, { source: url.searchParams.get('backfill') === '1' ? 'backfill' : 'turnward' });
+        // source=browser: DMs our own outreach sent (event_type dm_sent), logged from the LinkedIn tab.
+    const src = url.searchParams.get('backfill') === '1' ? 'backfill' : url.searchParams.get('source') === 'browser' ? 'browser' : 'turnward';
+    const out = await storeEvents(items, { source: src });
     return json(res, 200, out);
   } catch (err) {
     console.error('turnward webhook', err);

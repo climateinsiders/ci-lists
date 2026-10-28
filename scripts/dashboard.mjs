@@ -79,6 +79,11 @@ export function dashboardPage() {
     </section>
 
     <section class="panel">
+      <h2>Day by day <small>last 14 days, Lisbon time. Comments and DM requests come from Turnward, DMs sent from our outreach log</small></h2>
+      <div class="tscroll"><table id="t-days"></table></div>
+    </section>
+
+    <section class="panel">
       <h2>Week by week <small>ISO weeks, Monday start, Lisbon time</small></h2>
       <div class="tscroll"><table id="t-weeks"></table></div>
     </section>
@@ -320,6 +325,10 @@ const JS = `
     table('#t-weeks', ['Week', 'Posts', 'Impr.', 'Comments', 'DMs', 'Leads', 'Visits', 'Sales', 'Gross', 'Net', 'Conv.', '$ / lead'], d.weeks.map(function (w) {
       var empty = !w.posts && !w.leads && !w.sales;
       return { cls: empty ? 'quiet' : '', cells: ['<b>' + w.label + '</b> <span class="muted">' + fmtDay(w.week) + '</span>', num(w.posts), num(w.impressions || null), num(w.comments), num(w.dms), num(w.leads), num(w.visits), num(w.sales), money(w.gross), money(w.net), pct(w.conversion), money2(w.rev_per_lead)] };
+    }));
+    table('#t-days', ['Day', 'Comments', 'DM requests', 'DMs sent', 'Visits', 'Sales', 'Gross', 'Net', 'Visit to sale'], (d.days || []).map(function (x) {
+      var empty = !x.comments && !x.dm_requests && !x.dms_sent && !x.visits && !x.sales;
+      return { cls: empty ? 'quiet' : '', cells: ['<b>' + fmtDay(x.day) + '</b>', num(x.comments), num(x.dm_requests), num(x.dms_sent), num(x.visits), num(x.sales), money(x.gross), money(x.net), pct(x.visit_conversion)] };
     }));
     renderPosts();
     var u = d.unattributed;
