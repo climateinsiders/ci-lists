@@ -3,6 +3,7 @@ import { mkdir, writeFile, readFile, cp, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { page, allPage, thanksPage, welcomePage, setNav } from './render.mjs';
+import { pickSample, sampleStats } from '../api/_pick.js';
 import { termsPage } from './terms.mjs';
 import { dashboardPage } from './dashboard.mjs';
 
@@ -31,7 +32,11 @@ async function loadLists() {
     const [stats] = await sb(`rpc/paid_list_stats?slug=${l.slug}`).catch(() => [null]);
     l.stats = stats || (await computeStats(l.slug));
     l.rows = await sb(`paid_list_entries?slug=eq.${l.slug}&order=sort_order.asc&select=name,title,firm,country,region,extra,website,photo_url,logo_url`);
-    l.sample = await sb(`paid_list_entries?slug=eq.${l.slug}&is_sample=eq.true&order=sort_order.asc&select=name,title,firm,country,region,city,email,website,extra,photo_url,logo_url`);
+    // the free top 10: same rule as the emailed Excel (api/_pick.js), so page and inbox show the same ten
+    const cand = await sb(`paid_list_entries?slug=eq.${l.slug}&order=sort_order.asc&select=sort_order,name,title,firm,country,region,city,email,linkedin_url,website,extra,photo_url,logo_url,is_sample`);
+    l.sample = pickSample(cand);
+    const ss = sampleStats(cand);
+    console.log(`sample ${l.slug}: ${ss.picked_complete}/${ss.picked} with email + LinkedIn (${ss.complete_rows} complete rows in the list)`);
   }
   return lists;
 }

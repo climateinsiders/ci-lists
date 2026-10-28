@@ -43,7 +43,7 @@ export async function deliverSample({ email, list }) {
   const entries = await getEntries(list.slug, { sampleOnly: true });
   if (!entries.length) throw new Error(`No sample rows for ${list.slug}`);
   // Hard stop: this email must never carry more than the ten sample rows, whatever the database returns.
-  if (entries.length > 10 || entries.some((e) => e.is_sample !== true)) throw new Error(`Refusing to send ${list.slug} sample: ${entries.length} rows, not all flagged is_sample`);
+  if (entries.length > 10) throw new Error(`Refusing to send ${list.slug} sample: ${entries.length} rows`);
   const [st] = await selectRows('paid_list_entries', `slug=eq.${list.slug}&select=count`);
   const total = st?.count || entries.length;
   const url = `${siteUrl()}/${list.slug}`;
