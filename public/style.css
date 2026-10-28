@@ -653,3 +653,18 @@ a.chip { text-decoration: none; cursor: pointer; }
 .dcard.hl, .dcard:hover, .dcard:focus-visible { transition: transform .34s cubic-bezier(.22,.9,.3,1), box-shadow .3s ease, filter .25s ease, z-index 0s linear 0s; }
 .dcard .in::after { transition: transform .6s ease; }
 @media (prefers-reduced-motion: reduce) { .dcard, .dcard.hl { transition: none; } }
+
+/* free top-10 line under the picks */
+.sampleform { margin: 8px 0 0; padding: 8px 10px; background: var(--card); border: 1.5px dashed var(--rule); border-radius: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.sampleform label { font-size: 13px; font-weight: 600; color: var(--ink-2); flex: 1 1 230px; line-height: 1.25; }
+.sampleform .sfrow { display: flex; gap: 6px; flex: 1 1 300px; }
+.sampleform input[type=email] { flex: 1; min-width: 0; font: inherit; font-size: 14px; padding: 8px 12px; border: 1.5px solid var(--ink); border-radius: 999px; background: #fff; color: var(--ink); }
+.sampleform input[type=email]:focus { outline: 2px solid var(--orange); outline-offset: 1px; }
+.sampleform .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.sampleform .btn { white-space: nowrap; }
+.sampleform .sfmsg { flex-basis: 100%; font-size: 12.5px; color: var(--muted); }
+.sampleform .sfmsg:empty { display: none; }
+.sampleform.done { background: #eef8ef; border-style: solid; border-color: #9ccfa6; }
+.sampleform.done label, .sampleform.done .sfrow { display: none; }
+.sampleform.done .sfmsg { color: #14632d; font-size: 14px; font-weight: 600; }
+.sampleform.err .sfmsg { color: #b3261e; }

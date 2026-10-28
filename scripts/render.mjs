@@ -247,6 +247,15 @@ function statRow(list) {
   return `<ul class="stats">${items.map(([v, l]) => `<li><b>${v}</b> ${l}</li>`).join('')}</ul>`;
 }
 
+// One slim line under the top 10: the same ten, as an Excel, for an email. Wired up in app.js.
+function sampleForm(list) {
+  return `<form class="sampleform" data-sample="${esc(list.slug)}" novalidate>
+      <label for="sf-${esc(list.slug)}">Get these 10 as a free Excel, with full emails and LinkedIn</label>
+      <span class="sfrow"><input id="sf-${esc(list.slug)}" type="email" name="email" placeholder="you@company.com" autocomplete="email" inputmode="email" required><input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"><button class="btn small" type="submit">Send me the 10</button></span>
+      <small class="sfmsg" role="status" aria-live="polite"></small>
+    </form>`;
+}
+
 // The offer: top 10 on the left, the value stack and the buy button on the right.
 function offerBlock(list, { sheet = false } = {}) {
   const isFund = list.slug === 'climate-vcs-474';
@@ -254,6 +263,7 @@ function offerBlock(list, { sheet = false } = {}) {
     <div class="head"><h3>Top 10 picks<span class="script">straight from the sheet</span></h3>${sheet ? `<button class="viewall" type="button" data-sheet>View all ${n(list.stats.rows)} <span aria-hidden="true">↗</span></button>` : `<small>${n(list.stats.rows)} in the full list</small>`}</div>
     <ul class="picks">${picks(list)}</ul>
     <p class="more">… and ${n(Math.max(0, list.stats.rows - 10))} more with the full ${isFund ? 'details' : (list.stats.emails || 0) / Math.max(1, list.stats.rows || 1) >= 0.4 ? 'emails and LinkedIn' : 'names, firms and roles'}.</p>
+    ${sampleForm(list)}
   </div>
   <div class="valueCol">
     <div class="buy">

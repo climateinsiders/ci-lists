@@ -1,11 +1,13 @@
+import crypto from 'node:crypto';
 import { getList, readJson, json, insertRow, isEmail, selectRows } from './_lib.js';
 import { deliverSample } from './_deliver.js';
 
 // POST /api/sample  { email, slug, attribution }
-// Emails 10 real rows from the list and records the lead.
+// Emails the top 10 rows of the list as an Excel and records the lead (the nurture email follows a day later).
+// The endpoint emails whatever address it is given, so it is throttled: once per list per email per day,
+// and a per-IP daily cap. Set SAMPLE_ENABLED=0 to switch it off.
 export default async function handler(req, res) {
-  // Disabled: the free sample is no longer offered, and an open endpoint that emails any address can be abused.
-  if (process.env.SAMPLE_ENABLED !== '1') return json(res, 410, { error: 'Gone' });
+  if (process.env.SAMPLE_ENABLED === '0') return json(res, 410, { error: 'Gone' });
   if (req.method !== 'POST') return json(res, 405, { error: 'POST only' });
   try {
     const body = await readJson(req);
@@ -20,15 +22,19 @@ export default async function handler(req, res) {
     const recent = await selectRows('list_sample_requests', `email=eq.${encodeURIComponent(email)}&slug=eq.${list.slug}&created_at=gte.${since}&select=id`);
     if (recent.length) return json(res, 200, { ok: true, already: true });
 
-    await insertRow('list_sample_requests', {
-      email,
-      slug: list.slug,
-      attribution: body.attribution && typeof body.attribution === 'object' ? body.attribution : null,
-    });
-    await deliverSample({ email, list });
+    // Per-IP cap (hashed, never stored raw): 6 requests a day across all lists.
+    const fwd = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || '';
+    const ip = crypto.createHash('sha256').update(`ci-sample:${fwd}`).digest('hex').slice(0, 24);
+    const fromIp = await selectRows('list_sample_requests', `attribution->>ip=eq.${ip}&created_at=gte.${since}&select=id`);
+    if (fromIp.length >= 6) return json(res, 429, { error: 'Too many requests from this network. Try again tomorrow.' });
+
+    const attribution = body.attribution && typeof body.attribution === 'object' ? { ...body.attribution } : {};
+    attribution.ip = ip;
+    await deliverSample({ email, list }); // first, so a failed send never locks the visitor out for a day
+    await insertRow('list_sample_requests', { email, slug: list.slug, attribution });
     return json(res, 200, { ok: true });
   } catch (err) {
     console.error(err);
-    return json(res, 500, { error: 'Could not send the sample. Email yoann@climateinsiders.com.' });
+    return json(res, 500, { error: 'Could not send the sample. Try again in a minute.' });
   }
 }

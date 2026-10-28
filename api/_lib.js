@@ -58,7 +58,7 @@ export async function getList(slug) {
 }
 
 export async function getEntries(slug, { sampleOnly = false } = {}) {
-  const sel = 'sort_order,name,title,firm,country,region,city,linkedin_url,email,website,extra';
+  const sel = 'sort_order,name,title,firm,country,region,city,linkedin_url,email,website,extra,is_sample';
   const filter = sampleOnly ? '&is_sample=eq.true' : '';
   const out = [];
   let from = 0;

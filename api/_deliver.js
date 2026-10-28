@@ -1,4 +1,4 @@
-import { getActiveLists, getEntries, sendEmail, textToHtml, siteUrl, fmtUsd, BUNDLE_PRICE_CENTS } from './_lib.js';
+import { getActiveLists, getEntries, selectRows, sendEmail, textToHtml, siteUrl, fmtUsd, BUNDLE_PRICE_CENTS } from './_lib.js';
 import { toXlsx, xlsxFilename } from './_xlsx.js';
 import { deliveryEmail, sampleNudgeEmail, FOLLOWUP_SEQUENCE } from './_emails.js';
 
@@ -38,34 +38,32 @@ export async function deliverPurchase({ email, slugs, bundle, upgrade, token, am
   return sent.id;
 }
 
+// The free top-10: the same Excel as a paid list (cover, filters, status dropdown), just the ten sample rows.
 export async function deliverSample({ email, list }) {
   const entries = await getEntries(list.slug, { sampleOnly: true });
-  const rows = entries
-    .map((e) => {
-      if (e.extra) {
-        const x = e.extra;
-        return `- ${e.firm}${e.region ? `, ${e.region}` : ''}${x.stage ? `. ${x.stage}` : ''}${e.website ? `\n  ${e.website}` : ''}`;
-      }
-      return `- ${e.name}${e.title ? `, ${e.title}` : ''}, ${e.firm}${e.city || e.country ? ` (${[e.city, e.country].filter(Boolean).join(', ')})` : ''}${e.email ? `\n  ${e.email}` : ''}${e.linkedin_url ? `\n  ${e.linkedin_url}` : ''}`;
-    })
-    .join('\n');
+  if (!entries.length) throw new Error(`No sample rows for ${list.slug}`);
+  // Hard stop: this email must never carry more than the ten sample rows, whatever the database returns.
+  if (entries.length > 10 || entries.some((e) => e.is_sample !== true)) throw new Error(`Refusing to send ${list.slug} sample: ${entries.length} rows, not all flagged is_sample`);
+  const [st] = await selectRows('paid_list_entries', `slug=eq.${list.slug}&select=count`);
+  const total = st?.count || entries.length;
+  const url = `${siteUrl()}/${list.slug}`;
+  const xlsx = toXlsx(entries, list, { sample: { total, priceLabel: fmtUsd(list.price_cents), url } });
+  const filename = xlsxFilename(list).replace(/\.xlsx$/i, '-top-10-sample.xlsx');
 
   const text = `Hi,
 
-10 rows from the ${list.short_name} list, as promised. Real rows, straight from the sheet.
+The top 10 from the ${list.short_name} list is attached, as an Excel. Full names, firms, emails and LinkedIn where we have them. Same format as the full list.
 
-${rows}
+Before you email any of them: read their last 3 deals. If you can't say in one line why they'd care, skip them. 10 good fits beat 500 cold names.
 
-Before you email any of them: read their last 3 deals. If you can't say in one line why they'd care, skip them. 12 good fits beat 500 cold names.
-
-The full list, $${Math.round(list.price_cents / 100)}: ${siteUrl()}/${list.slug}
+The other ${Math.max(0, total - entries.length)} rows, ${fmtUsd(list.price_cents)} one time: ${url}
 All 10 lists, ${fmtUsd(BUNDLE_PRICE_CENTS)}: ${siteUrl()}/all
 
 Yoann
 
 Not raising right now? Reply "stop" and I won't write again.`;
 
-  const sent = await send(email, { subject: `10 rows from ${list.short_name}`, text }, { tag: 'list_sample' });
+  const sent = await send(email, { subject: `Your top 10 from ${list.short_name} (Excel)`, text }, { tag: 'list_sample', attachments: [{ filename, content: xlsx }] });
   return sent.id;
 }
 
