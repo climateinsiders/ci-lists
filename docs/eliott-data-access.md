@@ -1,6 +1,6 @@
 # Investor data access for list research (Eliott)
 
-Read-only access to the core investor database, for choosing and building the next lists. You can't see VC Boom users, decks, emails, payments or tokens. Only what's below.
+Read and edit access to the core investor database, for choosing, enriching and building the next lists. No inserts, no deletes. You can't see VC Boom users, decks, emails, payments or tokens. Only what's below.
 
 ## Connect
 
@@ -38,6 +38,26 @@ select v, count(*) from investors, unnest(verticals) v group by 1 order by 2 des
 -- countries for a type
 select country, count(*) from investors where type = 'Corporate VC' group by 1 order by 2 desc;
 ```
+
+## Enriching (Apollo, LinkedIn, web)
+
+Edit through two views. You can update fields; you cannot insert or delete rows.
+
+| View | You can read | You can update |
+|---|---|---|
+| `investor_edits` | everything except email and phone | names, firm, title, type, verticals, stages, geo, cheques, thesis, deals, location, country, website, LinkedIn, X, `contact_email`, `contact_phone`, `contact_email_status`, fund raised, partner names, `enrichment_source`, `enriched_at` |
+| `list_entry_edits` | the list rows, except email | name, title, firm, country, region, city, LinkedIn, website, `extra`, `email` |
+
+Emails and phones are write-only for you: you can fill them in, not read them back. Use `has_email` in `investors` to find the gaps.
+
+```sql
+-- fill a missing email and phone found in Apollo
+update investor_edits
+set contact_email = 'jane@fund.com', contact_phone = '+44 20 ...', enrichment_source = 'apollo', enriched_at = now()
+where id = '<uuid from investors>';
+```
+
+Every edit is logged in `edit_log` (who, when, before and after; old emails stay hidden), so anything can be reviewed or rolled back.
 
 ## Proposing a new list
 
