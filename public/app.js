@@ -150,6 +150,17 @@
       allCard.querySelectorAll('[data-slug]').forEach(function (e) { e.classList.toggle('hl', !!slug && e.getAttribute('data-slug') === slug); });
       if (deck) deck.classList.toggle('open', !!slug);
     };
+    // how the top 10 shows when you point at a card: burst (cards pop out), drawer (side panel), inside (the card turns into the list)
+    var peek = 'burst';
+    try { peek = q.get('peek') || localStorage.getItem('ci_peek') || 'burst'; } catch (e) {}
+    if (['burst', 'drawer', 'inside'].indexOf(peek) < 0) peek = 'burst';
+    var setPeek = function (m) {
+      if (deck) deck.setAttribute('data-peek', m);
+      allCard.querySelectorAll('.peeksw button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-peek') === m); });
+      try { localStorage.setItem('ci_peek', m); } catch (e) {}
+    };
+    setPeek(peek);
+    allCard.addEventListener('click', function (ev) { var b = ev.target.closest('.peeksw button'); if (b) { ev.preventDefault(); ev.stopPropagation(); setPeek(b.getAttribute('data-peek')); } }, true);
     allCard.addEventListener('mouseover', function (ev) { var t = ev.target.closest('[data-slug]'); if (t) light(t.getAttribute('data-slug')); });
     allCard.addEventListener('mouseout', function (ev) { var t = ev.target.closest('[data-slug]'); if (t && !t.contains(ev.relatedTarget)) light(''); });
   }

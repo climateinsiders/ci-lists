@@ -409,8 +409,21 @@ function rowMeta(list) {
   return ratio >= 0.4 ? `${n(st.rows)} names · ${n(st.emails)} direct emails` : `${n(st.rows)} names · firms and roles`;
 }
 
+// The top 10 of a list, rendered inside its deck card (shown on hover, three styles: burst / drawer / inside).
+function peekRows(list) {
+  const isFund = list.slug === 'climate-vcs-474';
+  return (list.sample || []).slice(0, 10).map((e, k) => {
+    const x = e.extra || {};
+    const iso = isFund ? null : isoFor(e.country);
+    const name = isFund ? e.firm : e.name;
+    const role = isFund ? [e.region, x.stage].filter(Boolean).join(' · ') : [e.title, e.firm].filter(Boolean).join(' · ');
+    const third = !isFund && e.email ? maskEmail(e.email) : isFund ? String(x.sector || '').split(',')[0] : [e.city, e.country].filter(Boolean).join(', ');
+    return `<span class="pi" style="--k:${k};--row:${k % 5};--col:${Math.floor(k / 5)}"><span class="pa">${face(e, 64)}${iso ? flagImg(iso, 'flagb') : ''}</span><span class="pw"><b>${esc(name)}</b><small>${esc(role)}</small><code>${esc(third)}</code></span></span>`;
+  }).join('');
+}
+
 function deckCard(list, i) {
-  return `<button class="dcard" type="button" data-slug="${esc(list.slug)}" data-open="${esc(list.slug)}" style="--i:${i};${toneVars(list)}" aria-label="${esc(list.name)}, ${usd(list.price_cents)} value">
+  return `<button class="dcard" type="button" data-slug="${esc(list.slug)}" data-open="${esc(list.slug)}" data-side="${i <= 6 ? 'r' : 'l'}" style="--i:${i};${toneVars(list)}" aria-label="${esc(list.name)}, ${usd(list.price_cents)} value">
   <span class="in">
     <span class="top">${listFlags(list, 'flags md')}<i class="vl">${usd(list.price_cents)}</i></span>
     <b class="ct">${esc(list.count_label)}</b>
@@ -418,6 +431,7 @@ function deckCard(list, i) {
     <span class="kd">${esc(DECK_KIND[list.slug] || 'family offices')}</span>
     <i class="no">${pad(i + 1)}</i>
   </span>
+  <span class="peek" aria-hidden="true"><span class="pkh">Top 10 · ${esc(DECK_NAME[list.slug] || list.short_name)}<i>click to open</i></span><span class="pl">${peekRows(list)}</span></span>
   <span class="own">yours</span>
 </button>`;
 }
@@ -452,8 +466,8 @@ export function allPage(lists) {
   <div class="picksCol deckCol">
     <div class="dsticky">
       <div class="head"><h3>All ${lists.length} lists<span class="script">one deck</span></h3><small>${n(totalRows)} rows · ${n(UNIQUE_INVESTORS)} unique investors</small></div>
-      <div class="deck" id="deck">${lists.map(deckCard).join('\n')}</div>
-      <p class="more"><span class="hv">Hover the deck. Click a card</span><span class="tp">Tap a card</span> for its top 10.</p>
+      <div class="deck" id="deck" data-peek="burst">${lists.map(deckCard).join('\n')}</div>
+      <p class="more"><span class="mtext"><span class="hv">Hover a card to peek at its top 10. Click to open it.</span><span class="tp">Tap a card for its top 10.</span></span><span class="peeksw" role="group" aria-label="Preview style">peek<button type="button" data-peek="burst">burst</button><button type="button" data-peek="drawer">drawer</button><button type="button" data-peek="inside">inside</button></span></p>
     </div>
   </div>
   <div class="valueCol">

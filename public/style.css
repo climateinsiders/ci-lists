@@ -566,3 +566,92 @@ a.chip { text-decoration: none; cursor: pointer; }
 @media (max-width: 900px) { .allcard .valueCol .buy .btn.big { flex: none; width: 100%; } }
 .allcard .valueCol .bigprice { display: grid; grid-template-columns: auto auto; justify-content: start; align-items: baseline; column-gap: 10px; }
 .allcard .bigprice small { grid-column: 1 / -1; flex-basis: auto; }
+
+/* ======== /all: fills the window, deck centred, top 10 on hover ======== */
+@media (min-width: 901px) {
+  /* no blank band under the footer: the offer takes the spare height */
+  html:has(.allcard) .wrap { min-height: 100vh; display: flex; flex-direction: column; }
+  html:has(.allcard) .offer.allcard { flex: 1 1 auto; }
+  html:has(.allcard) .foot { margin-top: auto; }
+  .allcard .valueCol { justify-content: space-between; }
+  /* the title, the deck and the caption sit together in the middle of the left side */
+  .allcard .deckCol { justify-content: center; }
+  .dsticky { position: relative; top: auto; z-index: 20; }
+  .deck { --ch: clamp(200px, 33vh, 270px); --cw: calc(var(--ch) * 0.69); height: calc(var(--ch) + 118px); }
+  .dcard { top: 50%; bottom: auto; margin-top: calc(var(--ch) / -2); }
+  .dcard .ct { font-size: calc(var(--ch) * 0.245); margin-top: calc(var(--ch) * 0.05); }
+  .dcard .nm { font-size: calc(var(--ch) * 0.06); }
+}
+.allcard .more { display: flex; align-items: center; justify-content: center; gap: 4px 16px; flex-wrap: wrap; }
+@media (min-width: 901px) and (max-height: 740px) { .allcard .more { display: flex; } .allcard .more .mtext { display: none; } }
+.peeksw { display: inline-flex; align-items: center; gap: 4px; font-family: var(--sans); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.peeksw button { font: inherit; border: 1px solid var(--rule); background: #fff; color: var(--ink-2); border-radius: 999px; padding: 2px 9px; cursor: pointer; letter-spacing: .06em; }
+.peeksw button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+/* the card no longer clips, so the top 10 can come out of it; the sheen stays inside */
+.dcard { overflow: visible; }
+.dcard::after { content: none; }
+.dcard .in { overflow: hidden; }
+.dcard .in::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(115deg, transparent 28%, rgba(255,255,255,.62) 46%, rgba(255,214,150,.35) 54%, transparent 70%); transform: translateX(-130%); transition: transform .75s ease; pointer-events: none; }
+.dcard:hover .in::after, .dcard.hl .in::after { transform: translateX(130%); }
+
+/* ---- the top 10 inside each card (built once, shown three ways) ---- */
+.peek { position: absolute; inset: 0; pointer-events: none; z-index: 6; }
+.peek .pkh { display: none; }
+.peek .pl { display: contents; }
+.peek .pi { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 8px; align-items: center; text-align: left; color: var(--ink); background: #fffdf8; border: 1.5px solid var(--ink); border-radius: 11px; padding: 6px 9px; box-shadow: 3px 3px 0 var(--tone-ink, var(--ink)); pointer-events: auto; }
+.peek .pa { position: relative; width: 30px; height: 30px; border-radius: 50%; background: #fff; border: 1px solid var(--rule); display: grid; place-items: center; font-size: 10px; font-weight: 700; }
+.peek .pa > img:not(.flagb) { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.peek .pa > img.logo { width: 62%; height: 62%; border-radius: 0; object-fit: contain; }
+.peek .pa .flagb { right: -5px; bottom: -4px; width: 14px; height: 14px; border-width: 1.5px; }
+.peek .pw { min-width: 0; line-height: 1.15; }
+.peek .pw b { display: block; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.peek .pw small { display: block; font-size: 10.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.peek .pw code { display: block; font: 10.5px ui-monospace, Menlo, monospace; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* 1. burst: ten mini cards pop out of the card, staggered, five rows by two columns */
+.deck[data-peek="burst"] .peek .pi { position: absolute; width: 174px; height: 52px; top: calc(var(--row) * 58px + (var(--ch) - 290px) / 2); opacity: 0; transform: translateX(calc(var(--dir) * -70px)) scale(.55) rotate(calc(var(--dir) * -5deg)); transition: transform .38s cubic-bezier(.2,.9,.3,1.25) calc(var(--k) * 28ms), opacity .2s ease calc(var(--k) * 28ms); }
+.deck[data-peek="burst"] .peek .pw small { display: none; }
+.dcard[data-side="r"] { --dir: 1; }
+.dcard[data-side="l"] { --dir: -1; }
+.deck[data-peek="burst"] .dcard[data-side="r"] .peek .pi { left: calc(100% + 14px + var(--col) * 184px); }
+.deck[data-peek="burst"] .dcard[data-side="l"] .peek .pi { right: calc(100% + 14px + var(--col) * 184px); }
+.deck[data-peek="burst"] .dcard:hover .peek .pi, .deck[data-peek="burst"] .dcard.hl .peek .pi, .deck[data-peek="burst"] .dcard:focus-visible .peek .pi { opacity: 1; transform: none; }
+
+/* 2. drawer: a panel slides out of the side of the card */
+.deck[data-peek="drawer"] .peek { inset: auto; top: -10px; width: 268px; opacity: 0; pointer-events: none; background: #fffdf8; border: 2px solid var(--ink); border-radius: 14px; box-shadow: 4px 4px 0 var(--orange); padding: 8px 10px 8px; transition: transform .35s cubic-bezier(.2,.9,.3,1.2), opacity .2s ease; }
+.deck[data-peek="drawer"] .dcard[data-side="r"] .peek { left: calc(100% - 4px); padding-left: 16px; transform: translateX(-26px) scale(.96); }
+.deck[data-peek="drawer"] .dcard[data-side="l"] .peek { right: calc(100% - 4px); padding-right: 16px; transform: translateX(26px) scale(.96); }
+.deck[data-peek="drawer"] .dcard:hover .peek, .deck[data-peek="drawer"] .dcard.hl .peek { opacity: 1; transform: none; pointer-events: auto; }
+.deck[data-peek="drawer"] .peek .pkh, .deck[data-peek="inside"] .peek .pkh { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-family: var(--serif); font-weight: 900; font-size: 14px; padding: 0 2px 5px; color: var(--ink); }
+.peek .pkh i { font-style: normal; font-family: var(--sans); font-weight: 600; font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.deck[data-peek="drawer"] .peek .pl { display: grid; gap: 2px; }
+.deck[data-peek="drawer"] .peek .pi { grid-template-columns: 22px minmax(0, 1fr); gap: 7px; background: transparent; border: 0; border-bottom: 1px solid var(--rule); border-radius: 0; box-shadow: none; padding: 3px 2px; }
+.deck[data-peek="drawer"] .peek .pa { width: 22px; height: 22px; font-size: 8px; }
+.deck[data-peek="drawer"] .peek .pa .flagb { width: 11px; height: 11px; right: -4px; bottom: -3px; }
+.deck[data-peek="drawer"] .peek .pw b { font-size: 11.5px; }
+.deck[data-peek="drawer"] .peek .pw small { display: none; }
+.deck[data-peek="drawer"] .peek .pw code { font-size: 10px; }
+
+/* 3. inside: the pointed card grows and turns into its own list */
+.deck[data-peek="inside"] .peek { inset: 7px; background: #fffdf8; border-radius: 10px; border: 1.5px solid rgba(31,27,22,.18); padding: 7px 8px; opacity: 0; transition: opacity .22s ease .1s; overflow: hidden; }
+.deck[data-peek="inside"] .dcard:hover, .deck[data-peek="inside"] .dcard.hl { transform: translate(var(--x), calc(var(--y) - 22px)) rotate(0deg) scale(1.28); }
+.deck[data-peek="inside"] .dcard:hover .peek, .deck[data-peek="inside"] .dcard.hl .peek { opacity: 1; pointer-events: auto; }
+.deck[data-peek="inside"] .peek .pkh { font-size: 11.5px; padding-bottom: 3px; }
+.deck[data-peek="inside"] .peek .pl { display: grid; gap: 1px; }
+.deck[data-peek="inside"] .peek .pi { grid-template-columns: 17px minmax(0, 1fr); gap: 6px; background: transparent; border: 0; border-radius: 0; box-shadow: none; padding: 1px 0; }
+.deck[data-peek="inside"] .peek .pa { width: 17px; height: 17px; font-size: 7px; }
+.deck[data-peek="inside"] .peek .pa .flagb { width: 9px; height: 9px; right: -3px; bottom: -2px; border-width: 1px; }
+.deck[data-peek="inside"] .peek .pw b { font-size: 10.5px; }
+.deck[data-peek="inside"] .peek .pw small, .deck[data-peek="inside"] .peek .pw code { display: none; }
+
+/* phones and touch screens: tap opens the list, no hover preview */
+@media (hover: none), (max-width: 900px) { .peek, .peeksw { display: none !important; } }
+.deck[data-peek="inside"] .peek .pkh i { display: none; }
+.deck[data-peek="burst"] .peek .pi { width: 190px; }
+.deck[data-peek="burst"] .dcard[data-side="r"] .peek .pi { left: calc(100% + 14px + var(--col) * 200px); }
+.deck[data-peek="burst"] .dcard[data-side="l"] .peek .pi { right: calc(100% + 14px + var(--col) * 200px); }
+@media (min-width: 901px) {
+  .deck { height: calc(var(--ch) + 100px); }
+  .dcard { top: calc(50% - 8px); }
+}
