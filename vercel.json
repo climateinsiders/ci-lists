@@ -92,5 +92,17 @@
       "path": "/api/ops-report?daily=1",
       "schedule": "0 19 * * *"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/favicon.ico",
+      "destination": "https://cdn.prod.website-files.com/657b1ee1812a034008e87de8/658538a0538bd8c8a8da2e34_fav-sm.jpg",
+      "permanent": false
+    },
+    {
+      "source": "/favicon.svg",
+      "destination": "https://cdn.prod.website-files.com/657b1ee1812a034008e87de8/658538a0538bd8c8a8da2e34_fav-sm.jpg",
+      "permanent": false
+    }
   ]
 }

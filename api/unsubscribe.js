@@ -21,5 +21,5 @@ export default async function handler(req, res) {
   }
   res.statusCode = ok ? 200 : 400;
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.end(`<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><body style="font-family:Georgia,serif;background:#fbf5ea;color:#1f1b16;display:grid;place-items:center;min-height:90vh;margin:0;padding:24px;text-align:center"><div><h1 style="font-size:32px;margin:0 0 8px">${ok ? 'Done. No more emails.' : 'That link did not work.'}</h1><p style="font-size:17px">${ok ? 'Your lists and Airtable links keep working.' : 'Reply "stop" to any of my emails and I will take you off by hand.'}</p></div></body>`);
+  res.end(`<!doctype html><link rel="icon" href="https://cdn.prod.website-files.com/657b1ee1812a034008e87de8/658538a0538bd8c8a8da2e34_fav-sm.jpg" type="image/jpeg"><meta name="viewport" content="width=device-width,initial-scale=1"><body style="font-family:Georgia,serif;background:#fbf5ea;color:#1f1b16;display:grid;place-items:center;min-height:90vh;margin:0;padding:24px;text-align:center"><div><h1 style="font-size:32px;margin:0 0 8px">${ok ? 'Done. No more emails.' : 'That link did not work.'}</h1><p style="font-size:17px">${ok ? 'Your lists and Airtable links keep working.' : 'Reply "stop" to any of my emails and I will take you off by hand.'}</p></div></body>`);
 }
