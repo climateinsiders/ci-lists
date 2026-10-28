@@ -66,9 +66,9 @@ export function newToken() {
   return randomBytes(32).toString('hex');
 }
 
-// ---------- session cookie (HMAC signed, 14 days) ----------
+// ---------- session cookie (HMAC signed, 90 days, renewed on use) ----------
 export const COOKIE = 'ci_dash';
-const SESSION_MS = 14 * 86400000;
+export const SESSION_MS = 90 * 86400000;
 const b64u = (buf) => Buffer.from(buf).toString('base64url');
 
 function sessionKey() {
@@ -115,7 +115,7 @@ export async function requireUser(req) {
   if (!s) return null;
   const [u] = await db(`dashboard_users?email=eq.${encodeURIComponent(s.e)}&select=email,password_set_at`);
   if (!u || !u.password_set_at || Date.parse(u.password_set_at) !== s.v) return null;
-  return { email: u.email };
+  return { email: u.email, pv: s.v, x: s.x };
 }
 
 // ---------- request helpers ----------

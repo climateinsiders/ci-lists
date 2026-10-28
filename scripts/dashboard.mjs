@@ -39,6 +39,7 @@ export function dashboardPage() {
       <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
       <p class="err" role="alert"></p>
       <button class="btn" type="submit">Log in</button>
+      <p class="small">You stay logged in on this device for 90 days.</p>
       <p class="small"><a href="#" data-go="reset">First time or forgot your password? Get a reset link.</a></p>
     </form>
   </main>
@@ -58,7 +59,8 @@ export function dashboardPage() {
   <main id="view-setpw" class="view" hidden>
     <form class="authbox" id="f-setpw" novalidate>
       <h2>Set your password</h2>
-      <p class="muted">At least 10 characters.</p>
+      <p class="muted">At least 10 characters. Let your browser save it: you stay logged in on this device for 90 days.</p>
+      <label>Email<input type="email" name="email" autocomplete="username" readonly></label>
       <label>New password<input type="password" name="password" autocomplete="new-password" minlength="10" required></label>
       <label>Same again<input type="password" name="confirm" autocomplete="new-password" minlength="10" required></label>
       <p class="err" role="alert"></p>
@@ -446,7 +448,10 @@ const JS = `
 
   // ---------- start ----------
   var m = location.hash.match(/reset=([a-f0-9]{64})/);
-  if (m) { resetToken = m[1]; history.replaceState(null, '', location.pathname); show('setpw'); }
+  if (m) {
+    resetToken = m[1]; history.replaceState(null, '', location.pathname); show('setpw');
+    api('reset-email&token=' + resetToken).then(function (j) { if (j.email) $('#f-setpw').email.value = j.email; });
+  }
   else load();
 })();
 `;

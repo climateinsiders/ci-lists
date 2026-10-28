@@ -1,6 +1,6 @@
 import { json, readJson, sendEmail, textToHtml, siteUrl, isEmail } from './_lib.js';
 import {
-  db, dbAll, hashPassword, verifyPassword, sha256, newToken, sessionCookie, clearCookie, requireUser,
+  db, dbAll, hashPassword, verifyPassword, sha256, newToken, sessionCookie, clearCookie, requireUser, SESSION_MS,
   clientIp, sameOrigin, recentAttempts, logAttempt, storeEvents, eventsFromBody,
 } from './_dash.js';
 import { buildDashboard } from './_dash-metrics.js';
@@ -23,7 +23,16 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
       if (op === 'me') {
         const u = await requireUser(req);
+        if (u) renew(res, u);
         return u ? json(res, 200, { email: u.email }) : json(res, 401, { error: 'login' });
+      }
+      // The set-password page shows which account the link is for, so the browser saves the password under it.
+      if (op === 'reset-email') {
+        const token = String(url.searchParams.get('token') || '');
+        if (!/^[a-f0-9]{64}$/.test(token)) return json(res, 400, { error: 'bad link' });
+        const [u] = await db(`dashboard_users?reset_token_hash=eq.${sha256(token)}&select=email,reset_expires_at`);
+        if (!u || !u.reset_expires_at || Date.parse(u.reset_expires_at) < Date.now()) return json(res, 400, { error: 'expired' });
+        return json(res, 200, { email: u.email });
       }
       if (op === 'data') return data(req, res);
       return json(res, 404, { error: 'unknown op' });
@@ -176,9 +185,15 @@ async function savePost(res, body) {
   return json(res, 200, { post: out[0] });
 }
 
+// Sliding session: any visit after the first day re-issues the 90-day cookie, so a regular user never has to log in again.
+function renew(res, u) {
+  if (u.x - Date.now() < SESSION_MS - 86400000) res.setHeader('Set-Cookie', sessionCookie(u.email, u.pv));
+}
+
 async function data(req, res) {
   const user = await requireUser(req);
   if (!user) return json(res, 401, { error: 'login' });
+  renew(res, user);
   const [purchases, posts, events, lists, tok] = await Promise.all([
     dbAll('list_purchases?amount_cents=gt.0&select=created_at,first_name,slugs,bundle,amount_cents,currency,fee_cents,net_cents,fee_estimated,attribution&order=created_at.asc'),
     db('posts?select=*&order=posted_at.desc.nullslast,id.desc'),
