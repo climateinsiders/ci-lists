@@ -1,7 +1,7 @@
 import { getActiveLists, stripe, readJson, json, siteUrl, upgradeQuote, BUNDLE_PRICE_CENTS, UPSELL_PRICE_CENTS, UNIQUE_INVESTORS } from './_lib.js';
 
 // POST /api/checkout
-//   { slug: "europe-500" }               one list, $90
+//   { slug: "europe-500" }               one list, $130
 //   { bundle: true }                     all 10 lists, $690
 //   { bundle: true, upgrade: "<token>" } all 10, minus what this buyer already paid (within the credit window)
 //   { upsell: true, session_id }         grand slam offer shown on /thanks (all lists the buyer lacks)

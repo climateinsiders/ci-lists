@@ -337,7 +337,7 @@ function sheetDialog(list) {
 </dialog>`;
 }
 
-// One page, one offer: the featured list ($90). The other lists are chips that open the same offer in a dialog.
+// One page, one offer: the featured list ($130). The other lists are chips that open the same offer in a dialog.
 export function page(lists, featured) {
   const f = lists.find((l) => l.slug === featured) || lists[0];
   const others = lists.filter((l) => l !== f);

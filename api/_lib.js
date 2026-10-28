@@ -4,10 +4,10 @@ import { pickSample } from './_pick.js';
 
 
 export const BUNDLE_PRICE_CENTS = 69000; // all 10 lists on /all
-export const LIST_PRICE_CENTS = 9000;
+export const LIST_PRICE_CENTS = 13000; // live price comes from paid_lists.price_cents
 export const UPSELL_PRICE_CENTS = 39000; // grand slam offer on /thanks for 24h: every list the buyer doesn't own yet
 export const MIN_UPGRADE_CENTS = 5000;
-export const UPGRADE_DAYS = 10; // the "$90 counts" credit window
+export const UPGRADE_DAYS = 10; // the "your single-list payment counts" credit window
 // Unique across all 10 lists (Europe 500 overlaps the regional lists). Update if the data changes.
 export const UNIQUE_INVESTORS = 2426;
 export const UNIQUE_EMAILS = 1363;

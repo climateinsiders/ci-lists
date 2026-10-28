@@ -1,7 +1,7 @@
 import { json, upgradeQuote } from './_lib.js';
 
 // GET /api/upgrade-quote?t=<token>  ->  { price, owned, active, bundleOwned, expiresAt }
-// Used by /all to show "your $90 counts" pricing to people who already bought a list.
+// Used by /all to show "your list payment counts" pricing to people who already bought a list.
 export default async function handler(req, res) {
   try {
     const t = new URL(req.url, 'http://x').searchParams.get('t');

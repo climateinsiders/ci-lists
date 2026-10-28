@@ -1,6 +1,6 @@
 # Climate Insiders Investor Lists
 
-lists.climateinsiders.com. Ten investor lists, $90 each, then a $250 add-on for every list the buyer does not own yet, delivered by email as CSV (plus an Airtable view when one is set).
+lists.climateinsiders.com. Ten investor lists, $130 each, then a $250 add-on for every list the buyer does not own yet, delivered by email as CSV (plus an Airtable view when one is set).
 
 Zero dependencies. Static pages are generated at build time from Supabase; serverless functions handle checkout (including the upsell), the Stripe webhook, the post-purchase session lookup and the free sample (no longer linked from the page).
 
@@ -8,7 +8,7 @@ Zero dependencies. Static pages are generated at build time from Supabase; serve
 
 1. LinkedIn post advertises one list with a keyword (for example `EU500`).
 2. Comment keyword -> reply with `https://lists.climateinsiders.com/europe-500?utm_source=linkedin&utm_campaign=eu500`.
-3. The page is one offer: that list's value bullets, $90 buy button and top 10 masked rows. The other nine lists are a single quiet line of chips, not clickable.
+3. The page is one offer: that list's value bullets, $130 buy button and top 10 masked rows. The other nine lists are a single quiet line of chips, not clickable.
 4. Stripe Checkout -> webhook -> CSV emailed from yoann@climateinsiders.com -> row in `list_purchases`.
 5. `/thanks?session_id=...` offers every list the buyer lacks for $250 (`POST /api/checkout {upsell:true, session_id}`). The delivery email links back to the same page.
 
