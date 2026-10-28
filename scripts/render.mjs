@@ -176,29 +176,6 @@ function toneAttr(list) {
   return `style="--tone:${bg};--tone-ink:${ink}"`;
 }
 
-// The card is a small version of the LinkedIn poster. When `image_url` is set, that poster is shown instead.
-export function card(list, i, { featured = false, open = false } = {}) {
-  const faces = (list.sample || []).slice(0, 3).map((e) => `<span class="face">${face(e, 64)}</span>`).join('');
-  const [first, ...rest] = list.card_name.split(' ');
-  const art = list.image_url
-    ? `<img class="poster" src="${esc(https(list.image_url))}" alt="${esc(list.name)}">`
-    : `<span class="poster-html">
-        <span class="eyebrow"><b>${esc(list.short_name)}</b></span>
-        <span class="count">${esc(list.count_label)}</span>
-        <span class="headline"><span class="hl">${esc(first)}</span> ${esc(rest.join(' '))}</span>
-        <span class="art">${ICONS[list.icon] || ICONS.globe}</span>
-        <span class="faces">${faces}</span>
-      </span>`;
-  return `<button class="card${featured ? ' featured' : open ? ' open' : ' locked'}" type="button" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog" aria-label="${esc(list.name)}">
-  <span class="tape"></span>
-  <span class="num">${pad(i + 1)}</span>
-  ${featured || open ? '' : `<span class="lock" title="Buy to unlock">${SMALL_ICONS.lock}</span>`}
-  <span class="owned">yours</span>
-  ${art}
-  <span class="cta">${featured || open ? `<span class="price">${usd(list.price_cents)}</span><span class="btn">See the top 10</span>` : `<span class="peek">See the top 10 →</span>`}</span>
-</button>`;
-}
-
 function picks(list) {
   const isFund = list.slug === 'climate-vcs-474';
   return (list.sample || [])
@@ -268,16 +245,6 @@ function statRow(list) {
     st.countries ? [n(st.countries), 'countries'] : null,
   ].filter(Boolean);
   return `<ul class="stats">${items.map(([v, l]) => `<li><b>${v}</b> ${l}</li>`).join('')}</ul>`;
-}
-
-function bundleBar(lists) {
-  const full = lists.reduce((a, l) => a + l.price_cents / 100, 0);
-  const total = lists.reduce((a, l) => a + (l.stats.rows || 0), 0);
-  return `<div class="bundle" id="all">
-  <span class="tag">best value</span>
-  <span class="txt"><b id="bundle-price">All ${lists.length} lists, $${BUNDLE}</b> <s>$${full}</s><small id="bundle-sub">${n(UNIQUE_INVESTORS)} investors, hand-checked and up to date. Every region, the LPs and the climate funds.</small></span>
-  <button class="btn" data-buy="all">Get all ${lists.length}</button>
-</div>`;
 }
 
 // The offer: top 10 on the left, the value stack and the buy button on the right.
@@ -423,46 +390,91 @@ function slamCard() {
 </div>`;
 }
 
-// /all keeps the original card + side-by-side preview dialog (styled by all.css).
-function legacyPreview(list, i) {
-  const isFund = list.slug === 'climate-vcs-474';
-  return `<dialog class="preview" id="p-${esc(list.slug)}" data-slug="${esc(list.slug)}" aria-labelledby="t-${esc(list.slug)}">
-<div class="sheet" ${toneAttr(list)}>
-  <button class="close" type="button" data-close aria-label="Close">×</button>
-  <div class="left">
-    <span class="script">${esc(list.short_name)}</span>
-    <h2 id="t-${esc(list.slug)}">${esc(list.name)}</h2>
-    ${valuePoints(list)}
-    <div class="bigprice">${usd(list.price_cents)}<small>one time · yours forever</small></div>
-    <button class="btn big" data-buy="${esc(list.slug)}">Buy this list</button>
-    <p class="fine">Stripe checkout. Card, Apple Pay, Google Pay. Receipt and invoice by email. Or all 10 for $${BUNDLE}: <a href="#" data-buy="all">get the bundle</a>.</p>
-  </div>
-  <div class="right">
-    <div class="head"><h3>Top 10 picks<span class="script">straight from the sheet</span></h3><small>${n(list.stats.rows)} in the full list</small></div>
-    <ul class="picks">${picks(list)}</ul>
-    <p class="more">… and ${n(Math.max(0, list.stats.rows - 10))} more with the full ${isFund ? 'details' : 'emails and LinkedIn'}.</p>
-    ${quote(i)}
-  </div>
-</div>
-</dialog>`;
+// ---------- /all: the whole offer as a value ladder ----------
+// Left: ten cards stacked like a deck (hover to fan them out). Right: price, then every list with its value, then the total.
+const UNIQUE_EMAILS = 1363; // keep in sync with api/_lib.js
+const DECK_NAME = { 'europe-500': 'Europe', 'usa-500': 'United States', 'uk-200': 'United Kingdom', 'dach-150': 'DACH', 'nordics-150': 'Nordics', 'france-benelux-150': 'France + Benelux', 'apac-200': 'Asia-Pacific', 'latam-canada-150': 'Canada + LatAm', 'lps-366': 'LPs and allocators', 'climate-vcs-474': 'Climate VCs' };
+const DECK_KIND = { 'lps-366': 'LPs, funds of funds', 'climate-vcs-474': 'climate VC funds' };
+const ALL_FLAGS = ['eu', 'us', 'gb', 'de', 'se', 'fr', 'sg', 'ca'];
+
+const toneVars = (list) => { const [bg, ink] = TONES[list.slug] || ['#e8dcc6', '#1f1b16']; return `--tone:${bg};--tone-ink:${ink}`; };
+const listFlags = (list, cls) => {
+  const f = LIST_FLAGS[list.slug];
+  return f ? flagStack(f.slice(0, 3), cls) : `<span class="${cls}" aria-hidden="true"><span class="fl iconfl">${ICONS[list.icon] || ICONS.globe}</span></span>`;
+};
+function rowMeta(list) {
+  const st = list.stats || {};
+  if (list.slug === 'climate-vcs-474') return `${n(st.rows)} funds · stage, ticket, sector`;
+  const ratio = (st.emails || 0) / Math.max(1, st.rows || 1);
+  return ratio >= 0.4 ? `${n(st.rows)} names · ${n(st.emails)} direct emails` : `${n(st.rows)} names · firms and roles`;
 }
 
-// /all: every list as a card, the bundle up top. Upsell emails land here (?u=<token> turns on upgrade pricing).
+function deckCard(list, i) {
+  return `<button class="dcard" type="button" data-slug="${esc(list.slug)}" data-open="${esc(list.slug)}" style="--i:${i};${toneVars(list)}" aria-label="${esc(list.name)}, ${usd(list.price_cents)} value">
+  <span class="in">
+    <span class="top">${listFlags(list, 'flags md')}<i class="vl">${usd(list.price_cents)}</i></span>
+    <b class="ct">${esc(list.count_label)}</b>
+    <span class="nm">${esc(DECK_NAME[list.slug] || list.short_name)}</span>
+    <span class="kd">${esc(DECK_KIND[list.slug] || 'family offices')}</span>
+    <i class="no">${pad(i + 1)}</i>
+  </span>
+  <span class="own">yours</span>
+</button>`;
+}
+
+function ladderRow(list, maxRows) {
+  const pct = Math.max(6, Math.round(((list.stats.rows || 0) / maxRows) * 100));
+  return `<li><button class="lrow" type="button" data-slug="${esc(list.slug)}" data-open="${esc(list.slug)}" style="${toneVars(list)};--w:${pct}%">
+  ${listFlags(list, 'flags sm')}
+  <span class="lt"><b>${esc(list.count_label)} ${esc(list.card_name)}</b><small>${esc(rowMeta(list))}</small></span>
+  <em>${usd(list.price_cents)}</em>
+  <span class="bar" aria-hidden="true"></span>
+</button></li>`;
+}
+
+// /all: the bundle. Upsell emails land here (?u=<token> turns on upgrade pricing, see public/app.js).
 export function allPage(lists) {
+  const full = lists.reduce((a, l) => a + l.price_cents / 100, 0);
+  const totalRows = lists.reduce((a, l) => a + (l.stats.rows || 0), 0);
+  const maxRows = Math.max(...lists.map((l) => l.stats.rows || 0));
+  const perList = Math.round(BUNDLE / lists.length);
   const body = `
-<header class="topbar">${brand()}</header>
-<section class="hero">
-  <div>
-    <span class="script" id="all-kicker">all ten, side by side</span>
-    <h1>Every <span class="hl">investor list</span>.</h1>
+<header class="hero" style="--tone:#ffe3cc;--tone-ink:#c2410c">
+  <div class="title">
+    ${brand()}
+    <div class="kick"><span class="script" id="all-kicker">all ten lists. one payment.</span></div>
+    <div class="h1row">${flagStack(ALL_FLAGS, 'flags lg')}<h1>Every <span class="hl">investor list</span>.</h1></div>
+    <ul class="stats"><li><b>${lists.length}</b> lists</li><li><b>${n(UNIQUE_INVESTORS)}</b> unique investors</li><li><b>${n(UNIQUE_EMAILS)}</b> direct emails</li></ul>
   </div>
-  ${bundleBar(lists)}
+</header>
+
+<section class="offer main allcard" id="offer">
+  <div class="picksCol deckCol">
+    <div class="dsticky">
+      <div class="head"><h3>All ${lists.length} lists<span class="script">one deck</span></h3><small>${n(totalRows)} rows</small></div>
+      <div class="deck" id="deck">${lists.map(deckCard).join('\n')}</div>
+      <p class="more"><span class="hv">Hover the deck. Click a card</span><span class="tp">Tap a card</span> for its top 10.</p>
+    </div>
+  </div>
+  <div class="valueCol">
+    <div class="buy">
+      <div class="bigprice"><s class="was">$${full}</s><span class="js-price">$${BUNDLE}</span><small>one payment · yours forever</small></div>
+      <button class="btn big" data-buy="all">Get all ${lists.length}</button>
+    </div>
+    <p class="fine">Stripe checkout. Card, Apple Pay, Google Pay. Airtable + Excel by email in 2 minutes, receipt and invoice included.</p>
+    <p class="credit" id="all-credit" hidden></p>
+    <span class="script">stack everything you get</span>
+    <ul class="ladder">${lists.map((l) => ladderRow(l, maxRows)).join('')}</ul>
+    <div class="tally" data-full="${full}">
+      <div class="tl"><span>Total value</span><b>$${full}</b></div>
+      <div class="tl pay"><span>You pay today</span><b class="js-price">$${BUNDLE}</b></div>
+      <p class="save" id="all-save">You save $${full - BUNDLE}. That is $${perList} a list instead of $${Math.round(full / lists.length)}.</p>
+    </div>
+  </div>
 </section>
-<section class="grid all" id="lists">
-${lists.map((l, i) => card(l, i, { open: true })).join('\n')}
-</section>
+<div class="stickybuy" id="stickybuy"><span class="sp"><b class="js-price">$${BUNDLE}</b><small>all ${lists.length} lists · one payment</small></span><button class="btn" data-buy="all">Get all ${lists.length}</button></div>
 ${proofStrip()}
-${lists.map((l, i) => legacyPreview(l, i)).join('\n')}`;
+${lists.map(preview).join('\n')}`;
   return shell({
     title: 'All 10 investor lists · Climate Insiders',
     description: `${n(UNIQUE_INVESTORS)} investors across 10 lists: family offices in every region, LPs and climate VC funds. $${BUNDLE} for all ten.`,
@@ -470,7 +482,7 @@ ${lists.map((l, i) => legacyPreview(l, i)).join('\n')}`;
     ogImage: `${SITE}/og/all.png`,
     jsonld: { '@context': 'https://schema.org', '@type': 'Product', name: 'All 10 Climate Insiders investor lists', description: `${n(UNIQUE_INVESTORS)} investors across 10 hand-checked lists.`, image: `${SITE}/og/all.png`, url: `${SITE}/all`, sku: 'all', brand: { '@type': 'Brand', name: 'Climate Insiders' }, offers: { '@type': 'Offer', price: String(BUNDLE) + '.00', priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: `${SITE}/all` } },
     body,
-    extraHead: '<meta name="x-page" content="all"><link rel="stylesheet" href="/all.css">',
+    extraHead: '<meta name="x-page" content="all">',
   });
 }
 

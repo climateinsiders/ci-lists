@@ -94,7 +94,7 @@
   document.addEventListener('cancel', function (ev) { if (ev.target.tagName === 'DIALOG') { ev.preventDefault(); closeD(); } }, true);
 
   // ---- main offer follows the cursor: soft tilt ----
-  var main = document.querySelector('.offer.main');
+  var main = document.querySelector('.offer.main:not(.allcard)');
   if (main && window.matchMedia('(hover: hover) and (min-width: 901px)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     main.addEventListener('mousemove', function (e) {
       var r = main.getBoundingClientRect();
@@ -122,23 +122,36 @@
     fetch('/api/upgrade-quote?t=' + upgrade).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
       if (!d) return;
       (d.owned || []).forEach(function (slug) {
-        var c = document.querySelector('.card[data-open="' + slug + '"]');
-        if (c) c.classList.add('is-owned');
+        document.querySelectorAll('[data-slug="' + slug + '"]').forEach(function (e) { e.classList.add('is-owned'); });
       });
-      var price = document.getElementById('bundle-price');
-      var sub = document.getElementById('bundle-sub');
       var kicker = document.getElementById('all-kicker');
+      var credit = document.getElementById('all-credit');
       if (d.bundleOwned) {
         if (kicker) kicker.textContent = 'you have all ten. nice.';
         return;
       }
-      if (d.active && price) {
+      if (d.active) {
         var days = Math.max(1, Math.ceil((new Date(d.expiresAt) - Date.now()) / 86400000));
-        price.textContent = 'All 10 lists, $' + Math.round(d.price / 100);
-        if (sub) sub.textContent = 'What you paid counts. Offer open ' + days + ' more day' + (days > 1 ? 's' : '') + '.';
+        var price = '$' + Math.round(d.price / 100);
+        document.querySelectorAll('.js-price').forEach(function (e) { e.textContent = price; });
+        var tally = document.querySelector('.tally'), save = document.getElementById('all-save');
+        if (tally && save) save.textContent = 'You save $' + (Number(tally.getAttribute('data-full')) - Math.round(d.price / 100)) + ' compared to buying each list on its own.';
+        if (credit) { credit.hidden = false; credit.textContent = 'What you paid counts toward this. Offer open ' + days + ' more day' + (days > 1 ? 's' : '') + '.'; }
         if (kicker) kicker.textContent = 'your earlier purchase counts toward the bundle';
       }
     }).catch(function () {});
+  }
+
+  // ---- /all: pointing at a card or a row lights up its twin and fans the deck ----
+  var allCard = document.querySelector('.offer.allcard');
+  if (allCard) {
+    var deck = document.getElementById('deck');
+    var light = function (slug) {
+      allCard.querySelectorAll('[data-slug]').forEach(function (e) { e.classList.toggle('hl', !!slug && e.getAttribute('data-slug') === slug); });
+      if (deck) deck.classList.toggle('open', !!slug);
+    };
+    allCard.addEventListener('mouseover', function (ev) { var t = ev.target.closest('[data-slug]'); if (t) light(t.getAttribute('data-slug')); });
+    allCard.addEventListener('mouseout', function (ev) { var t = ev.target.closest('[data-slug]'); if (t && !t.contains(ev.relatedTarget)) light(''); });
   }
 
   // ---- checkout: Stripe Embedded Checkout in a dialog, no page change ----
