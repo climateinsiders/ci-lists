@@ -2,7 +2,7 @@ import { getActiveLists, stripe, readJson, json, siteUrl, upgradeQuote, BUNDLE_P
 
 // POST /api/checkout
 //   { slug: "europe-500" }               one list, $90
-//   { bundle: true }                     all 10 lists, $390
+//   { bundle: true }                     all 10 lists, $690
 //   { bundle: true, upgrade: "<token>" } all 10, minus what this buyer already paid (within the credit window)
 //   { upsell: true, session_id }         grand slam offer shown on /thanks (all lists the buyer lacks)
 // Payments go to the VC Boom Stripe account (STRIPE_SECRET_KEY).

@@ -1,7 +1,7 @@
 // Shared helpers for the serverless functions. Zero dependencies: Stripe, Resend and
 // Supabase are all called over plain HTTPS.
 
-export const BUNDLE_PRICE_CENTS = 39000; // all 10 lists on /all
+export const BUNDLE_PRICE_CENTS = 69000; // all 10 lists on /all
 export const LIST_PRICE_CENTS = 9000;
 export const UPSELL_PRICE_CENTS = 39000; // grand slam offer on /thanks for 24h: every list the buyer doesn't own yet
 export const MIN_UPGRADE_CENTS = 5000;
