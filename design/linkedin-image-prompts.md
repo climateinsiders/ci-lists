@@ -162,4 +162,4 @@ CTA keyword: CLIMATE.
 
 ## The bundle image (optional 11th)
 
-Headline: "ALL 10 INVESTOR" / "LISTS. ONE SHEET EACH.". Subline: "2,830 rows across family offices, LPs and climate funds. Pay once, keep forever." Map: world map, dots on every city above. Stats: "2,830 ROWS", "1,670 EMAILS", "10 LISTS", "$390 INSTEAD OF $900". CTA keyword: ALL10.
+Headline: "ALL 10 INVESTOR" / "LISTS. ONE SHEET EACH.". Subline: "2,830 rows across family offices, LPs and climate funds. Pay once, keep forever." Map: world map, dots on every city above. Stats: "2,830 ROWS", "1,670 EMAILS", "10 LISTS", "$690 INSTEAD OF $900". CTA keyword: ALL10.

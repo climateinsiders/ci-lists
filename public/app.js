@@ -195,6 +195,36 @@
     allCard.addEventListener('mouseout', function (ev) { var t = ev.target.closest('[data-slug]'); if (t && !t.contains(ev.relatedTarget)) light(''); });
     allCard.addEventListener('focusin', function (ev) { var t = ev.target.closest('[data-slug]'); if (t) showPeek(t.getAttribute('data-slug')); });
 
+    // Fluid scrubbing: on a mouse device the cards stop catching the pointer. The card under the pointer is worked out
+    // from its horizontal position over the fan, so lifting a card can never knock the hover off it (no flicker).
+    var cards = deck ? [].slice.call(deck.querySelectorAll('.dcard')) : [];
+    var scrub = !!deck && cards.length > 0 && window.matchMedia('(hover: hover) and (min-width: 901px)').matches;
+    var rawIndex = function (x) {
+      var r = deck.getBoundingClientRect(), cw = cards[0].offsetWidth;
+      var sp = Math.min(56, (r.width - cw - 40) / 9);            // same spread as the CSS fan
+      return (x - (r.left + r.width / 2 - 4.5 * sp - cw / 2)) / sp; // 0..9, the left edge of card i sits at i
+    };
+    var active = -1;
+    var pickAt = function (x) {
+      var t = rawIndex(x);
+      // a little hysteresis at the edge of a strip, so the pointer never "chatters" between two cards
+      if (active >= 0 && t > active - 0.12 && t < (active === 9 ? 99 : active + 1.12)) return active;
+      return t >= 9 ? 9 : Math.max(0, Math.min(8, Math.floor(t)));
+    };
+    if (scrub) {
+      deck.classList.add('scrub');
+      var inside = false;
+      deck.addEventListener('mouseenter', function () { inside = true; deck.classList.add('open'); });
+      deck.addEventListener('mousemove', function (ev) {
+        if (!inside) { inside = true; deck.classList.add('open'); }
+        var i = pickAt(ev.clientX);
+        if (i === active) return;                 // nothing to do until the pointer crosses into another card
+        active = i;
+        light(cards[i].getAttribute('data-slug'));
+      });
+      deck.addEventListener('mouseleave', function () { inside = false; active = -1; light(''); });
+    }
+
     // the full list: the blurred sheet of that list's own page, fetched the first time and kept
     var openSheet = function (slug) {
       var id = 'sheet-' + slug, ready = document.getElementById(id);
@@ -210,7 +240,7 @@
           var cur = document.querySelector('.js-price');
           var all = document.createElement('button');
           all.type = 'button'; all.className = 'btn ghost'; all.setAttribute('data-buy', 'all');
-          all.textContent = 'Or all 10 lists · ' + (cur ? cur.textContent : '$390');
+          all.textContent = 'Or all 10 lists · ' + (cur ? cur.textContent : '$690');
           foot.appendChild(all);
         }
         document.body.appendChild(d);
@@ -221,6 +251,7 @@
       var t = ev.target.closest('[data-open]');
       var pp = ev.target.closest('.pp');
       var slug = t ? t.getAttribute('data-open') : pp ? pp.getAttribute('data-for') : '';
+      if (!slug && scrub && deck.contains(ev.target)) slug = cards[pickAt(ev.clientX)].getAttribute('data-slug');
       if (!slug) return;
       ev.preventDefault(); ev.stopPropagation();
       openSheet(slug);

@@ -1,4 +1,4 @@
-import { getActiveLists, getEntries, sendEmail, textToHtml, siteUrl } from './_lib.js';
+import { getActiveLists, getEntries, sendEmail, textToHtml, siteUrl, fmtUsd, BUNDLE_PRICE_CENTS } from './_lib.js';
 import { toXlsx, xlsxFilename } from './_xlsx.js';
 import { deliveryEmail, sampleNudgeEmail, FOLLOWUP_SEQUENCE } from './_emails.js';
 
@@ -59,7 +59,7 @@ ${rows}
 Before you email any of them: read their last 3 deals. If you can't say in one line why they'd care, skip them. 12 good fits beat 500 cold names.
 
 The full list, $${Math.round(list.price_cents / 100)}: ${siteUrl()}/${list.slug}
-All 10 lists, $390: ${siteUrl()}/all
+All 10 lists, ${fmtUsd(BUNDLE_PRICE_CENTS)}: ${siteUrl()}/all
 
 Yoann
 

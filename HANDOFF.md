@@ -4,7 +4,7 @@ Status Oct 27, 2026, 15:50 Lisbon. Paused here. Read this first, then README.md.
 
 ## What this is
 
-lists.climateinsiders.com. 10 investor lists at $90 each, or all 10 for $390. LinkedIn post, people comment a keyword, we reply with the list's link, the page opens on that list's card, they buy via Stripe, the CSV arrives by email.
+lists.climateinsiders.com. 10 investor lists at $90 each, or all 10 for $690. LinkedIn post, people comment a keyword, we reply with the list's link, the page opens on that list's card, they buy via Stripe, the CSV arrives by email.
 
 Brand is Climate Insiders, not VC Boom. Design copies climateinsiders.com/all-star-yoann: cream paper, Fraunces 900, Caveat orange script, orange pill buttons.
 
