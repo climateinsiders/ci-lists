@@ -190,7 +190,8 @@ function toDate(v) {
 const TYPE_KEYS = ['event_type', 'eventType', 'type', 'event', 'kind', 'source', 'channel', 'trigger', 'trigger_type', 'action'];
 
 function typeOf(flat) {
-  const test = (s) => (/comment/.test(s) ? 'comment' : /\bdms?\b|direct|message|inbox|conversation/.test(s) ? 'dm' : null);
+  // dm_sent = a DM we sent with the list link (logged by our own outreach), not an inbound lead.
+  const test = (s) => (/dm_sent|outbound|link_sent/.test(s) ? 'dm_sent' : /comment/.test(s) ? 'comment' : /\bdms?\b|direct|message|inbox|conversation/.test(s) ? 'dm' : null);
   const explicit = Object.entries(flat)
     .filter(([k]) => TYPE_KEYS.map(norm).includes(norm(k).split('.').pop()))
     .map(([, v]) => String(v).toLowerCase())

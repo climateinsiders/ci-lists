@@ -95,7 +95,9 @@ export function buildDashboard({ purchases = [], posts = [], events = [], lists 
   };
   const postForRef = (ref) => (ref ? P.find((p) => p.url && (p.url.includes(ref) || ref.includes(p.url))) || null : null);
 
-  const E = events.map((e) => ({ ...e, t: new Date(e.occurred_at).getTime(), who: personKey(e) }));
+  // Outbound DMs we sent (dm_sent) are tracked separately: they are not leads.
+  const SENT = events.filter((e) => e.event_type === 'dm_sent').map((e) => ({ ...e, t: new Date(e.occurred_at).getTime() }));
+  const E = events.filter((e) => e.event_type !== 'dm_sent').map((e) => ({ ...e, t: new Date(e.occurred_at).getTime(), who: personKey(e) }));
   for (const e of E) {
     e.post = (e.keyword && (postFor(e.keyword, e.t) || postForList(e.keyword, e.t))) || postForRef(e.post_ref);
     if (e.post) e.post.events.push(e);
@@ -144,6 +146,7 @@ export function buildDashboard({ purchases = [], posts = [], events = [], lists 
     last_week: { gross: sum(sl, 'amount_cents'), net: sum(sl, 'net'), sales: sl.length },
     comments: E.filter((e) => e.event_type === 'comment').length,
     dms: E.filter((e) => e.event_type === 'dm').length,
+    dms_sent: SENT.length,
     events: E.length,
     leads,
     visits: sum(V, 'n'),
@@ -177,6 +180,25 @@ export function buildDashboard({ purchases = [], posts = [], events = [], lists 
     });
   }
   weeks.reverse();
+
+  // ---- day by day, last 14 days (Lisbon days): the daily CVR view ----
+  const today = lisbonDay(now);
+  const days = [];
+  for (let i = 0; i < 14; i++) {
+    const day = addDays(today, -i);
+    const ds = sales.filter((s) => lisbonDay(s.t) === day);
+    const de = E.filter((e) => lisbonDay(e.t) === day);
+    const dv = sum(V.filter((v) => v.day === day), 'n');
+    days.push({
+      day,
+      comments: de.filter((e) => e.event_type === 'comment').length,
+      dm_requests: de.filter((e) => e.event_type === 'dm').length,
+      dms_sent: SENT.filter((e) => lisbonDay(e.t) === day).length,
+      visits: dv,
+      sales: ds.length, gross: sum(ds, 'amount_cents'), net: sum(ds, 'net'),
+      visit_conversion: ratio(ds.length, dv),
+    });
+  }
 
   // ---- per post ----
   const postRows = P.map((p) => {
@@ -239,7 +261,7 @@ export function buildDashboard({ purchases = [], posts = [], events = [], lists 
     post: s.post ? s.post.title : null,
   }));
 
-  return { generated_at: now.toISOString(), totals, weeks, posts: postRows, best_post_id: best ? best.id : null, unattributed, lists: lists_, sources, recent, takeaways: takeaways({ postRows, lists_, totals, unattributed }) };
+  return { generated_at: now.toISOString(), totals, weeks, days, posts: postRows, best_post_id: best ? best.id : null, unattributed, lists: lists_, sources, recent, takeaways: takeaways({ postRows, lists_, totals, unattributed }) };
 }
 
 const usd = (c) => (Math.abs(c || 0) < 1000 ? `$${((c || 0) / 100).toFixed(2)}` : `$${Math.round((c || 0) / 100).toLocaleString('en-US')}`);

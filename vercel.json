@@ -87,6 +87,10 @@
     {
       "path": "/api/cron-emails",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/ops-report?daily=1",
+      "schedule": "0 19 * * *"
     }
   ]
 }
