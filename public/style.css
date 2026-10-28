@@ -450,31 +450,43 @@ a.chip { text-decoration: none; cursor: pointer; }
 .dcard.is-owned { filter: saturate(.45); opacity: .8; }
 .dcard.is-owned .own { display: inline-block; }
 
-/* right column */
-.allcard .valueCol .bigprice { display: flex; flex-direction: column; }
-.allcard .bigprice .was { font-family: var(--sans); font-weight: 600; font-size: 15px; color: var(--muted); text-decoration: line-through; line-height: 1; margin-bottom: 2px; }
-.allcard .bigprice small { margin-top: 3px; }
-.allcard .credit { margin: 0; padding: 8px 10px; font-size: 12.5px; font-weight: 600; color: #1b7a4a; background: #d8efe0; border-radius: 10px; line-height: 1.3; }
-.ladder { list-style: none; margin: 2px 0 0; padding: 0; display: grid; gap: 7px; }
-.lrow { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; width: 100%; padding: 8px 11px 11px; text-align: left; color: var(--ink); background: #fff; border: 1.5px solid var(--ink); border-radius: 13px; box-shadow: 2px 2px 0 var(--ink); cursor: pointer; transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
-.lrow .flags { --fs: 24px; }
-.lrow .lt b { display: block; font-family: var(--serif); font-weight: 900; font-size: 15px; line-height: 1.12; }
-.lrow .lt small { display: block; font-size: 11.5px; color: var(--ink-2); margin-top: 1px; }
-.lrow em { font-style: normal; font-weight: 700; font-size: 13px; color: #1b7a4a; background: #d8efe0; border-radius: 999px; padding: 3px 10px; }
-.lrow .bar { position: absolute; left: 11px; right: 11px; bottom: 4px; height: 3px; border-radius: 2px; background: rgba(31,27,22,.08); overflow: hidden; }
+/* right column: compact so the whole page fits one screen */
+.allcard .valueCol { gap: 6px; padding: 14px 20px 14px; }
+.allcard .valueCol .bigprice { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 10px; font-size: 46px; }
+.allcard .valueCol .bigprice .js-price { order: 1; font-family: var(--serif); font-weight: 900; font-size: 46px; line-height: 1; }
+.allcard .bigprice .was { order: 2; font-family: var(--sans); font-weight: 600; font-size: 16px; color: var(--muted); text-decoration: line-through; line-height: 1; }
+.allcard .bigprice small { order: 3; flex-basis: 100%; margin-top: 3px; }
+.allcard .valueCol .script { font-size: 24px; margin-top: 2px; }
+.allcard .credit { margin: 0; padding: 6px 10px; font-size: 12px; font-weight: 600; color: #1b7a4a; background: #d8efe0; border-radius: 10px; line-height: 1.3; }
+.ladder { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.lrow { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 7px; width: 100%; padding: 6px 9px 10px; text-align: left; color: var(--ink); background: #fff; border: 1.5px solid var(--ink); border-radius: 11px; box-shadow: 2px 2px 0 var(--ink); cursor: pointer; transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+.lrow .flags { --fs: 20px; }
+.lrow .lt { min-width: 0; }
+.lrow .lt b { display: block; font-family: var(--serif); font-weight: 900; font-size: 15px; line-height: 1; }
+.lrow .lt small { display: block; font-size: 11px; line-height: 1.2; color: var(--ink-2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lrow em { font-style: normal; font-weight: 700; font-size: 12px; color: #1b7a4a; background: #d8efe0; border-radius: 999px; padding: 2px 7px; }
+.lrow .bar { position: absolute; left: 9px; right: 9px; bottom: 3px; height: 3px; border-radius: 2px; background: rgba(31,27,22,.08); overflow: hidden; }
 .lrow .bar::after { content: ''; display: block; height: 100%; width: var(--w); background: var(--tone-ink); border-radius: 2px; }
-.lrow:hover, .lrow.hl, .lrow:focus-visible { border-color: var(--orange); transform: translateX(4px); box-shadow: 3px 3px 0 var(--orange); outline: none; }
+.lrow:hover, .lrow.hl, .lrow:focus-visible { border-color: var(--orange); transform: translateY(-2px); box-shadow: 3px 3px 0 var(--orange); outline: none; }
 .lrow.is-owned { opacity: .6; }
 .lrow.is-owned em { background: var(--paper-3); color: var(--ink-2); font-size: 0; }
-.lrow.is-owned em::after { content: 'yours'; font-size: 12px; }
-.tally { margin-top: 4px; padding-top: 10px; border-top: 2px dashed var(--ink); display: grid; gap: 3px; }
-.tl { display: flex; justify-content: space-between; align-items: baseline; }
-.tl span { font-size: 13.5px; color: var(--ink-2); font-weight: 500; }
-.tl b { font-family: var(--serif); font-weight: 900; font-size: 22px; }
-.tl:first-child b { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 2px; }
-.tl.pay span { font-weight: 700; color: var(--ink); }
-.tl.pay b { font-size: 38px; color: var(--orange-deep); line-height: 1; }
-.save { margin: 2px 0 0; font-size: 13px; font-weight: 700; color: #1b7a4a; }
+.lrow.is-owned em::after { content: 'yours'; font-size: 11px; }
+.tally { margin-top: 2px; padding-top: 8px; border-top: 2px dashed var(--ink); display: grid; grid-template-columns: auto 1fr; gap: 0 16px; align-items: end; }
+.tl span { display: block; font-size: 12px; color: var(--ink-2); font-weight: 600; }
+.tl b { font-family: var(--serif); font-weight: 900; font-size: 20px; line-height: 1.1; }
+.tl.was b { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 2px; }
+.tl.pay { text-align: right; }
+.tl.pay span { color: var(--ink); font-weight: 700; }
+.tl.pay b { font-size: 34px; color: var(--orange-deep); line-height: 1; }
+.save { grid-column: 1 / -1; margin: 4px 0 0; font-size: 12.5px; font-weight: 700; color: #1b7a4a; }
+
+/* one screen on a computer: the deck and the spacing follow the window height */
+@media (min-width: 901px) {
+  .offer.allcard.main { margin-top: 14px; }
+  .deck { height: clamp(330px, 50vh, 470px); }
+  html:has(.allcard) .proof { margin-top: 12px; padding: 8px 0 6px; }
+  html:has(.allcard) .hero { padding-top: 6px; }
+}
 
 /* phones and touch screens cannot hover: the deck stays fanned, smaller */
 @media (hover: none), (max-width: 900px) {
@@ -493,9 +505,64 @@ a.chip { text-decoration: none; cursor: pointer; }
 @media (max-width: 900px) { .offer.allcard { grid-template-columns: minmax(0, 1fr); } .tl.pay b { font-size: 34px; } }
 @media (prefers-reduced-motion: reduce) { .dcard, .dcard::after { transition: none; } }
 @media (max-width: 900px) {
-  .lrow { padding: 7px 9px 10px; gap: 8px; }
-  .lrow .flags { --fs: 20px; }
-  .lrow .lt b { font-size: 13.5px; }
-  .lrow .lt small { font-size: 11px; }
-  .lrow em { padding: 2px 8px; font-size: 12px; }
+  .ladder { grid-template-columns: 1fr; }
+  .lrow { padding: 8px 10px 11px; gap: 10px; }
+  .lrow .lt b { display: inline; margin-right: 6px; font-size: 15px; }
+  .lrow .lt small { display: inline; font-size: 12px; }
 }
+
+/* ======== /all on one screen (desktop) ======== */
+.listnav.compact { flex-wrap: nowrap; align-items: baseline; gap: 4px 16px; padding: 8px 0 6px; margin-top: 10px; font-size: 12px; overflow: hidden; white-space: nowrap; }
+.listnav.compact .lbl { width: auto; flex: none; }
+@media (min-width: 901px) {
+  .offer.allcard { grid-template-columns: minmax(0, 1fr) 460px; }
+  .deck { height: clamp(300px, 44vh, 440px); }
+  .allcard .deckCol { padding: 14px 22px 10px; }
+  .allcard .picksCol .head { margin-bottom: 4px; }
+  .allcard .valueCol { padding: 12px 20px 12px; gap: 5px; }
+  .allcard .valueCol .fine { font-size: 12px; line-height: 1.25; }
+  .allcard .valueCol .script { font-size: 22px; margin-top: 0; line-height: 1; }
+  .ladder { gap: 5px; }
+  .lrow { padding: 5px 9px 9px; }
+  .tally { padding-top: 6px; }
+  .tl b { font-size: 18px; }
+  .tl.pay b { font-size: 30px; }
+  .save { margin-top: 2px; font-size: 12px; }
+  html:has(.allcard) .hero { padding-top: 4px; }
+  html:has(.allcard) .hero .brand { margin-bottom: 2px; }
+  html:has(.allcard) .hero h1 { font-size: clamp(28px, 3vw, 42px); }
+  html:has(.allcard) .proof { margin-top: 10px; padding: 6px 0 4px; gap: 28px; }
+  html:has(.allcard) .proof .left { gap: 4px; }
+  html:has(.allcard) .proof .stat .faces img { width: 26px; height: 26px; }
+  html:has(.allcard) .rq blockquote { font-size: 14.5px; }
+}
+
+/* shorter laptop screens: single-line ladder rows, tighter hero and footer */
+@media (min-width: 901px) and (max-height: 790px) {
+  .lrow { padding: 4px 8px 8px; gap: 6px; }
+  .lrow .flags { --fs: 18px; }
+  .lrow .flags .fl:nth-child(n+3) { display: none; }
+  .lrow .lt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lrow .lt b { display: inline; margin-right: 5px; font-size: 13.5px; }
+  .lrow .lt small { display: inline; font-size: 11.5px; margin: 0; }
+  .lrow .bar { bottom: 2px; }
+  .tl.pay b { font-size: 28px; }
+  .allcard .bigprice .js-price { font-size: 40px; }
+  .allcard .valueCol .bigprice { font-size: 40px; }
+  html:has(.allcard) .hero h1 { font-size: clamp(26px, 2.8vw, 38px); }
+  html:has(.allcard) .hero .brand img { width: 32px; height: 32px; }
+  .listnav.compact { padding: 4px 0 2px; margin-top: 6px; }
+  .foot { padding: 4px 0 6px; }
+}
+@media (min-width: 901px) and (max-height: 740px) {
+  html:has(.allcard) .hero .kick { display: none; }
+  html:has(.allcard) .proof .rotator { display: none; }
+  .deck { height: 280px; }
+  .allcard .more { display: none; }
+}
+.allcard .valueCol .buy { gap: 14px; }
+.allcard .valueCol .buy .bigprice { flex: 0 0 auto; }
+.allcard .valueCol .buy .btn.big { flex: 1 1 160px; min-width: 150px; padding: 14px 20px; }
+@media (max-width: 900px) { .allcard .valueCol .buy .btn.big { flex: none; width: 100%; } }
+.allcard .valueCol .bigprice { display: grid; grid-template-columns: auto auto; justify-content: start; align-items: baseline; column-gap: 10px; }
+.allcard .bigprice small { grid-column: 1 / -1; flex-basis: auto; }

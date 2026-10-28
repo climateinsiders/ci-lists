@@ -109,7 +109,7 @@ function maskEmail(e) {
 
 const GA_ID = 'G-REVK9GPTEP';
 
-export function shell({ title, description, body, canonical, ogTitle, ogImage, jsonld, extraHead = '' }) {
+export function shell({ title, description, body, canonical, ogTitle, ogImage, jsonld, extraHead = '', compactNav = false }) {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -142,7 +142,7 @@ ${extraHead}
 <body>
 <div class="wrap">
 ${body}
-${footer()}
+${footer(compactNav)}
 </div>
 <dialog class="preview paydlg" id="pay" aria-label="Secure checkout">
   <div class="pvhead"><span class="script">secure checkout</span><h2>Pay with Stripe</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
@@ -161,9 +161,9 @@ function brand() {
 let NAV = [];
 export function setNav(lists) { NAV = lists.map((l) => ({ slug: l.slug, name: l.name })); }
 
-function footer() {
+function footer(compact = false) {
   const nav = NAV.length
-    ? `<nav class="listnav" aria-label="All investor lists"><span class="lbl">All investor lists</span>${NAV.map((l) => `<a href="/${esc(l.slug)}">${esc(l.name)}</a>`).join('')}<a href="/all">All 10 lists together</a></nav>`
+    ? `<nav class="listnav${compact ? ' compact' : ''}" aria-label="All investor lists"><span class="lbl">All investor lists</span>${NAV.map((l) => `<a href="/${esc(l.slug)}" title="${esc(l.name)}">${esc(compact ? DECK_NAME[l.slug] || l.name : l.name)}</a>`).join('')}${compact ? '' : '<a href="/all">All 10 lists together</a>'}</nav>`
     : '';
   return `${nav}<footer class="foot">
   <span>© Climate Insiders</span>
@@ -424,9 +424,10 @@ function deckCard(list, i) {
 
 function ladderRow(list, maxRows) {
   const pct = Math.max(6, Math.round(((list.stats.rows || 0) / maxRows) * 100));
-  return `<li><button class="lrow" type="button" data-slug="${esc(list.slug)}" data-open="${esc(list.slug)}" style="${toneVars(list)};--w:${pct}%">
+  const name = DECK_NAME[list.slug] || list.short_name;
+  return `<li><button class="lrow" type="button" data-slug="${esc(list.slug)}" data-open="${esc(list.slug)}" style="${toneVars(list)};--w:${pct}%" title="${esc(list.count_label + ' ' + list.card_name + ' · ' + rowMeta(list))}">
   ${listFlags(list, 'flags sm')}
-  <span class="lt"><b>${esc(list.count_label)} ${esc(list.card_name)}</b><small>${esc(rowMeta(list))}</small></span>
+  <span class="lt"><b>${esc(list.count_label)}</b><small>${esc(name)}</small></span>
   <em>${usd(list.price_cents)}</em>
   <span class="bar" aria-hidden="true"></span>
 </button></li>`;
@@ -444,14 +445,13 @@ export function allPage(lists) {
     ${brand()}
     <div class="kick"><span class="script" id="all-kicker">all ten lists. one payment.</span></div>
     <div class="h1row">${flagStack(ALL_FLAGS, 'flags lg')}<h1>Every <span class="hl">investor list</span>.</h1></div>
-    <ul class="stats"><li><b>${lists.length}</b> lists</li><li><b>${n(UNIQUE_INVESTORS)}</b> unique investors</li><li><b>${n(UNIQUE_EMAILS)}</b> direct emails</li></ul>
   </div>
 </header>
 
 <section class="offer main allcard" id="offer">
   <div class="picksCol deckCol">
     <div class="dsticky">
-      <div class="head"><h3>All ${lists.length} lists<span class="script">one deck</span></h3><small>${n(totalRows)} rows</small></div>
+      <div class="head"><h3>All ${lists.length} lists<span class="script">one deck</span></h3><small>${n(totalRows)} rows · ${n(UNIQUE_INVESTORS)} unique investors</small></div>
       <div class="deck" id="deck">${lists.map(deckCard).join('\n')}</div>
       <p class="more"><span class="hv">Hover the deck. Click a card</span><span class="tp">Tap a card</span> for its top 10.</p>
     </div>
@@ -461,12 +461,12 @@ export function allPage(lists) {
       <div class="bigprice"><s class="was">$${full}</s><span class="js-price">$${BUNDLE}</span><small>one payment · yours forever</small></div>
       <button class="btn big" data-buy="all">Get all ${lists.length}</button>
     </div>
-    <p class="fine">Stripe checkout. Card, Apple Pay, Google Pay. Airtable + Excel by email in 2 minutes, receipt and invoice included.</p>
+    <p class="fine">Card, Apple Pay, Google Pay · Airtable + Excel in 2 minutes</p>
     <p class="credit" id="all-credit" hidden></p>
     <span class="script">stack everything you get</span>
     <ul class="ladder">${lists.map((l) => ladderRow(l, maxRows)).join('')}</ul>
     <div class="tally" data-full="${full}">
-      <div class="tl"><span>Total value</span><b>$${full}</b></div>
+      <div class="tl was"><span>Total value</span><b>$${full}</b></div>
       <div class="tl pay"><span>You pay today</span><b class="js-price">$${BUNDLE}</b></div>
       <p class="save" id="all-save">You save $${full - BUNDLE}. That is $${perList} a list instead of $${Math.round(full / lists.length)}.</p>
     </div>
@@ -483,6 +483,7 @@ ${lists.map(preview).join('\n')}`;
     jsonld: { '@context': 'https://schema.org', '@type': 'Product', name: 'All 10 Climate Insiders investor lists', description: `${n(UNIQUE_INVESTORS)} investors across 10 hand-checked lists.`, image: `${SITE}/og/all.png`, url: `${SITE}/all`, sku: 'all', brand: { '@type': 'Brand', name: 'Climate Insiders' }, offers: { '@type': 'Offer', price: String(BUNDLE) + '.00', priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: `${SITE}/all` } },
     body,
     extraHead: '<meta name="x-page" content="all">',
+    compactNav: true,
   });
 }
 
