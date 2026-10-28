@@ -1,6 +1,6 @@
 # Investor data access for list research (Eliott)
 
-Read, edit and add access to the core investor database, for choosing, enriching and building the next lists. No deletes. You can't see VC Boom users, decks, emails, payments or tokens. Only what's below.
+Full access to the core investor database (Supabase Developer), for choosing, enriching and building the next lists. The one rule: never delete rows.
 
 ## Connect
 
