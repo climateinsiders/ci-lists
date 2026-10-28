@@ -4,10 +4,9 @@ Read, edit and add access to the core investor database, for choosing, enriching
 
 ## Connect
 
-- Login: `eliott_reader` (the password comes from Yoann, privately)
-- Host: the Supabase "Session pooler" connection string for the VC Boom project (Supabase → Connect). Swap in user `eliott_reader.qzhstjaakmvcmnmrdvbi` and the password.
-- Works from any SQL tool (TablePlus, DBeaver, psql) or from Claude Code with `psql`.
-- Queries time out after 60s. Max 5 connections.
+You're a Developer on the Climate Insiders Supabase organization (invite sent to ardissoneliott@gmail.com Oct 28). Accept the invite, then add the Supabase connector in your Claude. Project: "VC Boom" (`qzhstjaakmvcmnmrdvbi`). You can read, edit and add anything. Please never delete rows: if something is wrong, fix it or flag it to Yoann. Daily backups exist, but restoring is slow.
+
+The investor data lives in `public.investors` (47,874 rows) and the live lists in `public.paid_lists` / `public.paid_list_entries`. The `catalog` views below are shortcuts with the useful columns.
 
 ## What you can see (schema `catalog`, the default)
 
@@ -18,7 +17,7 @@ Read, edit and add access to the core investor database, for choosing, enriching
 | `paid_list_entries` | The 2,830 rows behind those lists. |
 | `list_drafts` | Your workspace. You can insert and update here to propose a new list. |
 
-Emails are masked everywhere. You see `has_email`, `email_domain` and `contact_email_status`, never the address itself. Exports with real emails get built from the draft on our side.
+The `catalog.investors` view shows `has_email` and `email_domain` instead of the address; the full data is in `public.investors`.
 
 Current mix by type: Seed VC 34,041 (23,226 with email), Family Office 7,564 (7,275), Angel 3,924 (669), Tier 1 VC 801, Corporate VC 420, Accelerator 342, Micro VC 65.
 
