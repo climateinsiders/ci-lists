@@ -64,6 +64,8 @@ export async function notifySale({ rowId, sessionId, paymentIntent, amountCents,
     ];
     const r = await fetch(hook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: lines.join('\n') }) });
     if (!r.ok) console.warn('slack post failed', r.status, sessionId);
+    // Marked so the hourly catch-up task doesn't post this sale again.
+    else if (rowId) await updateRows('list_purchases', `id=eq.${rowId}`, { slack_notified_at: new Date().toISOString() });
   } catch (e) {
     console.warn('slack notify failed', String(e.message || e).slice(0, 200));
   }
