@@ -18,3 +18,8 @@ in `paid_lists`.
 1. Insert the list into `paid_lists` (slug, name, short_name, tagline, region_note, icon, price_cents 13000, csv_filename, value_points, active true).
 2. Insert its entries into `paid_list_entries` with `extra` = `{stage, check, kind}` and email, linkedin_url, photo_url, logo_url.
 3. Redeploy. The page, `/sectors` and the sitemap pick it up; checkout and delivery work per slug.
+
+## Navigation and bundles
+- `/` two doors (by region, by sector), `/regions` (world map + tiles), `/sectors` (tiles), `/bundles`, `/all` (10 region lists, $690), `/all-sectors` (all sector lists, $1,490).
+- Sector bundle: checkout `{ sectorBundle: true }`, Stripe metadata `kind=sector-bundle`, delivered by the same webhook (one Excel per list). Price and unique-investor count live in `data/sectors.json` `bundle` and `SECTOR_BUNDLE_PRICE_CENTS` in `api/_lib.js`.
+- The region map comes from `data/world-map.json` (generated once from the world-atlas topojson).

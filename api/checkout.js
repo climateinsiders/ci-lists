@@ -1,4 +1,4 @@
-import { getActiveLists, getBundleLists, stripe, readJson, json, siteUrl, upgradeQuote, BUNDLE_PRICE_CENTS, UPSELL_PRICE_CENTS, UNIQUE_INVESTORS } from './_lib.js';
+import { getActiveLists, getBundleLists, getSectorLists, sectorBundleInfo, stripe, readJson, json, siteUrl, upgradeQuote, BUNDLE_PRICE_CENTS, SECTOR_BUNDLE_PRICE_CENTS, UPSELL_PRICE_CENTS, UNIQUE_INVESTORS } from './_lib.js';
 
 // POST /api/checkout
 //   { slug: "europe-500" }               one list, $130
@@ -36,6 +36,25 @@ export default async function handler(req, res) {
             product_data: {
               name: `All ${UNIQUE_INVESTORS.toLocaleString('en-US')} investors (Climate Insiders)`,
               description: `${rest.map((l) => l.short_name).join(', ')}. Airtable + Excel, delivered by email.`,
+            },
+          },
+        },
+      ];
+    } else if (body.sectorBundle) {
+      const sectorLists = await getSectorLists();
+      if (!sectorLists.length) return json(res, 400, { error: 'Sector lists are not available yet' });
+      bundle = false;
+      slugs = sectorLists.map((l) => l.slug);
+      origin = '/all-sectors';
+      lineItems = [
+        {
+          quantity: 1,
+          price_data: {
+            currency: 'usd',
+            unit_amount: SECTOR_BUNDLE_PRICE_CENTS,
+            product_data: {
+              name: `All ${sectorLists.length} sector investor lists`,
+              description: `${sectorBundleInfo().unique_investors.toLocaleString('en-US')} investors across ${sectorLists.length} sectors. Excel, delivered by email.`,
             },
           },
         },
@@ -107,6 +126,7 @@ export default async function handler(req, res) {
         slugs: slugs.join(','),
         bundle: bundle ? '1' : '0',
         upsell: body.upsell ? '1' : '0',
+        kind: body.sectorBundle ? 'sector-bundle' : '',
         upgrade: upgradeToken,
         utm_source: String(attribution.utm_source || ''),
         utm_campaign: String(attribution.utm_campaign || ''),

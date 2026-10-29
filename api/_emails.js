@@ -11,7 +11,7 @@
 //   E0 "The cold emails I actually answered all did one thing..."
 //   E2 "the round rarely closes where it starts", Climentum being Copenhagen-based.
 // - Plain text, rendered as a plain Gmail-looking email (see textToHtml). No logos, no buttons.
-import { isSectorSlug, siteUrl, fmtUsd, UNIQUE_INVESTORS, UNIQUE_EMAILS, BUNDLE_PRICE_CENTS } from './_lib.js';
+import { isSectorSlug, sectorBundleInfo, siteUrl, fmtUsd, UNIQUE_INVESTORS, UNIQUE_EMAILS, BUNDLE_PRICE_CENTS } from './_lib.js';
 
 const n = (x) => Number(x).toLocaleString('en-US');
 const hi = (name) => (name ? `Hi ${name},` : 'Hi,');
@@ -28,12 +28,12 @@ function links(chosen) {
 }
 
 // E0, right after payment. Data first, then one idea: specificity beats volume.
-export function deliveryEmail({ chosen, allLists, bundle, token, amountCents, name, sessionId, upsell }) {
+export function deliveryEmail({ chosen, allLists, bundle, token, amountCents, name, sessionId, upsell, sectorBundle }) {
   const one = chosen.length === 1 ? chosen[0] : null;
-  const subject = bundle ? 'all ten, as promised' : `your ${one.short_name.toLowerCase()} list`;
+  const subject = sectorBundle ? `all ${chosen.length} sector lists, as promised` : bundle ? 'all ten, as promised' : `your ${one.short_name.toLowerCase()} list`;
   const text = `${hi(name)}
 
-${bundle ? `All ten lists, ${n(UNIQUE_INVESTORS)} investors. Links below, one Excel file per list attached, and the follow-up sequence I promised is in there too.` : (chosen.every((l) => l.airtable_url || !isSectorSlug(l.slug)) ? `It's yours. Airtable link below, and the Excel file is attached if you'd rather work offline. Status dropdowns are already in it.` : `It's yours. The Excel file is attached, with status dropdowns already in it.`)}
+${sectorBundle ? `All ${chosen.length} sector lists. One Excel file per list is attached, with the links below.` : bundle ? `All ten lists, ${n(UNIQUE_INVESTORS)} investors. Links below, one Excel file per list attached, and the follow-up sequence I promised is in there too.` : (chosen.every((l) => l.airtable_url || !isSectorSlug(l.slug)) ? `It's yours. Airtable link below, and the Excel file is attached if you'd rather work offline. Status dropdowns are already in it.` : `It's yours. The Excel file is attached, with status dropdowns already in it.`)}
 
 ${links(chosen)}
 
@@ -47,11 +47,11 @@ That's it. Ten minutes of homework per investor.
 
 Almost nobody does it, because it doesn't scale. Which is exactly why it works.
 
-So please don't send ${bundle ? n(UNIQUE_INVESTORS) : n(chosen.reduce((a, l) => a + (l.stats?.rows || 0), 0) || 150)} emails this week. Pick 12. Do the ten minutes on each.
+So please don't send ${sectorBundle ? n(sectorBundleInfo().unique_investors) : bundle ? n(UNIQUE_INVESTORS) : n(chosen.reduce((a, l) => a + (l.stats?.rows || 0), 0) || 150)} emails this week. Pick 12. Do the ten minutes on each.
 
 In two days I'll send you the email I'd write if I were raising tomorrow.
 
-Yoann${!bundle && !upsell && amountCents > 0 && sessionId ? `
+Yoann${!bundle && !sectorBundle && !upsell && amountCents > 0 && sessionId ? `
 
 ps. most rounds end up pulling money from more than one country, so one list is rarely the whole story. Everything else I have is on your order page, at a price that only shows up there, for the next 24 hours: ${siteUrl()}/thanks?session_id=${sessionId}` : ''}${footer(token)}`;
   return { subject, text };

@@ -2,7 +2,7 @@
 import { mkdir, writeFile, readFile, cp, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { page, allPage, thanksPage, welcomePage, setNav, setSectors, sectorsPage } from './render.mjs';
+import { page, allPage, thanksPage, welcomePage, setNav, setSectors, homePage, regionsPage, sectorsPage, bundlesPage, allSectorsPage } from './render.mjs';
 import { pickSample, sampleStats } from '../api/_pick.js';
 import { termsPage } from './terms.mjs';
 import { dashboardPage } from './dashboard.mjs';
@@ -22,9 +22,13 @@ async function sb(pathq) {
 
 // Sector lists (data/sectors.json): copy, stats and ten public rows. Locally they all show; in production only the ones
 // that are active in paid_lists are built (publish = insert the list + its entries, see docs/sector-lists.md).
+let sectorBundle = null;
 async function loadSectorData() {
   const f = path.join(root, 'data', 'sectors.json');
-  return existsSync(f) ? JSON.parse(await readFile(f, 'utf8')).lists : [];
+  if (!existsSync(f)) return [];
+  const d = JSON.parse(await readFile(f, 'utf8'));
+  sectorBundle = d.bundle || null;
+  return d.lists;
 }
 
 async function loadLists() {
@@ -100,11 +104,15 @@ async function main() {
   const lists = all.filter((l) => l.kind !== 'sector');
   const sectors = all.filter((l) => l.kind === 'sector');
   setNav(lists);
-  setSectors(sectors);
+  setSectors(sectors, sectorBundle);
   await rm(dist, { recursive: true, force: true });
   await mkdir(dist, { recursive: true });
   await cp(path.join(root, 'public'), dist, { recursive: true });
-  await writeFile(path.join(dist, 'index.html'), page(lists, null));
+  await writeFile(path.join(dist, 'index.html'), homePage());
+  await mkdir(path.join(dist, 'regions'), { recursive: true });
+  await writeFile(path.join(dist, 'regions', 'index.html'), regionsPage());
+  await mkdir(path.join(dist, 'bundles'), { recursive: true });
+  await writeFile(path.join(dist, 'bundles', 'index.html'), bundlesPage());
   for (const l of lists) {
     await mkdir(path.join(dist, l.slug), { recursive: true });
     await writeFile(path.join(dist, l.slug, 'index.html'), page(lists, l.slug));
@@ -115,7 +123,9 @@ async function main() {
   }
   if (sectors.length) {
     await mkdir(path.join(dist, 'sectors'), { recursive: true });
-    await writeFile(path.join(dist, 'sectors', 'index.html'), sectorsPage(sectors));
+    await writeFile(path.join(dist, 'sectors', 'index.html'), sectorsPage());
+    await mkdir(path.join(dist, 'all-sectors'), { recursive: true });
+    await writeFile(path.join(dist, 'all-sectors', 'index.html'), allSectorsPage());
   }
   await mkdir(path.join(dist, 'all'), { recursive: true });
   await writeFile(path.join(dist, 'all', 'index.html'), allPage(lists));
@@ -129,7 +139,7 @@ async function main() {
   await writeFile(path.join(dist, 'dashboard', 'index.html'), dashboardPage());
   await writeFile(
     path.join(dist, 'sitemap.xml'),
-    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['', 'all', ...(sectors.length ? ['sectors'] : []), ...lists.map((l) => l.slug), ...sectors.map((l) => l.slug), 'terms']
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['', 'regions', 'bundles', 'all', ...(sectors.length ? ['sectors', 'all-sectors'] : []), ...lists.map((l) => l.slug), ...sectors.map((l) => l.slug), 'terms']
       .map((p) => `  <url><loc>https://lists.climateinsiders.com/${p}</loc><lastmod>${new Date().toISOString().slice(0, 10)}</lastmod></url>`)
       .join('\n')}\n</urlset>\n`,
   );

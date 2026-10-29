@@ -12,6 +12,7 @@ export const UPGRADE_DAYS = 10; // the "your single-list payment counts" credit 
 // Unique across all 10 lists (Europe 500 overlaps the regional lists). Update if the data changes.
 export const UNIQUE_INVESTORS = 2426;
 export const UNIQUE_EMAILS = 1363;
+export const SECTOR_BUNDLE_PRICE_CENTS = 149000; // all sector lists on /all-sectors (keep in sync with data/sectors.json bundle)
 
 export function env(name, fallback) {
   const v = process.env[name];
@@ -55,6 +56,12 @@ export function sectorSlugs() {
   return sectorSet;
 }
 export const isSectorSlug = (slug) => sectorSlugs().has(slug);
+export async function getSectorLists() {
+  return (await getActiveLists()).filter((l) => isSectorSlug(l.slug));
+}
+export function sectorBundleInfo() {
+  try { return JSON.parse(readFileSync(new URL('../data/sectors.json', import.meta.url), 'utf8')).bundle; } catch { return { unique_investors: 0 }; }
+}
 export async function getBundleLists() {
   return (await getActiveLists()).filter((l) => !isSectorSlug(l.slug));
 }

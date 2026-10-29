@@ -69,7 +69,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    await deliverPurchase({ email, slugs, bundle, upgrade, token: row.token, amountCents: s.amount_total, name: firstName, sessionId: s.id, upsell: s.metadata?.upsell === '1' });
+    await deliverPurchase({ email, slugs, bundle, upgrade, token: row.token, amountCents: s.amount_total, name: firstName, sessionId: s.id, upsell: s.metadata?.upsell === '1', sectorBundle: s.metadata?.kind === 'sector-bundle' });
     const now = new Date().toISOString();
     // Only the newest purchase per email runs the sequence, so nobody gets two copies.
     await updateRows('list_purchases', `email=ilike.${encodeURIComponent(email)}&id=neq.${row.id}`, { followup_step: 99 });

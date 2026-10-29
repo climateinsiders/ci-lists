@@ -20,7 +20,7 @@ export async function send(to, { subject, text }, { token, attachments = [], tag
 }
 
 // E0: the Excel files, the Airtable links, three rules, and (single lists only) the upgrade P.S.
-export async function deliverPurchase({ email, slugs, bundle, upgrade, token, amountCents, name, sessionId, upsell }) {
+export async function deliverPurchase({ email, slugs, bundle, upgrade, token, amountCents, name, sessionId, upsell, sectorBundle }) {
   const active = await getActiveLists();
   const allLists = active.filter((l) => !isSectorSlug(l.slug));
   const chosen = active.filter((l) => slugs.includes(l.slug));
@@ -34,7 +34,7 @@ export async function deliverPurchase({ email, slugs, bundle, upgrade, token, am
   }
   if (bundle) attachments.push({ filename: 'climate-insiders-follow-up-sequence.txt', content: FOLLOWUP_SEQUENCE });
 
-  const msg = deliveryEmail({ chosen, allLists, bundle, upgrade, token, amountCents, name, sessionId, upsell });
+  const msg = deliveryEmail({ chosen, allLists, bundle, upgrade, token, amountCents, name, sessionId, upsell, sectorBundle });
   const sent = await send(email, msg, { token, attachments, tag: 'list_delivery' });
   return sent.id;
 }

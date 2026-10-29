@@ -4381,5 +4381,10 @@
     }
    ]
   }
- ]
+ ],
+ "bundle": {
+  "price_cents": 149000,
+  "unique_investors": 5113,
+  "rows": 9332
+ }
 }

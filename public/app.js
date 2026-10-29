@@ -174,52 +174,19 @@
     setTimeout(fitStack, 0);
   }
 
-  // ---- /sectors: slide across the deck, the top 10 of the sector under the pointer shows on the right; click opens its page ----
-  var hub = document.querySelector('.sectorhub');
-  if (hub) {
-    var hdeck = document.getElementById('deck');
-    var hcards = hdeck ? [].slice.call(hdeck.querySelectorAll('.dcard')) : [];
-    var hscrub = hcards.length > 0 && window.matchMedia('(hover: hover) and (min-width: 901px)').matches;
-    var last = hcards.length - 1;
-    var showSector = function (slug) {
-      hub.querySelectorAll('.shp').forEach(function (p) { p.classList.toggle('on', p.getAttribute('data-for') === slug); });
-      hcards.forEach(function (c) { c.classList.toggle('sel', c.getAttribute('data-slug') === slug); });
+  // ---- /regions: pointing at a region on the map lights its tile, and the other way round ----
+  document.querySelectorAll('.regionhub').forEach(function (hub) {
+    var scope = hub.parentElement;
+    var light = function (slug, on) {
+      scope.querySelectorAll('[data-region="' + slug + '"]').forEach(function (e) { e.classList.toggle('hl', on); });
     };
-    var lightSector = function (slug) {
-      hcards.forEach(function (c) { c.classList.toggle('hl', !!slug && c.getAttribute('data-slug') === slug); });
-      if (hdeck) hdeck.classList.toggle('open', !!slug);
-      if (slug) showSector(slug);
-    };
-    if (hcards.length) showSector(hcards[0].getAttribute('data-slug'));
-    // the card under the pointer is worked out from its horizontal position over the fan, so lifting a card never knocks the hover off it
-    var hIndex = function (x) {
-      var r = hdeck.getBoundingClientRect(), cw = hcards[0].offsetWidth;
-      var sp = Math.min(56, (r.width - cw - 40) / last);
-      return (x - (r.left + r.width / 2 - (last / 2) * sp - cw / 2)) / sp;
-    };
-    var hActive = -1;
-    var hPick = function (x) {
-      var t = hIndex(x);
-      if (hActive >= 0 && t > hActive - 0.12 && t < (hActive === last ? 99 : hActive + 1.12)) return hActive;
-      return t >= last ? last : Math.max(0, Math.min(last - 1, Math.floor(t)));
-    };
-    if (hscrub) {
-      hdeck.classList.add('scrub');
-      var hIn = false;
-      hdeck.addEventListener('mouseenter', function () { hIn = true; hdeck.classList.add('open'); });
-      hdeck.addEventListener('mousemove', function (ev) {
-        if (!hIn) { hIn = true; hdeck.classList.add('open'); }
-        var i = hPick(ev.clientX);
-        if (i === hActive) return;
-        hActive = i;
-        lightSector(hcards[i].getAttribute('data-slug'));
-      });
-      hdeck.addEventListener('mouseleave', function () { hIn = false; hActive = -1; lightSector(''); });
-      hdeck.addEventListener('click', function (ev) { location.href = '/' + hcards[hPick(ev.clientX)].getAttribute('data-slug'); });
-    } else {
-      hcards.forEach(function (c) { c.addEventListener('click', function () { showSector(c.getAttribute('data-slug')); }); });
-    }
-  }
+    ['mouseover', 'focusin'].forEach(function (evn) {
+      hub.addEventListener(evn, function (ev) { var t = ev.target.closest('[data-region]'); if (t) light(t.getAttribute('data-region'), true); });
+    });
+    ['mouseout', 'focusout'].forEach(function (evn) {
+      hub.addEventListener(evn, function (ev) { var t = ev.target.closest('[data-region]'); if (t && !t.contains(ev.relatedTarget)) light(t.getAttribute('data-region'), false); });
+    });
+  });
 
   // ---- /all: point at a card (or a row) and its top 10 shows under the deck; click opens the full list ----
   var allCard = document.querySelector('.offer.allcard');
@@ -336,7 +303,7 @@
     track('purchase', { transaction_id: id, value: j.amount / 100, currency: (j.currency || 'usd').toUpperCase(), items: (j.lists || []).map(function (l) { return { item_id: l.slug, item_name: l.name }; }).concat(j.upsell ? [{ item_id: 'all-investors', item_name: 'All investors upgrade' }] : []) });
   }
   function startCheckout(payload, btn) {
-    track('begin_checkout', { currency: 'USD', items: [{ item_id: payload.upsell ? 'all-investors' : (payload.bundle ? 'all' : payload.slug) }] });
+    track('begin_checkout', { currency: 'USD', items: [{ item_id: payload.upsell ? 'all-investors' : (payload.bundle ? 'all' : payload.sectorBundle ? 'all-sectors' : payload.slug) }] });
     // The label never changes (a longer text made the button grow past its box); a spinner shows progress.
     if (btn) { btn.disabled = true; btn.classList.add('is-loading'); btn.setAttribute('aria-busy', 'true'); }
     var done = function () { if (btn) { btn.disabled = false; btn.classList.remove('is-loading'); btn.removeAttribute('aria-busy'); } };
@@ -366,7 +333,7 @@
     if (!b) return;
     ev.preventDefault();
     var slug = b.getAttribute('data-buy');
-    startCheckout(slug === 'all' ? { bundle: true, upgrade: upgrade } : { slug: slug }, b);
+    startCheckout(slug === 'all' ? { bundle: true, upgrade: upgrade } : slug === 'sectors' ? { sectorBundle: true } : { slug: slug }, b);
   });
 
   // ---- confetti: one or two seconds across the whole page ----

@@ -1,5 +1,6 @@
 import { ICONS as BASE_ICONS, SMALL_ICONS } from './icons.mjs';
 import { SECTOR_ICONS, SECTOR_TONES } from './sector-icons.mjs';
+import { readFileSync } from 'node:fs';
 
 const ICONS = { ...BASE_ICONS, ...SECTOR_ICONS };
 
@@ -113,7 +114,7 @@ function maskEmail(e) {
 
 const GA_ID = 'G-REVK9GPTEP';
 
-export function shell({ title, description, body, canonical, ogTitle, ogImage, jsonld, extraHead = '', compactNav = false }) {
+export function shell({ title, description, body, canonical, ogTitle, ogImage, jsonld, extraHead = '', compactNav = false, nav = false }) {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -145,6 +146,7 @@ ${extraHead}
 </head>
 <body>
 <div class="wrap">
+${nav ? topnav(nav) : ''}
 ${body}
 ${footer(compactNav)}
 </div>
@@ -163,17 +165,21 @@ function brand() {
 }
 
 let NAV = [];
+let GEO = [];
 let SECTORS = [];
-export function setNav(lists) { NAV = lists.map((l) => ({ slug: l.slug, name: l.name })); }
-export function setSectors(lists) { SECTORS = lists; }
+let SECTOR_BUNDLE = { price_cents: 149000, unique_investors: 0 };
+export function setNav(lists) { NAV = lists.map((l) => ({ slug: l.slug, name: l.name })); GEO = lists; }
+export function setSectors(lists, bundle) { SECTORS = lists; if (bundle) SECTOR_BUNDLE = bundle; }
 
-function footer(compact = false) {
-  const nav = NAV.length
-    ? `<nav class="listnav${compact ? ' compact' : ''}" aria-label="All investor lists"><span class="lbl">All investor lists</span>${NAV.map((l) => `<a href="/${esc(l.slug)}" title="${esc(l.name)}">${esc(compact ? DECK_NAME[l.slug] || l.name : l.name)}</a>`).join('')}${compact ? '' : '<a href="/all">All 10 lists together</a>'}${SECTORS.length ? '<a href="/sectors">Lists by sector</a>' : ''}</nav>`
-    : '';
-  return `${nav}<footer class="foot">
+function topnav(active) {
+  const item = (key, href, label) => `<a href="${href}"${active === key ? ' class="on" aria-current="page"' : ''}>${label}</a>`;
+  return `<nav class="topnav" aria-label="Browse the lists">${item('regions', '/regions', 'By region')}${SECTORS.length ? item('sectors', '/sectors', 'By sector') : ''}${item('bundles', '/bundles', 'Bundles')}</nav>`;
+}
+
+function footer() {
+  return `<footer class="foot">
   <span>© Climate Insiders</span>
-  <span><a href="/terms">Terms and privacy</a> · <a href="https://climateinsiders.com">climateinsiders.com</a></span>
+  <span><a href="/regions">Regions</a> · ${SECTORS.length ? '<a href="/sectors">Sectors</a> · ' : ''}<a href="/bundles">Bundles</a> · <a href="/terms">Terms and privacy</a> · <a href="https://climateinsiders.com">climateinsiders.com</a></span>
 </footer>`;
 }
 
@@ -372,6 +378,7 @@ export function page(lists, featured) {
 <header class="hero" ${toneAttr(f)}>
   <div class="title">
     ${brand()}
+    ${featured ? crumbs(f) : ''}
     <div class="kick"><span class="script">${featured ? `you asked for ${esc(KICKER_NAME[f.slug] || f.short_name)}. here it is.` : 'hey, founders and fund managers'}</span></div>
     <div class="h1row">${LIST_FLAGS[f.slug] ? flagStack(LIST_FLAGS[f.slug], 'flags lg') : `<span class="flags lg" aria-hidden="true"><span class="fl iconfl">${ICONS[f.icon] || ICONS.globe}</span></span>`}<h1><span class="hl">${esc(f.name)}</span></h1></div>
     ${isSector(f) && f.pool ? `<p class="sub">${esc(poolNote(f))} ${esc(f.topic)} investors in our database, ranked by how well they fit. Stage, cheque size and a verified email on every row.</p>` : ''}
@@ -381,7 +388,7 @@ export function page(lists, featured) {
 <section class="offer main" id="offer" ${toneAttr(f)}>${offerBlock(f, { sheet: true })}</section>
 <div class="stickybuy" id="stickybuy"><span class="sp"><b>${usd(f.price_cents)}</b><small>one time · yours forever</small></span><button class="btn" data-buy="${esc(f.slug)}">Get the list</button></div>
 
-<section class="chips"><span class="lbl">+ ${others.length} more ${isSector(f) ? 'sectors' : 'lists'}</span><span class="row">${others.slice(0, isSector(f) ? 5 : 6).map(chip).join('')}<a class="chip morechip" href="/all">All lists</a>${isSector(f) ? '<a class="chip morechip" href="/sectors">All sectors</a>' : SECTORS.length ? '<a class="chip morechip" href="/sectors">By sector</a>' : ''}</span></section>
+${bundleBanner(isSector(f) ? 'sectors' : 'regions')}
 ${proofStrip()}
 ${sheetDialog(f)}`;
   const title = featured ? `${f.name}${isSector(f) ? ' · Investor list' : ''} · Climate Insiders` : 'Investor lists for founders and fund managers · Climate Insiders';
@@ -405,7 +412,7 @@ ${sheetDialog(f)}`;
         offers: { '@type': 'Offer', price: (f.price_cents / 100).toFixed(2), priceCurrency: 'USD', availability: 'https://schema.org/InStock', url, seller: org },
       }
     : { '@context': 'https://schema.org', '@graph': [{ ...org, '@id': 'https://climateinsiders.com/#org' }, { '@type': 'WebSite', name: 'Climate Insiders Investor Lists', url: `${SITE}/`, publisher: { '@id': 'https://climateinsiders.com/#org' } }] };
-  return shell({ title, description, canonical: url, ogImage, jsonld, body });
+  return shell({ title, description, canonical: url, ogImage, jsonld, body, nav: isSector(f) ? 'sectors' : 'regions' });
 }
 
 // The grand slam offer: a stack of what they get, then one button.
@@ -540,6 +547,7 @@ ${proofStrip()}`;
     body,
     extraHead: '<meta name="x-page" content="all">',
     compactNav: true,
+    nav: 'bundles',
   });
 }
 
@@ -619,68 +627,220 @@ export function welcomePage() {
   return shell({ title: 'You have everything · Climate Insiders Investor Lists', description: 'Your full access.', canonical: `${SITE}/welcome`, body });
 }
 
-// ---------- /sectors: the lists by sector ----------
-// Same deck as /all on the left (point at a card), the top 10 investors of that sector on the right. Touch screens get a plain list.
-function sectorCard(list, i) {
-  const of = list.pool > list.stats.rows ? `of ${n(list.pool)}` : 'all of them';
-  return `<button class="dcard" type="button" data-slug="${esc(list.slug)}" style="--i:${i};${toneVars(list)}" aria-label="${esc(list.short_name)}: ${esc(poolNote(list))} investors">
-  <span class="in">
-    <span class="top">${listFlags(list, 'flags md')}<i class="vl">${esc(of)}</i></span>
-    <b class="ct">${esc(list.count_label)}</b>
-    <span class="nm">${esc(list.short_name)}</span>
-    <span class="kd">investors</span>
-    <i class="no">${pad(i + 1)}</i>
-  </span>
-</button>`;
+// ---------- one tile for every list (regions and sectors look the same) ----------
+const tileName = (l) => (isSector(l) ? l.short_name : DECK_NAME[l.slug] || l.short_name);
+function tileFacts(l) {
+  const st = l.stats || {};
+  if (isSector(l)) return [`${n(st.verified || 0)} verified emails`, `${n(st.firms || 0)} funds`, `${n(st.countries || 0)} ${st.countries === 1 ? 'country' : 'countries'}`];
+  if (l.slug === 'climate-vcs-474') return [`${n(st.rows)} funds`, 'stage, sector, ticket size'];
+  if (l.slug === 'lps-366') return [`${n(st.rows)} names`, 'firms and roles'];
+  const ratio = (st.emails || 0) / Math.max(1, st.rows || 1);
+  return [ratio >= 0.4 ? `${n(st.emails)} direct emails` : `${n(st.rows)} named people`, `${n(st.firms || 0)} firms`, `${n(st.countries || 0)} ${st.countries === 1 ? 'country' : 'countries'}`];
+}
+function tile(l) {
+  const sub = isSector(l) ? poolNote(l) : DECK_KIND[l.slug] || 'family offices';
+  const faces = (l.sample || []).slice(0, 4).map((e) => `<span class="av">${face(e, 48)}</span>`).join('');
+  return `<a class="tile" href="/${esc(l.slug)}" data-region="${esc(l.slug)}" ${toneAttr(l)}>
+  <span class="tt">${listFlags(l, 'flags md')}<i class="tp">${usd(l.price_cents)}</i></span>
+  <b class="tc">${esc(l.count_label)}</b>
+  <span class="tn">${esc(tileName(l))}</span>
+  <small class="ts">${esc(sub)}</small>
+  <span class="tfaces" aria-hidden="true">${faces}</span>
+  <ul class="tf">${tileFacts(l).map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
+  <span class="tg">See the list <b aria-hidden="true">→</b></span>
+</a>`;
 }
 
-function sectorRow(list, maxRows) {
-  const pct = Math.max(6, Math.round(((list.stats.rows || 0) / maxRows) * 100));
-  return `<li><a class="lrow" href="/${esc(list.slug)}" style="${toneVars(list)};--w:${pct}%">
-  ${listFlags(list, 'flags sm')}
-  <span class="lt"><b>${esc(list.count_label)}</b><small>${esc(list.short_name)}</small></span>
-  <em>${usd(list.price_cents)}</em>
-  <span class="bar" aria-hidden="true"></span>
-</a></li>`;
+function crumbs(l) {
+  const sec = isSector(l);
+  return `<nav class="crumbs" aria-label="Breadcrumb"><a href="${sec ? '/sectors' : '/regions'}">${sec ? 'By sector' : 'By region'}</a><span aria-hidden="true">›</span><span>${esc(tileName(l))}</span></nav>`;
 }
 
-function sectorPanel(list, i) {
-  return `<div class="shp${i === 0 ? ' on' : ''}" data-for="${esc(list.slug)}" ${toneAttr(list)}>
-    <div class="shh">${listFlags(list, 'flags lg')}<div><span class="script">top 10 investors</span><h3>${esc(list.short_name)}</h3></div><span class="shn"><b>${esc(list.count_label)}</b>${esc(poolNote(list).toLowerCase())}</span></div>
-    <ul class="picks">${picks(list, { compact: true })}</ul>
-    <div class="shf"><small>${n(list.stats.verified || 0)} verified emails · ${n(list.stats.firms || 0)} funds · ${n(list.stats.countries || 0)} countries</small><a class="btn" href="/${esc(list.slug)}">Open the list · ${usd(list.price_cents)}</a></div>
-  </div>`;
+// "Want them all?" banner under every list, and on the browse pages.
+function bundleBanner(kind) {
+  const sec = kind === 'sectors';
+  const lists = sec ? SECTORS : GEO;
+  if (!lists.length) return '';
+  const price = sec ? SECTOR_BUNDLE.price_cents / 100 : BUNDLE;
+  const full = lists.reduce((a, l) => a + l.price_cents / 100, 0);
+  const unique = sec ? SECTOR_BUNDLE.unique_investors : UNIQUE_INVESTORS;
+  const href = sec ? '/all-sectors' : '/all';
+  const facts = sec
+    ? [`${n(unique)} unique investors`, `${lists.length} sectors, ${n(lists.reduce((a, l) => a + (l.stats.rows || 0), 0))} rows`, 'Stage and cheque size on every row']
+    : [`${n(unique)} unique investors`, `${lists.length} lists: 8 regions, LPs and climate VCs`, `${n(UNIQUE_EMAILS_PAGE)} direct emails`];
+  return `<section class="bundle" aria-label="${sec ? 'All sector lists' : 'All region lists'}">
+  <div class="bl"><span class="script">want them all?</span><h3>All ${lists.length} ${sec ? 'sector' : 'region'} lists</h3><ul>${facts.map((f) => `<li>${SMALL_ICONS.check}<span>${esc(f)}</span></li>`).join('')}</ul></div>
+  <div class="br"><div class="bp"><s>$${n(full)}</s><b>$${n(price)}</b><small>one payment · yours forever · $${Math.round(price / lists.length)} a list</small></div>
+  <div class="bb"><a class="btn ghost" href="${href}">See what's inside</a><button class="btn" data-buy="${sec ? 'sectors' : 'all'}">Get all ${lists.length} · $${n(price)}</button></div></div>
+</section>`;
+}
+const UNIQUE_EMAILS_PAGE = 1363; // keep in sync with api/_lib.js UNIQUE_EMAILS
+
+// ---------- / : two doors ----------
+export function homePage() {
+  const geoRows = GEO.reduce((a, l) => a + (l.stats.rows || 0), 0);
+  const secRows = SECTORS.reduce((a, l) => a + (l.stats.rows || 0), 0);
+  const geoFlags = ['eu', 'us', 'gb', 'de', 'se', 'fr', 'sg', 'ca'];
+  const door = ({ href, label, big, text, stats, chips, cta, bundle }) => `<a class="door" href="${href}">
+    <span class="dlabel">${label}</span>
+    <b class="dbig">${big}</b>
+    <p>${text}</p>
+    <span class="dchips" aria-hidden="true">${chips}</span>
+    <ul class="dstats">${stats.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+    <span class="dcta">${cta} <b aria-hidden="true">→</b></span>
+    <small>${bundle}</small>
+  </a>`;
+  const body = `
+<header class="hero" style="--tone:#ffe3cc;--tone-ink:#c2410c">
+  <div class="title">
+    ${brand()}
+    <div class="kick"><span class="script">hey, founders and fund managers</span></div>
+    <div class="h1row"><h1>Find the <span class="hl">investors</span> who back your raise.</h1></div>
+    <p class="sub">Hand-checked investor lists with named decision makers. Pick how you want to search.</p>
+  </div>
+</header>
+<section class="doors">
+  ${door({ href: '/regions', label: 'By region', big: `${GEO.length} lists`, text: 'Family offices, LPs and climate VCs in Europe, the US, the UK, DACH, the Nordics, APAC and LatAm.', stats: [`${n(geoRows)} named rows`, `${n(UNIQUE_INVESTORS)} unique investors`, `from ${usd(Math.min(...GEO.map((l) => l.price_cents)))} a list`], chips: flagStack(geoFlags, 'flags lg'), cta: 'Browse regions', bundle: `Or all ${GEO.length} for $${BUNDLE}` })}
+  ${SECTORS.length ? door({ href: '/sectors', label: 'By sector', big: `${SECTORS.length} lists`, text: 'The funds that back AI, fintech, climate tech, real estate, defense and 15 more sectors. Ranked by fit.', stats: [`${n(secRows)} investors`, 'Stage and cheque size on every row', `${usd(SECTORS[0].price_cents)} a list`], chips: `<span class="flags lg" aria-hidden="true">${['ai', 'fintech', 'climate', 'proptech', 'defense', 'health', 'cyber', 'energy'].map((k) => `<span class="fl iconfl">${ICONS[k]}</span>`).join('')}</span>`, cta: 'Browse sectors', bundle: `Or all ${SECTORS.length} for $${n(SECTOR_BUNDLE.price_cents / 100)}` }) : ''}
+</section>
+${proofStrip()}`;
+  return shell({
+    title: 'Investor lists for founders and fund managers · Climate Insiders',
+    description: 'Hand-checked investor lists for founders and fund managers: by region (family offices, LPs, climate VCs) and by sector (AI, fintech, climate tech and more).',
+    canonical: `${SITE}/`,
+    jsonld: { '@context': 'https://schema.org', '@graph': [{ '@type': 'Organization', '@id': 'https://climateinsiders.com/#org', name: 'Climate Insiders', url: 'https://climateinsiders.com', logo: 'https://cdn.prod.website-files.com/657b1ee1812a034008e87de8/6585389a7f43d48ed7b3c851_fav-md.jpg' }, { '@type': 'WebSite', name: 'Climate Insiders Investor Lists', url: `${SITE}/`, publisher: { '@id': 'https://climateinsiders.com/#org' } }] },
+    body,
+    nav: true,
+  });
 }
 
-export function sectorsPage(lists) {
+// ---------- /regions: a map, then one tile per list ----------
+const MAP = (() => { try { return JSON.parse(readFileSync(new URL('../data/world-map.json', import.meta.url), 'utf8')); } catch { return null; } })();
+function worldMap() {
+  if (!MAP) return '';
+  const label = { 'europe-500': 'Rest of Europe', 'uk-200': 'United Kingdom', 'dach-150': 'DACH', 'nordics-150': 'Nordics', 'france-benelux-150': 'France + Benelux', 'usa-500': 'United States', 'latam-canada-150': 'Canada + LatAm', 'apac-200': 'Asia-Pacific' };
+  const groups = Object.entries(MAP.groups).map(([slug, parts]) => {
+    const l = GEO.find((x) => x.slug === slug);
+    if (!l) return '';
+    const dots = (MAP.markers[slug] || []).map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5"/>`).join('');
+    return `<a class="rg" href="/${esc(slug)}" data-region="${esc(slug)}" style="--c:${(TONES[slug] || [])[1] || '#1f1b16'}" aria-label="${esc(label[slug] || slug)}"><title>${esc(label[slug] || slug)}</title>${parts.map((p) => `<path d="${p.d}"/>`).join('')}${dots}</a>`;
+  }).join('');
+  return `<svg class="wmap" viewBox="0 0 ${MAP.w} ${MAP.h}" role="img" aria-label="Map of the regions covered"><path class="land" d="${MAP.other}"/>${groups}</svg>`;
+}
+
+export function regionsPage() {
+  const geo = GEO.filter((l) => LIST_FLAGS[l.slug]);
+  const special = GEO.filter((l) => !LIST_FLAGS[l.slug]);
+  const body = `
+<header class="hero" style="--tone:#dbe8f5;--tone-ink:#1f5a9c">
+  <div class="title">
+    ${brand()}
+    <div class="kick"><span class="script">pick where you are raising</span></div>
+    <div class="h1row"><h1>Investor lists <span class="hl">by region</span></h1></div>
+    <p class="sub">${GEO.length} lists, ${n(UNIQUE_INVESTORS)} unique investors. Click a region on the map or pick a list below.</p>
+  </div>
+</header>
+<section class="mapcard regionhub"><div class="mapwrap">${worldMap()}</div><p class="maphint">Europe 500 covers every country in Europe. The regional lists go deeper on the UK, DACH, the Nordics and France + Benelux.</p></section>
+<section class="tiles regionhub" aria-label="Region lists">${geo.map(tile).join('')}</section>
+<h2 class="tiles-title"><span class="script">not tied to a place</span>Specialist lists</h2>
+<section class="tiles two regionhub" aria-label="Specialist lists">${special.map(tile).join('')}</section>
+${bundleBanner('regions')}
+${proofStrip()}`;
+  return shell({
+    title: 'Investor lists by region · Climate Insiders',
+    description: `${GEO.length} hand-checked investor lists by region: family offices in Europe, the US, the UK, DACH, the Nordics, France and Benelux, Asia-Pacific and LatAm, plus LPs and climate VC funds.`,
+    canonical: `${SITE}/regions`,
+    body,
+    nav: 'regions',
+  });
+}
+
+// ---------- /sectors: one tile per sector ----------
+export function sectorsPage() {
+  const lists = SECTORS;
   const rows = lists.reduce((a, l) => a + (l.stats.rows || 0), 0);
-  const maxRows = Math.max(...lists.map((l) => l.stats.rows || 0));
   const body = `
 <header class="hero" style="--tone:#d8efe0;--tone-ink:#1b7a4a">
   <div class="title">
     ${brand()}
     <div class="kick"><span class="script">investors who back your sector</span></div>
     <div class="h1row"><h1>Investor lists <span class="hl">by sector</span></h1></div>
+    <p class="sub">${lists.length} lists, ${n(rows)} investors, ${usd(lists[0]?.price_cents || 13000)} each. Ranked by how well they fit, with stage, cheque size and a verified email on every row.</p>
   </div>
 </header>
-
-<section class="offer main sectorhub" id="offer">
-  <div class="picksCol deckCol">
-    <div class="head"><h3>${lists.length} sectors<span class="script">one deck</span></h3><small>${n(rows)} investors · ${usd(lists[0]?.price_cents || 13000)} a list</small></div>
-    <div class="deck" id="deck">${lists.map(sectorCard).join('\n')}</div>
-    <p class="more"><span class="hv">Slide across the cards for the top 10. Click to open the list.</span></p>
-  </div>
-  <div class="valueCol">
-    <div class="shstack" id="shstack" aria-live="polite">${lists.map(sectorPanel).join('')}</div>
-    <div class="sgrid"><span class="script">pick your sector</span><p class="fine">${lists.length} lists, ${n(rows)} investors, ${usd(lists[0]?.price_cents || 13000)} each. Ranked by fit, with stage, cheque size and a verified email on every row.</p><ul class="ladder">${lists.map((l) => sectorRow(l, maxRows)).join('')}</ul></div>
-  </div>
-</section>
-<p class="sfoot">Looking for a region instead? <a href="/">Browse the lists by geography</a>.</p>
+<section class="tiles quad" aria-label="Sector lists">${lists.map(tile).join('')}</section>
+${bundleBanner('sectors')}
 ${proofStrip()}`;
   return shell({
     title: 'Investor lists by sector · Climate Insiders',
     description: `${lists.length} investor lists by sector (AI, fintech, climate tech, real estate, defense and more). Ranked by fit, with stage, cheque size and verified emails. ${usd(lists[0]?.price_cents || 13000)} each.`,
     canonical: `${SITE}/sectors`,
     body,
+    nav: 'sectors',
+  });
+}
+
+// ---------- /bundles: the two bundles side by side ----------
+export function bundlesPage() {
+  const body = `
+<header class="hero" style="--tone:#efe5d2;--tone-ink:#6b4f1d">
+  <div class="title">
+    ${brand()}
+    <div class="kick"><span class="script">one payment, everything inside</span></div>
+    <div class="h1row"><h1>The <span class="hl">bundles</span></h1></div>
+    <p class="sub">Every list in a group, delivered as Excel in one email. Yours forever.</p>
+  </div>
+</header>
+<div class="bundles">${bundleBanner('regions')}${SECTORS.length ? bundleBanner('sectors') : ''}</div>
+${proofStrip()}`;
+  return shell({ title: 'Investor list bundles · Climate Insiders', description: `All ${GEO.length} region lists for $${BUNDLE}${SECTORS.length ? `, or all ${SECTORS.length} sector lists for $${n(SECTOR_BUNDLE.price_cents / 100)}` : ''}. One payment, delivered by email.`, canonical: `${SITE}/bundles`, body, nav: 'bundles' });
+}
+
+// ---------- /all-sectors: the sector bundle ----------
+export function allSectorsPage() {
+  const lists = SECTORS;
+  const price = SECTOR_BUNDLE.price_cents / 100;
+  const full = lists.reduce((a, l) => a + l.price_cents / 100, 0);
+  const rows = lists.reduce((a, l) => a + (l.stats.rows || 0), 0);
+  const row = (l) => `<li><a class="srow" href="/${esc(l.slug)}" ${toneAttr(l)}>${listFlags(l, 'flags sm')}<span class="sn"><b>${esc(l.count_label)}</b> ${esc(l.short_name)}</span><em>${usd(l.price_cents)}</em></a></li>`;
+  const body = `
+<header class="hero" style="--tone:#d8efe0;--tone-ink:#1b7a4a">
+  <div class="title">
+    ${brand()}
+    ${`<nav class="crumbs" aria-label="Breadcrumb"><a href="/bundles">Bundles</a><span aria-hidden="true">›</span><span>All sectors</span></nav>`}
+    <div class="kick"><span class="script">every sector. one payment.</span></div>
+    <div class="h1row"><h1>All <span class="hl">${lists.length} sector lists</span></h1></div>
+  </div>
+</header>
+<section class="offer main sectorbundle" id="offer">
+  <div class="picksCol">
+    <div class="head"><h3>What is inside<span class="script">${lists.length} lists</span></h3><small>${n(rows)} rows · ${n(SECTOR_BUNDLE.unique_investors)} unique investors</small></div>
+    <ul class="srows">${lists.map(row).join('')}</ul>
+  </div>
+  <div class="valueCol">
+    <div class="buy">
+      <div class="bigprice"><s class="was">$${n(full)}</s>$${n(price)}<small>one payment · yours forever</small></div>
+      <button class="btn big" data-buy="sectors">Get all ${lists.length}</button>
+    </div>
+    <p class="fine">Stripe checkout. Card, Apple Pay, Google Pay. One Excel file per list by email in 2 minutes, receipt and invoice included.</p>
+    <span class="script">what you get</span>
+    <ul class="checks">
+      <li>${SMALL_ICONS.check}<span>${lists.length} sector lists, ${n(rows)} rows, ${n(SECTOR_BUNDLE.unique_investors)} unique investors.</span></li>
+      <li>${SMALL_ICONS.check}<span>Ranked by fit: the best matches for each sector come first.</span></li>
+      <li>${SMALL_ICONS.check}<span>Stage and cheque size on most rows, a verified email on the large majority.</span></li>
+      <li>${SMALL_ICONS.check}<span>Status, last touch and notes columns plus a pipeline tab, ready to work.</span></li>
+      <li>${SMALL_ICONS.check}<span>Wrong row? Reply, I fix it. Free, forever.</span></li>
+    </ul>
+    <p class="save">You save $${n(full - price)}. That is $${Math.round(price / lists.length)} a list instead of $${Math.round(full / lists.length)}.</p>
+  </div>
+</section>
+<div class="stickybuy" id="stickybuy"><span class="sp"><b>$${n(price)}</b><small>all ${lists.length} sector lists</small></span><button class="btn" data-buy="sectors">Get all ${lists.length}</button></div>
+${proofStrip()}`;
+  return shell({
+    title: `All ${lists.length} investor lists by sector · Climate Insiders`,
+    description: `${n(SECTOR_BUNDLE.unique_investors)} unique investors across ${lists.length} sector lists. $${n(price)} for all of them.`,
+    canonical: `${SITE}/all-sectors`,
+    body,
+    nav: 'bundles',
   });
 }
