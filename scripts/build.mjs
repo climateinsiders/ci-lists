@@ -2,7 +2,7 @@
 import { mkdir, writeFile, readFile, cp, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { page, allPage, thanksPage, welcomePage, setNav } from './render.mjs';
+import { page, allPage, thanksPage, welcomePage, setNav, setSectors, sectorsPage } from './render.mjs';
 import { pickSample, sampleStats } from '../api/_pick.js';
 import { termsPage } from './terms.mjs';
 import { dashboardPage } from './dashboard.mjs';
@@ -20,15 +20,27 @@ async function sb(pathq) {
   return res.json();
 }
 
+// Sector lists (data/sectors.json): copy, stats and ten public rows. Locally they all show; in production only the ones
+// that are active in paid_lists are built (publish = insert the list + its entries, see docs/sector-lists.md).
+async function loadSectorData() {
+  const f = path.join(root, 'data', 'sectors.json');
+  return existsSync(f) ? JSON.parse(await readFile(f, 'utf8')).lists : [];
+}
+
 async function loadLists() {
+  const sectorData = await loadSectorData();
+  const sectorBySlug = new Map(sectorData.map((l) => [l.slug, l]));
   if (local) {
     console.log('Building from scripts/fixture.json');
     const lists = JSON.parse(await readFile(path.join(root, 'scripts', 'fixture.json'), 'utf8')).lists;
     for (const l of lists) l.rows = fixtureRows(l);
+    for (const s of sectorData) lists.push({ ...s, rows: s.sample });
     return lists;
   }
   const lists = await sb('paid_lists?active=eq.true&order=sort_order.asc');
   for (const l of lists) {
+    const sd = sectorBySlug.get(l.slug);
+    if (sd) Object.assign(l, { kind: 'sector', sector: sd.sector, icon: sd.icon, keyword: sd.keyword, topic: sd.topic, short_name: l.short_name || sd.short_name, value_points: l.value_points?.length ? l.value_points : sd.value_points });
     const [stats] = await sb(`rpc/paid_list_stats?slug=${l.slug}`).catch(() => [null]);
     l.stats = stats || (await computeStats(l.slug));
     l.rows = await sb(`paid_list_entries?slug=eq.${l.slug}&order=sort_order.asc&select=sort_order,name,title,firm,country,region,extra,website,photo_url,logo_url`);
@@ -83,8 +95,11 @@ function decorate(lists) {
 }
 
 async function main() {
-  const lists = decorate(await loadLists());
+  const all = decorate(await loadLists());
+  const lists = all.filter((l) => l.kind !== 'sector');
+  const sectors = all.filter((l) => l.kind === 'sector');
   setNav(lists);
+  setSectors(sectors);
   await rm(dist, { recursive: true, force: true });
   await mkdir(dist, { recursive: true });
   await cp(path.join(root, 'public'), dist, { recursive: true });
@@ -92,6 +107,14 @@ async function main() {
   for (const l of lists) {
     await mkdir(path.join(dist, l.slug), { recursive: true });
     await writeFile(path.join(dist, l.slug, 'index.html'), page(lists, l.slug));
+  }
+  for (const l of sectors) {
+    await mkdir(path.join(dist, l.slug), { recursive: true });
+    await writeFile(path.join(dist, l.slug, 'index.html'), page(sectors, l.slug));
+  }
+  if (sectors.length) {
+    await mkdir(path.join(dist, 'sectors'), { recursive: true });
+    await writeFile(path.join(dist, 'sectors', 'index.html'), sectorsPage(sectors));
   }
   await mkdir(path.join(dist, 'all'), { recursive: true });
   await writeFile(path.join(dist, 'all', 'index.html'), allPage(lists));
@@ -105,13 +128,13 @@ async function main() {
   await writeFile(path.join(dist, 'dashboard', 'index.html'), dashboardPage());
   await writeFile(
     path.join(dist, 'sitemap.xml'),
-    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['', 'all', ...lists.map((l) => l.slug), 'terms']
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['', 'all', ...(sectors.length ? ['sectors'] : []), ...lists.map((l) => l.slug), ...sectors.map((l) => l.slug), 'terms']
       .map((p) => `  <url><loc>https://lists.climateinsiders.com/${p}</loc><lastmod>${new Date().toISOString().slice(0, 10)}</lastmod></url>`)
       .join('\n')}\n</urlset>\n`,
   );
   await writeFile(path.join(dist, 'robots.txt'), 'User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /dashboard\nSitemap: https://lists.climateinsiders.com/sitemap.xml\n');
   if (!existsSync(path.join(dist, 'og.png'))) console.warn('No og.png in public/, social previews will be blank');
-  console.log(`Built ${lists.length + 2} pages into dist/`);
+  console.log(`Built ${lists.length + sectors.length + 2} pages into dist/ (${sectors.length} sector lists)`);
 }
 
 main().catch((e) => {

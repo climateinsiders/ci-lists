@@ -1,0 +1,4385 @@
+{
+ "generated": "from catalog.investors, see docs/sector-lists.md",
+ "lists": [
+  {
+   "slug": "ai-500",
+   "sector": "ai",
+   "kind": "sector",
+   "keyword": "AI",
+   "name": "500 AI investors",
+   "short_name": "AI",
+   "topic": "AI",
+   "tagline": "Funds that back AI, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 29 countries, best match first.",
+   "icon": "ai",
+   "price_cents": 13000,
+   "sort_order": 11,
+   "csv_filename": "climate-insiders-500-ai-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "The best 500 of the 2,106 investors who back AI in our database, ranked by fit.",
+    "447 verified emails. Every one of the 500 rows has an email.",
+    "302 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 63% of rows, cheque size on 53%. 92% invest at seed or pre-seed.",
+    "29 countries, led by United States, United Kingdom and Israel.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 2106,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 447,
+    "linkedin": 434,
+    "firms": 302,
+    "countries": 29,
+    "seedish": 92,
+    "median_check_max": 5000,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Heather Redman",
+     "title": null,
+     "firm": "Flying Fish Partners",
+     "country": "United States",
+     "region": null,
+     "city": "Seattle",
+     "email": null,
+     "email_masked": "••••••@flyingfish.vc",
+     "website": "https://www.flyingfish.vc/home/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Pre-seed",
+      "check": "$500k to $1.5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Jeff Diamond",
+     "title": null,
+     "firm": "Fika Ventures",
+     "country": "Canada",
+     "region": null,
+     "city": "Canada",
+     "email": null,
+     "email_masked": "••••••@ghst.io",
+     "website": "http://www.fika.vc",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Pre-seed",
+      "check": "$1M to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Kanu Gulati",
+     "title": null,
+     "firm": "Khosla Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco Bay Area",
+     "email": null,
+     "email_masked": "••••••@khoslaventures.com",
+     "website": "http://www.khoslaventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series B · Series A",
+      "check": "$100k to $50M",
+      "kind": "Tier 1 VC"
+     }
+    },
+    {
+     "name": "Debbie Rennick",
+     "title": null,
+     "firm": "Act Venture Capital",
+     "country": "Ireland",
+     "region": null,
+     "city": "Ireland",
+     "email": null,
+     "email_masked": "••••••@actvc.ie",
+     "website": "https://www.actventure.capital",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Charlotte Xia",
+     "title": null,
+     "firm": "Fusion Fund",
+     "country": "Canada",
+     "region": null,
+     "city": "Canada",
+     "email": null,
+     "email_masked": "••••••@fusionfund.com",
+     "website": "https://www.fusionfund.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed · Pre-seed",
+      "check": "$500k to $4M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Mackenzie Regent",
+     "title": null,
+     "firm": "Asylum Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "New York",
+     "email": null,
+     "email_masked": "••••••@asylum.vc",
+     "website": "http://www.asylum.vc",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$1M to $2M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Dylan Itzikowitz",
+     "title": null,
+     "firm": "South Park Commons",
+     "country": null,
+     "region": null,
+     "city": "Global",
+     "email": null,
+     "email_masked": "••••••@southparkcommons.com",
+     "website": "http://www.southparkcommons.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Pre-seed",
+      "check": "$500k to $2M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Dominik Leisi",
+     "title": null,
+     "firm": "Atlantic Bridge",
+     "country": "Ireland",
+     "region": null,
+     "city": "Dublin",
+     "email": null,
+     "email_masked": "••••••@abven.com",
+     "website": "http://www.abven.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Graham Carroll",
+     "title": null,
+     "firm": "Lytical Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "New York",
+     "email": null,
+     "email_masked": "••••••@lyticalventures.com",
+     "website": "https://lyticalventures.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Adrian Kania",
+     "title": null,
+     "firm": "Sapphire Ventures",
+     "country": null,
+     "region": null,
+     "city": null,
+     "email": null,
+     "email_masked": "••••••@sapphireventures.com",
+     "website": "http://www.sapphireventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B",
+      "check": "$20k to $60k",
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "fintech-500",
+   "sector": "fintech",
+   "kind": "sector",
+   "keyword": "FINTECH",
+   "name": "500 Fintech investors",
+   "short_name": "Fintech",
+   "topic": "fintech",
+   "tagline": "Funds that back fintech, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 38 countries, best match first.",
+   "icon": "fintech",
+   "price_cents": 13000,
+   "sort_order": 12,
+   "csv_filename": "climate-insiders-500-fintech-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "The best 500 of the 2,415 investors who back fintech in our database, ranked by fit.",
+    "464 verified emails. Every one of the 500 rows has an email.",
+    "329 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 67% of rows, cheque size on 43%. 93% invest at seed or pre-seed.",
+    "38 countries, led by United States, United Kingdom and Australia.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 2415,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 464,
+    "linkedin": 476,
+    "firms": 329,
+    "countries": 38,
+    "seedish": 93,
+    "median_check_max": 5000.0,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Neil Kapur",
+     "title": null,
+     "firm": "TTV Capital",
+     "country": "United States",
+     "region": null,
+     "city": "Atlanta",
+     "email": null,
+     "email_masked": "••••••@ttvcapital.com",
+     "website": "http://www.ttvcapital.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series B · Series A",
+      "check": "$100k to $10M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Peter Gabriz",
+     "title": null,
+     "firm": "Anthemis Group",
+     "country": null,
+     "region": null,
+     "city": "London",
+     "email": null,
+     "email_masked": "••••••@thespot.sk",
+     "website": "http://www.anthemis.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Doug Sills",
+     "title": null,
+     "firm": "Anthem Venture Partners",
+     "country": null,
+     "region": null,
+     "city": null,
+     "email": null,
+     "email_masked": "••••••@anthemvp.com",
+     "website": "http://anthemvp.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series B · Series A",
+      "check": "$500k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Gerri Kodres",
+     "title": null,
+     "firm": "Specialist VC",
+     "country": null,
+     "region": null,
+     "city": "Global",
+     "email": null,
+     "email_masked": "••••••@specialist.vc",
+     "website": "http://www.specialist.vc",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A · Pre-seed",
+      "check": "$250k to $3M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Marc Simoncini",
+     "title": null,
+     "firm": "Daphni",
+     "country": "France",
+     "region": null,
+     "city": "Paris",
+     "email": null,
+     "email_masked": "••••••@daphni.com",
+     "website": "https://daphni.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series B · Series A · Pre-seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Ivan Ong",
+     "title": null,
+     "firm": "AFG Partners",
+     "country": "Singapore",
+     "region": null,
+     "city": "Singapore",
+     "email": null,
+     "email_masked": "••••••@afgvc.com",
+     "website": "https://www.afgvc.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Neelesh Satpute",
+     "title": null,
+     "firm": "Commerce Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "New York",
+     "email": null,
+     "email_masked": "••••••@shift4.com",
+     "website": "http://www.commerce.vc",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series B · Series A",
+      "check": "$1M to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Daisuke Dan Nagayama",
+     "title": null,
+     "firm": "Arbor Ventures",
+     "country": null,
+     "region": null,
+     "city": "Tokyo",
+     "email": null,
+     "email_masked": "••••••@orgfarm.store",
+     "website": "https://www.arborventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Nuno Sebastiao",
+     "title": null,
+     "firm": "Oak HC/FT",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco Bay Area",
+     "email": null,
+     "email_masked": "••••••@feedzai.com",
+     "website": "http://www.oakhcft.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A",
+      "check": "$5k to $50k",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Denis Shafranik",
+     "title": null,
+     "firm": "Concentric Partners",
+     "country": "United Kingdom",
+     "region": null,
+     "city": "London",
+     "email": null,
+     "email_masked": "••••••@concentricteam.com",
+     "website": "https://www.concentricteam.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "climate-500",
+   "sector": "climate",
+   "kind": "sector",
+   "keyword": "CLIMATETECH",
+   "name": "500 Climate Tech investors",
+   "short_name": "Climate Tech",
+   "topic": "climate tech",
+   "tagline": "Funds that back climate tech, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 35 countries, best match first.",
+   "icon": "climate",
+   "price_cents": 13000,
+   "sort_order": 13,
+   "csv_filename": "climate-insiders-500-climate-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "The best 500 of the 1,247 investors who back climate tech in our database, ranked by fit.",
+    "428 verified emails. Every one of the 500 rows has an email.",
+    "336 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 75% of rows, cheque size on 52%. 91% invest at seed or pre-seed.",
+    "35 countries, led by United States, United Kingdom and Germany.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 1247,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 428,
+    "linkedin": 387,
+    "firms": 336,
+    "countries": 35,
+    "seedish": 91,
+    "median_check_max": 5000.0,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Julia Reichelstein",
+     "title": null,
+     "firm": "Piva Capital",
+     "country": "United States",
+     "region": null,
+     "city": "United States",
+     "email": null,
+     "email_masked": "••••••@vaulteddeep.com",
+     "website": "http://www.piva.vc",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A · Seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Rajashree 'Raji' Baskaran",
+     "title": null,
+     "firm": "Social Impact Capital",
+     "country": "United States",
+     "region": null,
+     "city": "Portland",
+     "email": null,
+     "email_masked": "••••••@projectkarna.com",
+     "website": "https://social-impact-capital.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Alan Yu",
+     "title": null,
+     "firm": "Space Capital",
+     "country": "United States",
+     "region": null,
+     "city": "United States",
+     "email": null,
+     "email_masked": "••••••@spacecapital.com",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A · Pre-seed",
+      "check": "$750k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Laura Dyer",
+     "title": null,
+     "firm": "Buoyant Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "Los Angeles",
+     "email": null,
+     "email_masked": "••••••@buoyant.vc",
+     "website": "https://www.buoyant.vc/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Martin Kroner",
+     "title": null,
+     "firm": "Munich Venture Partners",
+     "country": "Germany",
+     "region": null,
+     "city": "Gruenwald",
+     "email": null,
+     "email_masked": "••••••@munichvp.com",
+     "website": "https://www.munichvp.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Ramon Escobar",
+     "title": null,
+     "firm": "Cemex Ventures",
+     "country": "Mexico",
+     "region": null,
+     "city": "Mexico City",
+     "email": null,
+     "email_masked": "••••••@puntored.mx",
+     "website": "https://www.cemexventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $10M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Vicky McIvor",
+     "title": null,
+     "firm": "World Fund",
+     "country": "Netherlands",
+     "region": null,
+     "city": "Amsterdam",
+     "email": null,
+     "email_masked": "••••••@tibo.energy",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed",
+      "check": "$1M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Vincent Pichon",
+     "title": null,
+     "firm": "ENGIE New Ventures",
+     "country": "France",
+     "region": null,
+     "city": "Paris",
+     "email": null,
+     "email_masked": "••••••@engie.com",
+     "website": "http://www.engieventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": null,
+      "check": null,
+      "kind": "Corporate VC"
+     }
+    },
+    {
+     "name": "Pauline Tsai",
+     "title": null,
+     "firm": "ArcTern Ventures",
+     "country": "Canada",
+     "region": null,
+     "city": "Toronto",
+     "email": null,
+     "email_masked": "••••••@us.bosch.com",
+     "website": "http://www.arcternventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Sengo Garrine",
+     "title": null,
+     "firm": "AP Ventures",
+     "country": "South Africa",
+     "region": null,
+     "city": "Johannesburg",
+     "email": null,
+     "email_masked": "••••••@apventures.com",
+     "website": "https://apventures.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "proptech-500",
+   "sector": "proptech",
+   "kind": "sector",
+   "keyword": "PROPTECH",
+   "name": "500 Real Estate investors",
+   "short_name": "Real Estate",
+   "topic": "real estate and PropTech",
+   "tagline": "Funds that back real estate and PropTech, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 29 countries, best match first.",
+   "icon": "proptech",
+   "price_cents": 13000,
+   "sort_order": 14,
+   "csv_filename": "climate-insiders-500-proptech-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "500 investors who back real estate and PropTech, 255 of them family offices and real estate funds.",
+    "443 verified emails. Every one of the 500 rows has an email.",
+    "407 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 87% of rows, cheque size on 22%. 97% invest at seed or pre-seed.",
+    "29 countries, led by Australia, United States and Germany.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 1261,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 443,
+    "linkedin": 481,
+    "firms": 407,
+    "countries": 29,
+    "seedish": 97,
+    "median_check_max": 5000.0,
+    "family_offices": 255
+   },
+   "sample": [
+    {
+     "name": "Alex King",
+     "title": null,
+     "firm": "TruAmerica Multifamily",
+     "country": "United States",
+     "region": null,
+     "city": "Los Angeles",
+     "email": null,
+     "email_masked": "••••••@truamerica.com",
+     "website": "https://www.truamerica.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Family Office"
+     }
+    },
+    {
+     "name": "Jan Fossgard",
+     "title": null,
+     "firm": "Construct Venture",
+     "country": "Norway",
+     "region": null,
+     "city": "Fredrikstad",
+     "email": null,
+     "email_masked": "••••••@constructventure.no",
+     "website": "https://www.constructventure.no",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Mitchell N. Schear",
+     "title": null,
+     "firm": "Camber Creek",
+     "country": "United States",
+     "region": null,
+     "city": "Washington",
+     "email": null,
+     "email_masked": "••••••@10square.co",
+     "website": "http://www.cambercreek.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series B · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Ramon Escobar",
+     "title": null,
+     "firm": "Cemex Ventures",
+     "country": "Mexico",
+     "region": null,
+     "city": "Mexico City",
+     "email": null,
+     "email_masked": "••••••@puntored.mx",
+     "website": "https://www.cemexventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $10M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Richard Hayman",
+     "title": null,
+     "firm": "PPI Funds Management",
+     "country": "Australia",
+     "region": null,
+     "city": "Adelaide",
+     "email": null,
+     "email_masked": "••••••@ppifundsmanagement.com.au",
+     "website": "https://www.ppifundsmanagement.com.au",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Family Office"
+     }
+    },
+    {
+     "name": "Dan Wenhold",
+     "title": null,
+     "firm": "Fifth Wall",
+     "country": "United States",
+     "region": null,
+     "city": "Los Angeles",
+     "email": null,
+     "email_masked": "••••••@fifthwall.com",
+     "website": "https://fifthwall.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A",
+      "check": "$250k to $100M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Matthew Ohlman",
+     "title": null,
+     "firm": "Shadow Ventures",
+     "country": null,
+     "region": null,
+     "city": null,
+     "email": null,
+     "email_masked": "••••••@shadow.vc",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Pre-seed",
+      "check": "$250k to $1.5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Luis Villanova",
+     "title": null,
+     "firm": "CONREN Land",
+     "country": "Germany",
+     "region": null,
+     "city": "Frankfurt",
+     "email": null,
+     "email_masked": "••••••@conrenland.com",
+     "website": "https://www.conrenland.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Family Office"
+     }
+    },
+    {
+     "name": "Peter Van Beuningen",
+     "title": null,
+     "firm": "Bric Group",
+     "country": "Spain",
+     "region": null,
+     "city": "Marbella",
+     "email": null,
+     "email_masked": "••••••@bric-investment.com",
+     "website": "https://www.bric-investment.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Family Office"
+     }
+    },
+    {
+     "name": "Ondrej Krivanec",
+     "title": null,
+     "firm": "Fidurock Capital B.V.",
+     "country": "Czech Republic",
+     "region": null,
+     "city": "Hradec Králové",
+     "email": null,
+     "email_masked": "••••••@fidurock.com",
+     "website": "https://www.fidurock.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Family Office"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "defense-95",
+   "sector": "defense",
+   "kind": "sector",
+   "keyword": "DEFENSE",
+   "name": "95 Defense Tech investors",
+   "short_name": "Defense Tech",
+   "topic": "defense tech",
+   "tagline": "Funds that back defense tech, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 13 countries, best match first.",
+   "icon": "defense",
+   "price_cents": 13000,
+   "sort_order": 15,
+   "csv_filename": "climate-insiders-95-defense-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "All 95 investors who back defense tech in our database, ranked by fit.",
+    "71 verified emails. Every one of the 95 rows has an email.",
+    "64 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 75% of rows, cheque size on 57%. 97% invest at seed or pre-seed.",
+    "13 countries, led by United States, Germany and Finland.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 95,
+   "stats": {
+    "rows": 95,
+    "emails": 95,
+    "verified": 71,
+    "linkedin": 77,
+    "firms": 64,
+    "countries": 13,
+    "seedish": 97,
+    "median_check_max": 3000.0,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Ben Patterson",
+     "title": null,
+     "firm": "Elementum Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco",
+     "email": null,
+     "email_masked": "••••••@10vc.com",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Pre-seed",
+      "check": "$250k to $2M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Greg Castle",
+     "title": null,
+     "firm": "Anorak Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco",
+     "email": null,
+     "email_masked": "••••••@anorak.vc",
+     "website": "http://www.anorak.vc",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A · Seed · Pre-seed",
+      "check": "$50k to $400k",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Sam Blond",
+     "title": null,
+     "firm": "Founders Fund",
+     "country": "United States",
+     "region": null,
+     "city": "Miami",
+     "email": null,
+     "email_masked": "••••••@monaco.com",
+     "website": "http://www.foundersfund.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A · Pre-seed",
+      "check": "$10k to $100k",
+      "kind": "Tier 1 VC"
+     }
+    },
+    {
+     "name": "Doug Philippone",
+     "title": null,
+     "firm": "Snowpoint Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "Washington",
+     "email": null,
+     "email_masked": "••••••@snowpoint.vc",
+     "website": "snowpoint.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Alexandre Momeni",
+     "title": null,
+     "firm": "General Catalyst",
+     "country": "United Kingdom",
+     "region": null,
+     "city": "United Kingdom",
+     "email": null,
+     "email_masked": "••••••@generalcatalyst.com",
+     "website": "http://www.generalcatalyst.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$500k to $2M",
+      "kind": "Tier 1 VC"
+     }
+    },
+    {
+     "name": "Julian Schroeder",
+     "title": null,
+     "firm": "Argos GmbH",
+     "country": "Germany",
+     "region": null,
+     "city": "Muenchen",
+     "email": null,
+     "email_masked": "••••••@argosinvest.com",
+     "website": "https://www.argosinvest.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Christian Weiss",
+     "title": null,
+     "firm": "Sunfish Partners",
+     "country": "Germany",
+     "region": null,
+     "city": "Lippstadt",
+     "email": null,
+     "email_masked": "••••••@sunfish-partners.com",
+     "website": "https://www.sunfish-partners.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Greg Oam",
+     "title": null,
+     "firm": "BOKA Group",
+     "country": "Australia",
+     "region": null,
+     "city": "West Perth",
+     "email": null,
+     "email_masked": "••••••@boka-group.com",
+     "website": "https://www.boka-group.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Joni Karsikas",
+     "title": null,
+     "firm": "Tesi",
+     "country": "Finland",
+     "region": null,
+     "city": "Helsinki",
+     "email": null,
+     "email_masked": "••••••@tesi.fi",
+     "website": "http://www.tesi.fi",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": null,
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Ralph Westphal",
+     "title": null,
+     "firm": "AEQUITA",
+     "country": "Germany",
+     "region": null,
+     "city": "Muenchen",
+     "email": null,
+     "email_masked": "••••••@aequita.com",
+     "website": "https://www.aequita.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "health-500",
+   "sector": "health",
+   "kind": "sector",
+   "keyword": "HEALTH",
+   "name": "500 Digital Health investors",
+   "short_name": "Digital Health",
+   "topic": "digital health",
+   "tagline": "Funds that back digital health, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 30 countries, best match first.",
+   "icon": "health",
+   "price_cents": 13000,
+   "sort_order": 16,
+   "csv_filename": "climate-insiders-500-health-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "The best 500 of the 2,680 investors who back digital health in our database, ranked by fit.",
+    "465 verified emails. Every one of the 500 rows has an email.",
+    "315 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 71% of rows, cheque size on 58%. 92% invest at seed or pre-seed.",
+    "30 countries, led by United States, United Kingdom and Germany.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 2680,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 465,
+    "linkedin": 440,
+    "firms": 315,
+    "countries": 30,
+    "seedish": 92,
+    "median_check_max": 5000.0,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Johann Bleivik Wist",
+     "title": null,
+     "firm": "Investinor",
+     "country": "Norway",
+     "region": null,
+     "city": "Norway",
+     "email": null,
+     "email_masked": "••••••@investinor.no",
+     "website": "http://www.investinor.no",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Partha Mishra",
+     "title": null,
+     "firm": "DNA Capital",
+     "country": "Brazil",
+     "region": null,
+     "city": "Sao Paulo",
+     "email": null,
+     "email_masked": "••••••@dnacapital.com",
+     "website": "http://www.dnacapital.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Corporate VC"
+     }
+    },
+    {
+     "name": "Duarte Mineiro",
+     "title": null,
+     "firm": "Armilar Venture Partners",
+     "country": "Portugal",
+     "region": null,
+     "city": "Lisbon",
+     "email": null,
+     "email_masked": "••••••@armilar.com",
+     "website": "https://www.armilar.com/en/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Josh Cohen",
+     "title": null,
+     "firm": "City Light Capital",
+     "country": "United States",
+     "region": null,
+     "city": "New York",
+     "email": null,
+     "email_masked": "••••••@citylight.vc",
+     "website": "https://citylight.vc/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$50k to $3M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Ashish Behera",
+     "title": null,
+     "firm": "Beyond Next Ventures",
+     "country": "Japan",
+     "region": null,
+     "city": "Japan",
+     "email": null,
+     "email_masked": "••••••@fujitsu.com",
+     "website": "https://beyondnextventures.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Pat Mulach",
+     "title": null,
+     "firm": "Polaris Partners",
+     "country": "United States",
+     "region": null,
+     "city": "Boston",
+     "email": null,
+     "email_masked": "••••••@polarisgrowthfund.com",
+     "website": "https://www.polarispartners.com/portfolio/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$300k to $2M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Emilie Syed",
+     "title": null,
+     "firm": "Parkwalk Advisors",
+     "country": "United Kingdom",
+     "region": null,
+     "city": "Oxford",
+     "email": null,
+     "email_masked": "••••••@zinc.vc",
+     "website": "http://www.parkwalkadvisors.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series B · Series A",
+      "check": "$1.3M to $2M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Phyllis Gotlib",
+     "title": null,
+     "firm": "Flare Capital Partners",
+     "country": "United States",
+     "region": null,
+     "city": "Boston",
+     "email": null,
+     "email_masked": "••••••@amwell.com",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$1M to $10M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Camille Ridel",
+     "title": null,
+     "firm": "Sanofi Ventures",
+     "country": "France",
+     "region": null,
+     "city": "Paris",
+     "email": null,
+     "email_masked": "••••••@biocorp.fr",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$5M to $10M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Melanie Hayes",
+     "title": null,
+     "firm": "Bethnal Green Ventures",
+     "country": null,
+     "region": null,
+     "city": "London",
+     "email": null,
+     "email_masked": "••••••@bethnalgreenventures.com",
+     "website": "https://bethnalgreenventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Pre-seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "biotech-500",
+   "sector": "biotech",
+   "kind": "sector",
+   "keyword": "BIOTECH",
+   "name": "500 Biotech investors",
+   "short_name": "Biotech",
+   "topic": "biotech and life sciences",
+   "tagline": "Funds that back biotech and life sciences, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 32 countries, best match first.",
+   "icon": "biotech",
+   "price_cents": 13000,
+   "sort_order": 17,
+   "csv_filename": "climate-insiders-500-biotech-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "The best 500 of the 1,591 investors who back biotech and life sciences in our database, ranked by fit.",
+    "440 verified emails. Every one of the 500 rows has an email.",
+    "317 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 77% of rows, cheque size on 58%. 93% invest at seed or pre-seed.",
+    "32 countries, led by United States, United Kingdom and Germany.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 1591,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 440,
+    "linkedin": 401,
+    "firms": 317,
+    "countries": 32,
+    "seedish": 93,
+    "median_check_max": 5000.0,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Maria Berkman",
+     "title": null,
+     "firm": "Broadview Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "Boston",
+     "email": null,
+     "email_masked": "••••••@vensanacap.com",
+     "website": "https://broadviewventures.org/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Thilo Schroeder",
+     "title": null,
+     "firm": "Nextech Invest",
+     "country": "Switzerland",
+     "region": null,
+     "city": "Zurich",
+     "email": null,
+     "email_masked": "••••••@nextechinvest.com",
+     "website": "http://www.nextechinvest.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Sabah Oney",
+     "title": null,
+     "firm": "ARCH Venture Partners",
+     "country": "United States",
+     "region": null,
+     "city": "Chicago",
+     "email": null,
+     "email_masked": "••••••@dispatchbio.com",
+     "website": "https://www.archventure.com/portfolio/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series B · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Nandita Shangari",
+     "title": null,
+     "firm": "RA Capital Management",
+     "country": "United States",
+     "region": null,
+     "city": "Cambridge",
+     "email": null,
+     "email_masked": "••••••@racap.com",
+     "website": "http://www.racap.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Camille Ridel",
+     "title": null,
+     "firm": "Sanofi Ventures",
+     "country": "France",
+     "region": null,
+     "city": "Paris",
+     "email": null,
+     "email_masked": "••••••@biocorp.fr",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$5M to $10M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Frank Kung",
+     "title": null,
+     "firm": "Vivo Capital",
+     "country": "United States",
+     "region": null,
+     "city": "Palo Alto",
+     "email": null,
+     "email_masked": "••••••@vivocapital.com",
+     "website": "http://www.vivocapital.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$10M to $50M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Johann Bleivik Wist",
+     "title": null,
+     "firm": "Investinor",
+     "country": "Norway",
+     "region": null,
+     "city": "Norway",
+     "email": null,
+     "email_masked": "••••••@investinor.no",
+     "website": "http://www.investinor.no",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Ricardo Salomão",
+     "title": null,
+     "firm": "Green Rock",
+     "country": "Brazil",
+     "region": null,
+     "city": "Sao Paulo",
+     "email": null,
+     "email_masked": "••••••@greenrock.vc",
+     "website": "http://www.greenrock.vc",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A · Pre-seed · Series B",
+      "check": "$500k to $3M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Jean-François Rivassou",
+     "title": null,
+     "firm": "Kurma Partners",
+     "country": "France",
+     "region": null,
+     "city": "Paris",
+     "email": null,
+     "email_masked": "••••••@kurmapartners.com",
+     "website": "http://www.kurmapartners.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Pre-seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Shahzad Malik",
+     "title": null,
+     "firm": "Advent Life Sciences",
+     "country": null,
+     "region": null,
+     "city": "London",
+     "email": null,
+     "email_masked": "••••••@adventls.com",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A",
+      "check": "$25k to $5M",
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "cyber-500",
+   "sector": "cyber",
+   "kind": "sector",
+   "keyword": "CYBER",
+   "name": "500 Cybersecurity investors",
+   "short_name": "Cybersecurity",
+   "topic": "cybersecurity",
+   "tagline": "Funds that back cybersecurity, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 33 countries, best match first.",
+   "icon": "cyber",
+   "price_cents": 13000,
+   "sort_order": 18,
+   "csv_filename": "climate-insiders-500-cyber-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "The best 500 of the 700 investors who back cybersecurity in our database, ranked by fit.",
+    "426 verified emails. Every one of the 500 rows has an email.",
+    "311 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 73% of rows, cheque size on 60%. 88% invest at seed or pre-seed.",
+    "33 countries, led by United States, Israel and United Kingdom.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 700,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 426,
+    "linkedin": 442,
+    "firms": 311,
+    "countries": 33,
+    "seedish": 88,
+    "median_check_max": 5000.0,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Andrew J Doll",
+     "title": null,
+     "firm": "Ten Eleven Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco",
+     "email": null,
+     "email_masked": "••••••@1011vc.com",
+     "website": "http://www.1011vc.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series B · Series A",
+      "check": "$3M to $15M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "John Brennan",
+     "title": null,
+     "firm": "YL Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco Bay Area",
+     "email": null,
+     "email_masked": "••••••@hollyventures.com",
+     "website": "http://www.ylventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed",
+      "check": "$200k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Dylan Posner",
+     "title": null,
+     "firm": "SYN Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "New York",
+     "email": null,
+     "email_masked": "••••••@synventures.com",
+     "website": "http://www.synventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A · Seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Stephen Gray",
+     "title": null,
+     "firm": "DreamIt Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "Houston",
+     "email": null,
+     "email_masked": "••••••@vpcp.com",
+     "website": "dreamit.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$500k",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Israel Grimberg",
+     "title": null,
+     "firm": "Team8",
+     "country": "Israel",
+     "region": null,
+     "city": "Israel",
+     "email": null,
+     "email_masked": "••••••@team8.vc",
+     "website": "https://team8.vc/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A",
+      "check": "$1M to $10M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Willi Mannheims",
+     "title": null,
+     "firm": "eCapital Entrepreneurial Partners",
+     "country": "Germany",
+     "region": null,
+     "city": "Germany",
+     "email": null,
+     "email_masked": "••••••@ecapital.vc",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A · Seed",
+      "check": "$1.5M to $4M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Zemer Shwartz-Noy",
+     "title": null,
+     "firm": "Blumberg Capital",
+     "country": "Israel",
+     "region": null,
+     "city": "Tel Aviv",
+     "email": null,
+     "email_masked": "••••••@aim.security",
+     "website": "https://www.blumbergcapital.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$500k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Dominik Leisi",
+     "title": null,
+     "firm": "Atlantic Bridge",
+     "country": "Ireland",
+     "region": null,
+     "city": "Dublin",
+     "email": null,
+     "email_masked": "••••••@abven.com",
+     "website": "http://www.abven.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Adam Cragg",
+     "title": null,
+     "firm": "Osney Capital",
+     "country": "Canada",
+     "region": null,
+     "city": "Canada",
+     "email": null,
+     "email_masked": "••••••@osneycapital.com",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed · Pre-seed",
+      "check": "$300k to $3.325M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Gerri Kodres",
+     "title": null,
+     "firm": "Specialist VC",
+     "country": null,
+     "region": null,
+     "city": "Global",
+     "email": null,
+     "email_masked": "••••••@specialist.vc",
+     "website": "http://www.specialist.vc",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A · Pre-seed",
+      "check": "$250k to $3M",
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "web3-500",
+   "sector": "web3",
+   "kind": "sector",
+   "keyword": "WEB3",
+   "name": "500 Web3 investors",
+   "short_name": "Web3",
+   "topic": "Web3 and crypto",
+   "tagline": "Funds that back Web3 and crypto, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 37 countries, best match first.",
+   "icon": "web3",
+   "price_cents": 13000,
+   "sort_order": 19,
+   "csv_filename": "climate-insiders-500-web3-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "The best 500 of the 970 investors who back Web3 and crypto in our database, ranked by fit.",
+    "420 verified emails. Every one of the 500 rows has an email.",
+    "354 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 93% of rows, cheque size on 85%. 94% invest at seed or pre-seed.",
+    "37 countries, led by United States, Singapore and Germany.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 970,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 420,
+    "linkedin": 435,
+    "firms": 354,
+    "countries": 37,
+    "seedish": 94,
+    "median_check_max": 5000,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Sebastian Blum",
+     "title": null,
+     "firm": "Greenfield Capital",
+     "country": "Germany",
+     "region": null,
+     "city": "Berlin",
+     "email": null,
+     "email_masked": "••••••@greenfield.xyz",
+     "website": "http://www.greenfieldcapital.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Alex Felix",
+     "title": null,
+     "firm": "CoinFund",
+     "country": "United States",
+     "region": null,
+     "city": "New York",
+     "email": null,
+     "email_masked": "••••••@coinfund.io",
+     "website": "http://www.coinfund.io",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$6M to $10M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Evan Mair",
+     "title": null,
+     "firm": "Gumi Cryptos Capital",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco",
+     "email": null,
+     "email_masked": "••••••@gumi-cryptos.com",
+     "website": "https://www.gumi-cryptos.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A · Seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Nick Tomaino",
+     "title": null,
+     "firm": "1confirmation",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco",
+     "email": null,
+     "email_masked": "••••••@1confirmation.com",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Katherine Wu",
+     "title": null,
+     "firm": "Archetype",
+     "country": "United States",
+     "region": null,
+     "city": "New York",
+     "email": null,
+     "email_masked": "••••••@ens.domains",
+     "website": "http://www.archetype.fund",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Roshun Patel",
+     "title": null,
+     "firm": "Hack VC",
+     "country": null,
+     "region": null,
+     "city": "New York City",
+     "email": null,
+     "email_masked": "••••••@erebor.so",
+     "website": "https://hack-vc.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$5M to $10M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Fredrik Adolfsson",
+     "title": null,
+     "firm": "True Global Ventures",
+     "country": null,
+     "region": null,
+     "city": "Asia",
+     "email": null,
+     "email_masked": "••••••@bakgrundsanalys.se",
+     "website": "https://www.trueglobalventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B",
+      "check": "$1M to $35M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Jason Fang",
+     "title": null,
+     "firm": "Sora Ventures",
+     "country": "Hong Kong",
+     "region": null,
+     "city": "Hong Kong",
+     "email": null,
+     "email_masked": "••••••@sora.vc",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$10M to $50M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Nizar Hachem",
+     "title": null,
+     "firm": "NodeShift",
+     "country": "Luxembourg",
+     "region": null,
+     "city": "Luxembourg",
+     "email": null,
+     "email_masked": "••••••@tlfventures.com",
+     "website": "https://www.tlfventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Joey Krug",
+     "title": null,
+     "firm": "Founders Fund",
+     "country": null,
+     "region": null,
+     "city": "San Juan",
+     "email": null,
+     "email_masked": "••••••@foundersfund.com",
+     "website": "http://www.foundersfund.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A",
+      "check": "$500k to $150M",
+      "kind": "Tier 1 VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "saas-500",
+   "sector": "saas",
+   "kind": "sector",
+   "keyword": "SAAS",
+   "name": "500 SaaS investors",
+   "short_name": "SaaS",
+   "topic": "enterprise SaaS and developer tools",
+   "tagline": "Funds that back enterprise SaaS and developer tools, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 34 countries, best match first.",
+   "icon": "saas",
+   "price_cents": 13000,
+   "sort_order": 20,
+   "csv_filename": "climate-insiders-500-saas-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "The best 500 of the 3,325 investors who back enterprise SaaS and developer tools in our database, ranked by fit.",
+    "466 verified emails. Every one of the 500 rows has an email.",
+    "310 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 75% of rows, cheque size on 68%. 86% invest at seed or pre-seed.",
+    "34 countries, led by United States, United Kingdom and Germany.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 3325,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 466,
+    "linkedin": 456,
+    "firms": 310,
+    "countries": 34,
+    "seedish": 86,
+    "median_check_max": 5000.0,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Ilmo Caldas",
+     "title": null,
+     "firm": "HiPartners Capital&Work",
+     "country": "Brazil",
+     "region": null,
+     "city": "Sao Paulo",
+     "email": null,
+     "email_masked": "••••••@hipartners.com.br",
+     "website": "http://www.hipartners.com.br",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series B · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Benny Liao",
+     "title": null,
+     "firm": "Acorn Pacific Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "United States",
+     "email": null,
+     "email_masked": "••••••@acornpacific.ventures",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$500k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Chelsea Zhang",
+     "title": null,
+     "firm": "Equal Ventures",
+     "country": "Mexico",
+     "region": null,
+     "city": "Mexico",
+     "email": null,
+     "email_masked": "••••••@equal.vc",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed",
+      "check": "$1M to $2M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "David Sacks",
+     "title": null,
+     "firm": "Craft Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco Bay Area",
+     "email": null,
+     "email_masked": "••••••@craftventures.com",
+     "website": "http://www.craftventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$1M to $50M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Nils Seele",
+     "title": null,
+     "firm": "LEA Partners",
+     "country": "Germany",
+     "region": null,
+     "city": "Germany",
+     "email": null,
+     "email_masked": "••••••@leapartners.de",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed",
+      "check": "$1M to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Cormac O'Connor",
+     "title": null,
+     "firm": "ScOp Venture Capital",
+     "country": "United States",
+     "region": null,
+     "city": "San Luis Obispo",
+     "email": null,
+     "email_masked": "••••••@scopvc.com",
+     "website": "http://www.scopvc.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$500k to $3M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Todd Jackson",
+     "title": null,
+     "firm": "First Round Capital",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco Bay Area",
+     "email": null,
+     "email_masked": "••••••@firstround.com",
+     "website": "http://www.firstround.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A · Pre-seed",
+      "check": "$100k to $12M",
+      "kind": "Tier 1 VC"
+     }
+    },
+    {
+     "name": "João Bandeira",
+     "title": null,
+     "firm": "Bright Pixel Capital",
+     "country": "Israel",
+     "region": null,
+     "city": "Israel",
+     "email": null,
+     "email_masked": "••••••@brpx.com",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A",
+      "check": "$1M to $15M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "George Matelich",
+     "title": null,
+     "firm": "Hawk Hill Ventures",
+     "country": null,
+     "region": null,
+     "city": null,
+     "email": null,
+     "email_masked": "••••••@tryrely.ai",
+     "website": "hawkhill.ventures",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Pre-seed",
+      "check": "$10k to $100k",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Aaron Applbaum",
+     "title": null,
+     "firm": "MizMaa Ventures",
+     "country": "Israel",
+     "region": null,
+     "city": "Israel",
+     "email": null,
+     "email_masked": "••••••@kineticavc.com",
+     "website": "https://www.mizmaa.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A · Pre-seed",
+      "check": "$1M to $6M",
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "energy-500",
+   "sector": "energy",
+   "kind": "sector",
+   "keyword": "ENERGYTECH",
+   "name": "500 Energy Tech investors",
+   "short_name": "Energy Tech",
+   "topic": "energy tech",
+   "tagline": "Funds that back energy tech, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 37 countries, best match first.",
+   "icon": "energy",
+   "price_cents": 13000,
+   "sort_order": 21,
+   "csv_filename": "climate-insiders-500-energy-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "The best 500 of the 857 investors who back energy tech in our database, ranked by fit.",
+    "402 verified emails. Every one of the 500 rows has an email.",
+    "345 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 81% of rows, cheque size on 52%. 92% invest at seed or pre-seed.",
+    "37 countries, led by United States, United Kingdom and Australia.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 857,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 402,
+    "linkedin": 363,
+    "firms": 345,
+    "countries": 37,
+    "seedish": 92,
+    "median_check_max": 5000.0,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Julia Reichelstein",
+     "title": null,
+     "firm": "Piva Capital",
+     "country": "United States",
+     "region": null,
+     "city": "United States",
+     "email": null,
+     "email_masked": "••••••@vaulteddeep.com",
+     "website": "http://www.piva.vc",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A · Seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Baris Guzel",
+     "title": null,
+     "firm": "BMW i Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco Bay Area",
+     "email": null,
+     "email_masked": "••••••@bmwiventures.com",
+     "website": "https://www.bmwiventures.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A",
+      "check": "$6M to $10M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Abel Boreto",
+     "title": null,
+     "firm": "Novastar Ventures",
+     "country": "Kenya",
+     "region": null,
+     "city": "Kenya",
+     "email": null,
+     "email_masked": "••••••@novastarventures.com",
+     "website": "http://www.novastarventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Matt Eggers",
+     "title": null,
+     "firm": "Prelude Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco",
+     "email": null,
+     "email_masked": "••••••@preludeventures.com",
+     "website": "https://www.preludeventures.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series B · Series A · Pre-seed",
+      "check": "$500k to $25M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Ines Bergmann-Nolting",
+     "title": null,
+     "firm": "Future Energy Ventures",
+     "country": "Germany",
+     "region": null,
+     "city": "Germany",
+     "email": null,
+     "email_masked": "••••••@greencode.vc",
+     "website": "https://fev.vc/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Miran Khwais",
+     "title": null,
+     "firm": "Maniv Mobility",
+     "country": "Israel",
+     "region": null,
+     "city": "Haifa",
+     "email": null,
+     "email_masked": "••••••@ai71.ai",
+     "website": "https://www.maniv.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$1M to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Simon Leicht",
+     "title": null,
+     "firm": "Possible Ventures",
+     "country": "Germany",
+     "region": null,
+     "city": "Munich",
+     "email": null,
+     "email_masked": "••••••@sdac.io",
+     "website": "https://www.possible.ventures",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A · Pre-seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Mardé van Wyk",
+     "title": null,
+     "firm": "AP Ventures",
+     "country": "South Africa",
+     "region": null,
+     "city": "Johannesburg",
+     "email": null,
+     "email_masked": "••••••@apventures.com",
+     "website": "https://apventures.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Ram Kumar",
+     "title": null,
+     "firm": "Real Assets Investment Management",
+     "country": "United Kingdom",
+     "region": null,
+     "city": "Norwich",
+     "email": null,
+     "email_masked": "••••••@realassetsim.com",
+     "website": "https://www.realassetsim.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Cihan Elbirlik",
+     "title": null,
+     "firm": "Inci Holding",
+     "country": "Turkey",
+     "region": null,
+     "city": "Gaziemir",
+     "email": null,
+     "email_masked": "••••••@inciholding.com",
+     "website": "https://www.inciholding.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "space-374",
+   "sector": "space",
+   "kind": "sector",
+   "keyword": "SPACE",
+   "name": "374 Space investors",
+   "short_name": "Space",
+   "topic": "space and aerospace",
+   "tagline": "Funds that back space and aerospace, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 30 countries, best match first.",
+   "icon": "space",
+   "price_cents": 13000,
+   "sort_order": 22,
+   "csv_filename": "climate-insiders-374-space-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "All 374 investors who back space and aerospace in our database, ranked by fit.",
+    "309 verified emails. Every one of the 374 rows has an email.",
+    "300 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 90% of rows, cheque size on 73%. 95% invest at seed or pre-seed.",
+    "30 countries, led by United States, Germany and United Kingdom.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 374,
+   "stats": {
+    "rows": 374,
+    "emails": 374,
+    "verified": 309,
+    "linkedin": 266,
+    "firms": 300,
+    "countries": 30,
+    "seedish": 95,
+    "median_check_max": 5000.0,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Steven Jorgenson",
+     "title": null,
+     "firm": "Starbridge Venture Capital",
+     "country": "United States",
+     "region": null,
+     "city": "West Palm Beach",
+     "email": null,
+     "email_masked": "••••••@starbridgevc.com",
+     "website": "http://www.starbridgevc.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$250k to $1M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Alan Yu",
+     "title": null,
+     "firm": "Space Capital",
+     "country": "United States",
+     "region": null,
+     "city": "United States",
+     "email": null,
+     "email_masked": "••••••@spacecapital.com",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A · Pre-seed",
+      "check": "$750k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Tommy Oehl",
+     "title": null,
+     "firm": "Vsquared Ventures",
+     "country": "Germany",
+     "region": null,
+     "city": "Munich",
+     "email": null,
+     "email_masked": "••••••@vsquared.vc",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Jeff Schox",
+     "title": null,
+     "firm": "Trucks Venture Capital",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco",
+     "email": null,
+     "email_masked": "••••••@schox.org",
+     "website": "http://www.trucks.vc/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A · Pre-seed",
+      "check": "$100k to $500k",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Alexa M. Monti",
+     "title": null,
+     "firm": "Harpoon",
+     "country": "United States",
+     "region": null,
+     "city": "United States",
+     "email": null,
+     "email_masked": "••••••@havocai.com",
+     "website": "http://www.harpoon.vc",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Simon Leicht",
+     "title": null,
+     "firm": "Possible Ventures",
+     "country": "Germany",
+     "region": null,
+     "city": "Munich",
+     "email": null,
+     "email_masked": "••••••@sdac.io",
+     "website": "https://www.possible.ventures",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A · Pre-seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Olivier Dubuisson",
+     "title": null,
+     "firm": "Karista",
+     "country": "France",
+     "region": null,
+     "city": "Paris",
+     "email": null,
+     "email_masked": "••••••@karista.vc",
+     "website": "https://www.karista.vc/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Series B · Seed",
+      "check": "$600k to $6M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Greg Oam",
+     "title": null,
+     "firm": "BOKA Group",
+     "country": "Australia",
+     "region": null,
+     "city": "West Perth",
+     "email": null,
+     "email_masked": "••••••@boka-group.com",
+     "website": "https://www.boka-group.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Pablos Holman",
+     "title": null,
+     "firm": "Deep Future",
+     "country": "Israel",
+     "region": null,
+     "city": "Tel Aviv",
+     "email": null,
+     "email_masked": "••••••@deepfuture.tech",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Pre-seed",
+      "check": "$100k to $500k",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Benjamin Pavie",
+     "title": null,
+     "firm": "Expansion Ventures",
+     "country": "France",
+     "region": null,
+     "city": "Paris",
+     "email": null,
+     "email_masked": "••••••@expansion-vc.eu",
+     "website": "http://www.expansion-vc.eu",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": null,
+      "check": null,
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "robotics-500",
+   "sector": "robotics",
+   "kind": "sector",
+   "keyword": "ROBOTICS",
+   "name": "500 Robotics investors",
+   "short_name": "Robotics",
+   "topic": "robotics and industrial automation",
+   "tagline": "Funds that back robotics and industrial automation, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 33 countries, best match first.",
+   "icon": "robotics",
+   "price_cents": 13000,
+   "sort_order": 23,
+   "csv_filename": "climate-insiders-500-robotics-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "The best 500 of the 1,025 investors who back robotics and industrial automation in our database, ranked by fit.",
+    "429 verified emails. Every one of the 500 rows has an email.",
+    "346 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 75% of rows, cheque size on 53%. 94% invest at seed or pre-seed.",
+    "33 countries, led by United States, Germany and United Kingdom.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 1025,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 429,
+    "linkedin": 382,
+    "firms": 346,
+    "countries": 33,
+    "seedish": 94,
+    "median_check_max": 5000,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Mark Accomando",
+     "title": null,
+     "firm": "Heartland Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco",
+     "email": null,
+     "email_masked": "••••••@eosworldwide.com",
+     "website": "http://www.heartlandvc.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$1M to $2M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Marcus Jennekvist",
+     "title": null,
+     "firm": "Accent Equity",
+     "country": "Sweden",
+     "region": null,
+     "city": "Stockholm",
+     "email": null,
+     "email_masked": "••••••@accentequity.se",
+     "website": "https://www.accentequity.se",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Reto Eisenbart",
+     "title": null,
+     "firm": "Soleal Unternehmerkapital AG",
+     "country": "Switzerland",
+     "region": null,
+     "city": "Zurich",
+     "email": null,
+     "email_masked": "••••••@soleal.ch",
+     "website": "https://www.soleal.ch",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Jeff Schox",
+     "title": null,
+     "firm": "Trucks Venture Capital",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco",
+     "email": null,
+     "email_masked": "••••••@schox.org",
+     "website": "http://www.trucks.vc/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A · Pre-seed",
+      "check": "$100k to $500k",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Ralph Westphal",
+     "title": null,
+     "firm": "AEQUITA",
+     "country": "Germany",
+     "region": null,
+     "city": "Muenchen",
+     "email": null,
+     "email_masked": "••••••@aequita.com",
+     "website": "https://www.aequita.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Evan Kay",
+     "title": null,
+     "firm": "Anzu Partners",
+     "country": "United States",
+     "region": null,
+     "city": "San Diego",
+     "email": null,
+     "email_masked": "••••••@navier.ai",
+     "website": "https://anzupartners.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$3M to $15M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Tal Ben-Moshe",
+     "title": null,
+     "firm": "Grove Ventures",
+     "country": "Israel",
+     "region": null,
+     "city": "Israel",
+     "email": null,
+     "email_masked": "••••••@wonderful.ai",
+     "website": "https://www.grovevc.com/team/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$500k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "David Blivin",
+     "title": null,
+     "firm": "Cottonwood Technology Fund",
+     "country": "Netherlands",
+     "region": null,
+     "city": "Netherlands",
+     "email": null,
+     "email_masked": "••••••@cottonwood.vc",
+     "website": "https://www.cottonwood.vc",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A · Pre-seed",
+      "check": "$1M to $3M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Greg Castle",
+     "title": null,
+     "firm": "Anorak Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco",
+     "email": null,
+     "email_masked": "••••••@anorak.vc",
+     "website": "http://www.anorak.vc",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A · Seed · Pre-seed",
+      "check": "$50k to $400k",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Chinmay Vaidya",
+     "title": null,
+     "firm": "Foundamental",
+     "country": null,
+     "region": null,
+     "city": "Global",
+     "email": null,
+     "email_masked": "••••••@cloover.co",
+     "website": "https://foundamental.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A · Pre-seed",
+      "check": "$200k to $4M",
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "deeptech-500",
+   "sector": "deeptech",
+   "kind": "sector",
+   "keyword": "DEEPTECH",
+   "name": "500 Deep Tech investors",
+   "short_name": "Deep Tech",
+   "topic": "deep tech, semiconductors and quantum",
+   "tagline": "Funds that back deep tech, semiconductors and quantum, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 38 countries, best match first.",
+   "icon": "deeptech",
+   "price_cents": 13000,
+   "sort_order": 24,
+   "csv_filename": "climate-insiders-500-deeptech-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "The best 500 of the 1,210 investors who back deep tech, semiconductors and quantum in our database, ranked by fit.",
+    "411 verified emails. Every one of the 500 rows has an email.",
+    "381 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 88% of rows, cheque size on 56%. 90% invest at seed or pre-seed.",
+    "38 countries, led by United States, United Kingdom and Germany.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 1210,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 411,
+    "linkedin": 280,
+    "firms": 381,
+    "countries": 38,
+    "seedish": 90,
+    "median_check_max": 5000.0,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Steven Jorgenson",
+     "title": null,
+     "firm": "Starbridge Venture Capital",
+     "country": "United States",
+     "region": null,
+     "city": "West Palm Beach",
+     "email": null,
+     "email_masked": "••••••@starbridgevc.com",
+     "website": "http://www.starbridgevc.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$250k to $1M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Lise Rechsteiner",
+     "title": null,
+     "firm": "Vsquared Ventures",
+     "country": "Germany",
+     "region": null,
+     "city": "Germany",
+     "email": null,
+     "email_masked": "••••••@vsquared.vc",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Emilie Syed",
+     "title": null,
+     "firm": "Parkwalk Advisors",
+     "country": "United Kingdom",
+     "region": null,
+     "city": "Oxford",
+     "email": null,
+     "email_masked": "••••••@zinc.vc",
+     "website": "http://www.parkwalkadvisors.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series B · Series A",
+      "check": "$1.3M to $2M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Dominik Leisi",
+     "title": null,
+     "firm": "Atlantic Bridge",
+     "country": "Ireland",
+     "region": null,
+     "city": "Dublin",
+     "email": null,
+     "email_masked": "••••••@abven.com",
+     "website": "http://www.abven.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "James Sanders",
+     "title": null,
+     "firm": "QAI Ventures",
+     "country": "Switzerland",
+     "region": null,
+     "city": "Grenchen",
+     "email": null,
+     "email_masked": "••••••@qai-ventures.com",
+     "website": "https://www.qai-ventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Francis Ho",
+     "title": null,
+     "firm": "Walden Catalyst Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "Palo Alto",
+     "email": null,
+     "email_masked": "••••••@waldencatalyst.com",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$550M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Joe Blair",
+     "title": null,
+     "firm": "Cota Capital",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco Bay Area",
+     "email": null,
+     "email_masked": "••••••@baybridgevc.com",
+     "website": "https://www.cotacapital.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series B · Series A",
+      "check": "$500k to $15M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Alain le Loux",
+     "title": null,
+     "firm": "Cottonwood Technology Fund",
+     "country": "Switzerland",
+     "region": null,
+     "city": "Switzerland",
+     "email": null,
+     "email_masked": "••••••@cottonwood.vc",
+     "website": "https://www.cottonwood.vc",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A · Pre-seed",
+      "check": "$1M to $3M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Rima Chakrabarti",
+     "title": null,
+     "firm": "KdT Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "United States",
+     "email": null,
+     "email_masked": "••••••@sentinelbiotx.com",
+     "website": "https://www.kdtvc.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$700k to $1M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Ryan Shannon",
+     "title": null,
+     "firm": "Radical Ventures",
+     "country": "Canada",
+     "region": null,
+     "city": "Canada",
+     "email": null,
+     "email_masked": "••••••@radical.vc",
+     "website": "http://www.radical.vc",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A",
+      "check": "$1M to $25M",
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "mobility-500",
+   "sector": "mobility",
+   "kind": "sector",
+   "keyword": "MOBILITY",
+   "name": "500 Mobility investors",
+   "short_name": "Mobility",
+   "topic": "mobility and logistics",
+   "tagline": "Funds that back mobility and logistics, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 41 countries, best match first.",
+   "icon": "mobility",
+   "price_cents": 13000,
+   "sort_order": 25,
+   "csv_filename": "climate-insiders-500-mobility-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "The best 500 of the 1,134 investors who back mobility and logistics in our database, ranked by fit.",
+    "427 verified emails. Every one of the 500 rows has an email.",
+    "363 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 89% of rows, cheque size on 68%. 89% invest at seed or pre-seed.",
+    "41 countries, led by United States, Germany and United Kingdom.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 1134,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 427,
+    "linkedin": 357,
+    "firms": 363,
+    "countries": 41,
+    "seedish": 89,
+    "median_check_max": 5000.0,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Reilly Brennan",
+     "title": null,
+     "firm": "Trucks Venture Capital",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco",
+     "email": null,
+     "email_masked": "••••••@trucks.vc",
+     "website": "http://www.trucks.vc/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Pre-seed",
+      "check": "$100k to $750k",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Rick Zullo",
+     "title": null,
+     "firm": "Equal Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "New York",
+     "email": null,
+     "email_masked": "••••••@equal.vc",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed",
+      "check": "$1M to $2M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Miran Khwais",
+     "title": null,
+     "firm": "Maniv Mobility",
+     "country": "Israel",
+     "region": null,
+     "city": "Haifa",
+     "email": null,
+     "email_masked": "••••••@ai71.ai",
+     "website": "https://www.maniv.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$1M to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Aaron Applbaum",
+     "title": null,
+     "firm": "MizMaa Ventures",
+     "country": "Israel",
+     "region": null,
+     "city": "Israel",
+     "email": null,
+     "email_masked": "••••••@kineticavc.com",
+     "website": "https://www.mizmaa.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A · Pre-seed",
+      "check": "$1M to $6M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Chinmay Vaidya",
+     "title": null,
+     "firm": "Foundamental",
+     "country": null,
+     "region": null,
+     "city": "Global",
+     "email": null,
+     "email_masked": "••••••@cloover.co",
+     "website": "https://foundamental.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A · Pre-seed",
+      "check": "$200k to $4M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Esat Canli",
+     "title": null,
+     "firm": "Autotech Ventures",
+     "country": null,
+     "region": null,
+     "city": "Europe",
+     "email": null,
+     "email_masked": "••••••@echotwin.ai",
+     "website": "http://autotechvc.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$500k to $8M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Yoel Mazur",
+     "title": null,
+     "firm": "IN Venture",
+     "country": null,
+     "region": null,
+     "city": "Larnaka",
+     "email": null,
+     "email_masked": "••••••@in-venture.com",
+     "website": "https://www.in-venture.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Minnie Ingersoll",
+     "title": null,
+     "firm": "TenOneTen Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "Los Angeles",
+     "email": null,
+     "email_masked": "••••••@tenoneten.net",
+     "website": "https://tenoneten.net/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Pre-seed",
+      "check": "$250k to $1.5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Chris Stallman",
+     "title": null,
+     "firm": "Fontinalis Partners",
+     "country": "United States",
+     "region": null,
+     "city": "Detroit",
+     "email": null,
+     "email_masked": "••••••@fontinalis.com",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A · Seed",
+      "check": "$100k to $10M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Fabio Lancellotti",
+     "title": null,
+     "firm": "Aster Capital",
+     "country": "France",
+     "region": null,
+     "city": "Paris",
+     "email": null,
+     "email_masked": "••••••@aster.com",
+     "website": "http://www.aster.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A · Seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "agrifood-500",
+   "sector": "agrifood",
+   "kind": "sector",
+   "keyword": "AGRIFOOD",
+   "name": "500 AgTech and Food investors",
+   "short_name": "AgTech and Food",
+   "topic": "AgTech and food",
+   "tagline": "Funds that back AgTech and food, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 39 countries, best match first.",
+   "icon": "agrifood",
+   "price_cents": 13000,
+   "sort_order": 26,
+   "csv_filename": "climate-insiders-500-agrifood-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "The best 500 of the 1,098 investors who back AgTech and food in our database, ranked by fit.",
+    "417 verified emails. Every one of the 500 rows has an email.",
+    "348 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 77% of rows, cheque size on 54%. 92% invest at seed or pre-seed.",
+    "39 countries, led by United States, United Kingdom and France.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 1098,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 417,
+    "linkedin": 378,
+    "firms": 348,
+    "countries": 39,
+    "seedish": 92,
+    "median_check_max": 5000,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Jan Bouten",
+     "title": null,
+     "firm": "Innova Memphis",
+     "country": "United States",
+     "region": null,
+     "city": "United States",
+     "email": null,
+     "email_masked": "••••••@innovamemphis.com",
+     "website": "innovamemphis.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Pre-seed",
+      "check": "$250k to $2.5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Kim Wagenaar",
+     "title": null,
+     "firm": "Aqua Spark",
+     "country": "Netherlands",
+     "region": null,
+     "city": "Netherlands",
+     "email": null,
+     "email_masked": "••••••@futurefoodfund.com",
+     "website": "https://www.aqua-spark.nl/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Pre-seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Hamood Al Fanna",
+     "title": null,
+     "firm": "Agronomics",
+     "country": null,
+     "region": null,
+     "city": "Middle East",
+     "email": null,
+     "email_masked": "••••••@ithca.om",
+     "website": "https://agronomics.im/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Pre-seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Kanira Shah",
+     "title": null,
+     "firm": "Astanor Ventures",
+     "country": "United Kingdom",
+     "region": null,
+     "city": "United Kingdom",
+     "email": null,
+     "email_masked": "••••••@ipr.vc",
+     "website": "https://astanor.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Giacomo Fanin",
+     "title": null,
+     "firm": "Grey Silo Ventures",
+     "country": "Italy",
+     "region": null,
+     "city": "Milan",
+     "email": null,
+     "email_masked": "••••••@cerealdocks.it",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed",
+      "check": "$300k to $500k",
+      "kind": "Corporate VC"
+     }
+    },
+    {
+     "name": "Alex Behar",
+     "title": null,
+     "firm": "Sandbox Industries",
+     "country": "United States",
+     "region": null,
+     "city": "Chicago",
+     "email": null,
+     "email_masked": "••••••@buoyant.vc",
+     "website": "https://cultiviansbx.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A · Seed",
+      "check": "$1M to $20M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Alain Balthazart",
+     "title": null,
+     "firm": "Noshaq",
+     "country": "Belgium",
+     "region": null,
+     "city": "Belgium",
+     "email": null,
+     "email_masked": "••••••@noshaq.be",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A · Seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Marta Laorden",
+     "title": null,
+     "firm": "McWin Capital Partners",
+     "country": null,
+     "region": null,
+     "city": "Global",
+     "email": null,
+     "email_masked": "••••••@mcwin.fund",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A",
+      "check": "$6k to $20k",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Harsh Rajpal",
+     "title": null,
+     "firm": "Capital Code",
+     "country": "Singapore",
+     "region": null,
+     "city": "Singapore",
+     "email": null,
+     "email_masked": "••••••@capital-code.com",
+     "website": "https://www.capital-code.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Fredrik Arvius",
+     "title": null,
+     "firm": "Nicoya",
+     "country": "Sweden",
+     "region": null,
+     "city": "Stockholm",
+     "email": null,
+     "email_masked": "••••••@nicoya.se",
+     "website": "https://www.nicoya.se",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "consumer-500",
+   "sector": "consumer",
+   "kind": "sector",
+   "keyword": "CONSUMER",
+   "name": "500 Consumer investors",
+   "short_name": "Consumer",
+   "topic": "consumer and e-commerce",
+   "tagline": "Funds that back consumer and e-commerce, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 45 countries, best match first.",
+   "icon": "consumer",
+   "price_cents": 13000,
+   "sort_order": 27,
+   "csv_filename": "climate-insiders-500-consumer-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "The best 500 of the 2,556 investors who back consumer and e-commerce in our database, ranked by fit.",
+    "438 verified emails. Every one of the 500 rows has an email.",
+    "315 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 66% of rows, cheque size on 52%. 92% invest at seed or pre-seed.",
+    "45 countries, led by United States, United Kingdom and India.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 2556,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 438,
+    "linkedin": 452,
+    "firms": 315,
+    "countries": 45,
+    "seedish": 92,
+    "median_check_max": 5000.0,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Hunter Babcock",
+     "title": null,
+     "firm": "Atland Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "United States",
+     "email": null,
+     "email_masked": "••••••@alloypartners.com",
+     "website": "http://www.atlandventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Pre-seed",
+      "check": "$20k to $50k",
+      "kind": "Corporate VC"
+     }
+    },
+    {
+     "name": "William Quartner",
+     "title": null,
+     "firm": "Prelude Growth Partners",
+     "country": "Canada",
+     "region": null,
+     "city": "Canada",
+     "email": null,
+     "email_masked": "••••••@preludegrowth.com",
+     "website": "preludegrowth.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Series B",
+      "check": "$10M to $100M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Jarrod Dicker",
+     "title": null,
+     "firm": "TCG (The Chernin Group)",
+     "country": "United States",
+     "region": null,
+     "city": "California",
+     "email": null,
+     "email_masked": "••••••@zetaglobal.com",
+     "website": "http://www.tcg.co",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Mike Duboe",
+     "title": null,
+     "firm": "Greylock Partners",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco",
+     "email": null,
+     "email_masked": "••••••@greylock.com",
+     "website": "http://www.greylock.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed",
+      "check": "$500k to $200M",
+      "kind": "Tier 1 VC"
+     }
+    },
+    {
+     "name": "Tessa Battistin",
+     "title": null,
+     "firm": "Interlace Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "New York",
+     "email": null,
+     "email_masked": "••••••@justworks.com",
+     "website": "interlacevc.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Pre-seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Hector Mason",
+     "title": null,
+     "firm": "Episode 1 Ventures",
+     "country": "United Kingdom",
+     "region": null,
+     "city": "United Kingdom",
+     "email": null,
+     "email_masked": "••••••@episode1.com",
+     "website": "http://www.episode1.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Tobias Neveling",
+     "title": null,
+     "firm": "Venista Ventures",
+     "country": null,
+     "region": null,
+     "city": null,
+     "email": null,
+     "email_masked": "••••••@468cap.com",
+     "website": "http://www.venista-ventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Pre-seed",
+      "check": "$50k to $750k",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Mark Pearson",
+     "title": null,
+     "firm": "Fuel Ventures",
+     "country": null,
+     "region": null,
+     "city": "London",
+     "email": null,
+     "email_masked": "••••••@fuel.ventures",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Pre-seed",
+      "check": "$600k to $2M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Ernst Rustenhoven",
+     "title": null,
+     "firm": "Slingshot Ventures",
+     "country": "Netherlands",
+     "region": null,
+     "city": "Amsterdam",
+     "email": null,
+     "email_masked": "••••••@thecirqle.com",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Inge Fidjeland",
+     "title": null,
+     "firm": "Jotunfjell Partners AS",
+     "country": "Norway",
+     "region": null,
+     "city": "Oslo",
+     "email": null,
+     "email_masked": "••••••@jfp.no",
+     "website": "https://www.jfp.no",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "insurtech-363",
+   "sector": "insurtech",
+   "kind": "sector",
+   "keyword": "INSURTECH",
+   "name": "363 Insurtech investors",
+   "short_name": "Insurtech",
+   "topic": "insurtech",
+   "tagline": "Funds that back insurtech, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 26 countries, best match first.",
+   "icon": "insurtech",
+   "price_cents": 13000,
+   "sort_order": 28,
+   "csv_filename": "climate-insiders-363-insurtech-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "All 363 investors who back insurtech in our database, ranked by fit.",
+    "325 verified emails. Every one of the 363 rows has an email.",
+    "279 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 96% of rows, cheque size on 86%. 93% invest at seed or pre-seed.",
+    "26 countries, led by United States, France and Germany.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 363,
+   "stats": {
+    "rows": 363,
+    "emails": 363,
+    "verified": 325,
+    "linkedin": 334,
+    "firms": 279,
+    "countries": 26,
+    "seedish": 93,
+    "median_check_max": 5000,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Kevin Mcloughlin",
+     "title": null,
+     "firm": "Mtech Capital",
+     "country": "United Kingdom",
+     "region": null,
+     "city": "London",
+     "email": null,
+     "email_masked": "••••••@mtechcapital.com",
+     "website": "https://www.mtechcapital.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Shin Enomoto",
+     "title": null,
+     "firm": "MS&AD Ventures",
+     "country": "Japan",
+     "region": null,
+     "city": "Japan",
+     "email": null,
+     "email_masked": "••••••@msigusa.com",
+     "website": "http://www.msad.vc",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A · Seed",
+      "check": "$500k to $3M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Dick Harryvan",
+     "title": null,
+     "firm": "Finch Capital",
+     "country": "Netherlands",
+     "region": null,
+     "city": "Netherlands",
+     "email": null,
+     "email_masked": "••••••@finchcapital.com",
+     "website": "http://www.finchcapital.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A",
+      "check": "$1M to $6M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Michaela Balderston",
+     "title": null,
+     "firm": "Tusk Venture Partners",
+     "country": "United States",
+     "region": null,
+     "city": "New York",
+     "email": null,
+     "email_masked": "••••••@leadedge.com",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$500k to $10M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Daisuke Dan Nagayama",
+     "title": null,
+     "firm": "Arbor Ventures",
+     "country": null,
+     "region": null,
+     "city": "Tokyo",
+     "email": null,
+     "email_masked": "••••••@orgfarm.store",
+     "website": "https://www.arborventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Henry Pascoe",
+     "title": null,
+     "firm": "Anthemis Group",
+     "country": "United Kingdom",
+     "region": null,
+     "city": "United Kingdom",
+     "email": null,
+     "email_masked": "••••••@barclays.com",
+     "website": "http://www.anthemis.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Jonathan Cosgrave",
+     "title": null,
+     "firm": "Melior Equity Partners",
+     "country": "Ireland",
+     "region": null,
+     "city": "Dublin 12",
+     "email": null,
+     "email_masked": "••••••@meliorequity.com",
+     "website": "https://www.meliorequity.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Doug Kerr",
+     "title": null,
+     "firm": "Exceptional Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "Boston",
+     "email": null,
+     "email_masked": "••••••@dyne-tx.com",
+     "website": "https://exceptional.ventures/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Seed · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Dave Wechsler",
+     "title": null,
+     "firm": "OMERS Ventures",
+     "country": "Canada",
+     "region": null,
+     "city": "Canada",
+     "email": null,
+     "email_masked": "••••••@plume.com",
+     "website": "omersventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series B · Series A",
+      "check": "$5M to $20M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "David Mort",
+     "title": null,
+     "firm": "Propel Venture Partners",
+     "country": null,
+     "region": null,
+     "city": "LatAm (Latin America)",
+     "email": null,
+     "email_masked": "••••••@propel.vc",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A · Pre-seed",
+      "check": "$250k to $5M",
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "edtech-500",
+   "sector": "edtech",
+   "kind": "sector",
+   "keyword": "EDTECH",
+   "name": "500 EdTech investors",
+   "short_name": "EdTech",
+   "topic": "EdTech",
+   "tagline": "Funds that back EdTech, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 40 countries, best match first.",
+   "icon": "edtech",
+   "price_cents": 13000,
+   "sort_order": 29,
+   "csv_filename": "climate-insiders-500-edtech-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "The best 500 of the 596 investors who back EdTech in our database, ranked by fit.",
+    "427 verified emails. Every one of the 500 rows has an email.",
+    "379 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 92% of rows, cheque size on 80%. 92% invest at seed or pre-seed.",
+    "40 countries, led by United States, United Kingdom and Brazil.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 596,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 427,
+    "linkedin": 429,
+    "firms": 379,
+    "countries": 40,
+    "seedish": 92,
+    "median_check_max": 5000,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Michael Cohn",
+     "title": null,
+     "firm": "GSV Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "Chicago",
+     "email": null,
+     "email_masked": "••••••@gsv.com",
+     "website": "http://www.gsv.ventures",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$250k to $15M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Alexandre Glaser",
+     "title": null,
+     "firm": "Educapital",
+     "country": "France",
+     "region": null,
+     "city": "Paris",
+     "email": null,
+     "email_masked": "••••••@educapital.fr",
+     "website": "http://www.educapitalvc.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$3M to $10M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Mitchell Kapor",
+     "title": null,
+     "firm": "Kapor Capital",
+     "country": "United States",
+     "region": null,
+     "city": "Oakland",
+     "email": null,
+     "email_masked": "••••••@kapor.com",
+     "website": null,
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed",
+      "check": "$100k to $200k",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Jetu Lalvani",
+     "title": null,
+     "firm": "Kaizenvest",
+     "country": "Singapore",
+     "region": null,
+     "city": "Singapore",
+     "email": null,
+     "email_masked": "••••••@kaizenpe.com",
+     "website": "https://www.kaizenpe.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Wayee Chu",
+     "title": null,
+     "firm": "Reach Capital",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco Bay Area",
+     "email": null,
+     "email_masked": "••••••@reachcapital.com",
+     "website": "https://www.reachcapital.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$100k to $3M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "David Kirkpatrick",
+     "title": null,
+     "firm": "SJF Ventures",
+     "country": "United States",
+     "region": null,
+     "city": "United States",
+     "email": null,
+     "email_masked": "••••••@sjfventures.com",
+     "website": "https://sjfventures.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A",
+      "check": "$3M to $10M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Peter Richarz",
+     "title": null,
+     "firm": "Dieter Von Holtzbrinck Ventures",
+     "country": "Germany",
+     "region": null,
+     "city": "Koeln",
+     "email": null,
+     "email_masked": "••••••@dvhventures.de",
+     "website": "https://www.dvhventures.de",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Jaclyn Strelow",
+     "title": null,
+     "firm": "SEEK Investments",
+     "country": "Australia",
+     "region": null,
+     "city": "Port Macquarie",
+     "email": null,
+     "email_masked": "••••••@seekinvestments.com",
+     "website": "https://www.seekinvestments.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Hock Yun Khoong",
+     "title": null,
+     "firm": "Tembusu Partners",
+     "country": "Singapore",
+     "region": null,
+     "city": "Singapore",
+     "email": null,
+     "email_masked": "••••••@tembusupartners.com",
+     "website": "https://www.tembusupartners.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Pre-seed",
+      "check": "$3M to $20M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Cedric Duvinage",
+     "title": null,
+     "firm": "better ventures",
+     "country": "Germany",
+     "region": null,
+     "city": "Muenster",
+     "email": null,
+     "email_masked": "••••••@betterventures.io",
+     "website": "https://www.betterventures.io",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  },
+  {
+   "slug": "gaming-500",
+   "sector": "gaming",
+   "kind": "sector",
+   "keyword": "GAMING",
+   "name": "500 Gaming investors",
+   "short_name": "Gaming",
+   "topic": "gaming and entertainment",
+   "tagline": "Funds that back gaming and entertainment, ranked by fit. Stage, cheque size and a direct email on every row.",
+   "region_note": "Investors from 31 countries, best match first.",
+   "icon": "gaming",
+   "price_cents": 13000,
+   "sort_order": 30,
+   "csv_filename": "climate-insiders-500-gaming-investors.csv",
+   "airtable_url": null,
+   "image_url": null,
+   "value_points": [
+    "The best 500 of the 1,024 investors who back gaming and entertainment in our database, ranked by fit.",
+    "444 verified emails. Every one of the 500 rows has an email.",
+    "379 different funds. Two contacts per fund at most, so you reach more of the market.",
+    "Stage on 96% of rows, cheque size on 92%. 92% invest at seed or pre-seed.",
+    "31 countries, led by United States, United Kingdom and France.",
+    "Wrong row? Reply, I fix it. Free, forever."
+   ],
+   "pool": 1024,
+   "stats": {
+    "rows": 500,
+    "emails": 500,
+    "verified": 444,
+    "linkedin": 414,
+    "firms": 379,
+    "countries": 31,
+    "seedish": 92,
+    "median_check_max": 5000.0,
+    "family_offices": 0
+   },
+   "sample": [
+    {
+     "name": "Ryann Lai",
+     "title": null,
+     "firm": "Makers Fund",
+     "country": "United States",
+     "region": null,
+     "city": "United States",
+     "email": null,
+     "email_masked": "••••••@makersfund.com",
+     "website": "http://www.makersfund.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": "$5M to $40M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Stewart Alsop",
+     "title": null,
+     "firm": "Alsop Louie Partners",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco",
+     "email": null,
+     "email_masked": "••••••@alsop-louie.com",
+     "website": "http://www.alsop-louie.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Series A · Seed",
+      "check": "$500k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Amber Atherton",
+     "title": null,
+     "firm": "Patron",
+     "country": "United States",
+     "region": null,
+     "city": "San Francisco",
+     "email": null,
+     "email_masked": "••••••@patron.fund",
+     "website": "http://www.patron.fund",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Pre-seed",
+      "check": "$750k to $4M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Shukri Shammas",
+     "title": null,
+     "firm": "Initial Capital",
+     "country": "United Kingdom",
+     "region": null,
+     "city": "United Kingdom",
+     "email": null,
+     "email_masked": "••••••@summix.com",
+     "website": "https://www.initialcapital.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A · Pre-seed",
+      "check": "$25k to $100k",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Shreya Durbha",
+     "title": null,
+     "firm": "Smash Capital",
+     "country": "United States",
+     "region": null,
+     "city": "Los Angeles",
+     "email": null,
+     "email_masked": "••••••@smashcap.com",
+     "website": "http://www.smashcap.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series B · Series A",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Doug Sills",
+     "title": null,
+     "firm": "Anthem Venture Partners",
+     "country": null,
+     "region": null,
+     "city": null,
+     "email": null,
+     "email_masked": "••••••@anthemvp.com",
+     "website": "http://anthemvp.com/",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series B · Series A",
+      "check": "$500k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Lloyd Purser",
+     "title": null,
+     "firm": "FunFair Ventures",
+     "country": "United Kingdom",
+     "region": null,
+     "city": "England",
+     "email": null,
+     "email_masked": "••••••@funfair.ventures",
+     "website": "http://www.funfair.ventures",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": null,
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Jonathan Cooper",
+     "title": null,
+     "firm": "True Global Ventures",
+     "country": null,
+     "region": null,
+     "city": "Zagreb",
+     "email": null,
+     "email_masked": "••••••@brightentertainment.eu",
+     "website": "https://www.trueglobalventures.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Pre-seed",
+      "check": "$100k to $5M",
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Evgeny Konovalov",
+     "title": null,
+     "firm": "MGVC",
+     "country": null,
+     "region": null,
+     "city": "Nicosia",
+     "email": null,
+     "email_masked": "••••••@mgvc.com",
+     "website": "https://www.mgvc.com",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    },
+    {
+     "name": "Aylwin C.",
+     "title": null,
+     "firm": "DeFiance Capital",
+     "country": "Singapore",
+     "region": null,
+     "city": "Singapore",
+     "email": null,
+     "email_masked": "••••••@defiance.capital",
+     "website": "https://www.defiance.capital",
+     "photo_url": null,
+     "logo_url": null,
+     "extra": {
+      "stage": "Seed · Series A",
+      "check": null,
+      "kind": "Seed VC"
+     }
+    }
+   ]
+  }
+ ]
+}

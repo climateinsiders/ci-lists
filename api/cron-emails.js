@@ -1,4 +1,4 @@
-import { env, json, selectRows, updateRows, getActiveLists, upgradeQuote } from './_lib.js';
+import { env, json, selectRows, updateRows, getBundleLists, upgradeQuote } from './_lib.js';
 import { send } from './_deliver.js';
 import { templateEmail, offerEmail, followupEmail, sampleNudgeEmail } from './_emails.js';
 
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   const qs = new URL(req.url, 'http://x').searchParams;
   const fast = qs.get('fast') === '1';
   const only = (qs.get('email') || '').toLowerCase();
-  const lists = await getActiveLists();
+  const lists = await getBundleLists();
   const log = { sent: 0, skipped: 0, errors: 0 };
 
   const due = await selectRows(

@@ -1,4 +1,4 @@
-import { getActiveLists, getEntries, sendEmail, textToHtml, siteUrl, fmtUsd, BUNDLE_PRICE_CENTS } from './_lib.js';
+import { getActiveLists, isSectorSlug, getEntries, sendEmail, textToHtml, siteUrl, fmtUsd, BUNDLE_PRICE_CENTS } from './_lib.js';
 import { toXlsx, xlsxFilename } from './_xlsx.js';
 import { deliveryEmail, sampleNudgeEmail, FOLLOWUP_SEQUENCE } from './_emails.js';
 
@@ -21,8 +21,9 @@ export async function send(to, { subject, text }, { token, attachments = [], tag
 
 // E0: the Excel files, the Airtable links, three rules, and (single lists only) the upgrade P.S.
 export async function deliverPurchase({ email, slugs, bundle, upgrade, token, amountCents, name, sessionId, upsell }) {
-  const allLists = await getActiveLists();
-  const chosen = allLists.filter((l) => slugs.includes(l.slug));
+  const active = await getActiveLists();
+  const allLists = active.filter((l) => !isSectorSlug(l.slug));
+  const chosen = active.filter((l) => slugs.includes(l.slug));
   if (!chosen.length) throw new Error('No lists matched the purchase');
 
   const attachments = [];

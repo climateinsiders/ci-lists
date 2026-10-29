@@ -1,4 +1,7 @@
-import { ICONS, SMALL_ICONS } from './icons.mjs';
+import { ICONS as BASE_ICONS, SMALL_ICONS } from './icons.mjs';
+import { SECTOR_ICONS, SECTOR_TONES } from './sector-icons.mjs';
+
+const ICONS = { ...BASE_ICONS, ...SECTOR_ICONS };
 
 const SITE = 'https://lists.climateinsiders.com';
 const UPSELL = 390;
@@ -25,6 +28,7 @@ const TONES = {
   'latam-canada-150': ['#e3f0d8', '#2e7d32'],
   'lps-366': ['#efe5d2', '#6b4f1d'],
   'climate-vcs-474': ['#d8efe0', '#1b7a4a'],
+  ...SECTOR_TONES,
 };
 
 
@@ -159,11 +163,13 @@ function brand() {
 }
 
 let NAV = [];
+let SECTORS = [];
 export function setNav(lists) { NAV = lists.map((l) => ({ slug: l.slug, name: l.name })); }
+export function setSectors(lists) { SECTORS = lists; }
 
 function footer(compact = false) {
   const nav = NAV.length
-    ? `<nav class="listnav${compact ? ' compact' : ''}" aria-label="All investor lists"><span class="lbl">All investor lists</span>${NAV.map((l) => `<a href="/${esc(l.slug)}" title="${esc(l.name)}">${esc(compact ? DECK_NAME[l.slug] || l.name : l.name)}</a>`).join('')}${compact ? '' : '<a href="/all">All 10 lists together</a>'}</nav>`
+    ? `<nav class="listnav${compact ? ' compact' : ''}" aria-label="All investor lists"><span class="lbl">All investor lists</span>${NAV.map((l) => `<a href="/${esc(l.slug)}" title="${esc(l.name)}">${esc(compact ? DECK_NAME[l.slug] || l.name : l.name)}</a>`).join('')}${compact ? '' : '<a href="/all">All 10 lists together</a>'}${SECTORS.length ? '<a href="/sectors">Lists by sector</a>' : ''}</nav>`
     : '';
   return `${nav}<footer class="foot">
   <span>© Climate Insiders</span>
@@ -176,14 +182,19 @@ function toneAttr(list) {
   return `style="--tone:${bg};--tone-ink:${ink}"`;
 }
 
+const isSector = (list) => list.kind === 'sector';
+const poolNote = (l) => (l.pool > l.stats.rows ? `Top ${n(l.stats.rows)} of ${n(l.pool)}` : `All ${n(l.stats.rows)}`);
+const sectorMeta = (e) => [e.extra?.stage, e.extra?.check].filter(Boolean).join(' · ');
+
 function picks(list) {
   const isFund = list.slug === 'climate-vcs-474';
   return (list.sample || [])
     .slice(0, 10)
     .map((e) => {
       const x = e.extra || {};
-      const line2 = isFund ? [e.region, x.stage].filter(Boolean).join(' · ') : [e.title, e.firm].filter(Boolean).join(' · ');
-      const line3 = isFund ? x.sector || '' : e.email ? `<code>${esc(maskEmail(e.email))}</code>` : [e.city, e.country].filter(Boolean).join(', ');
+      const sec = isSector(list);
+      const line2 = isFund ? [e.region, x.stage].filter(Boolean).join(' · ') : sec ? [e.firm, e.country].filter(Boolean).join(' · ') : [e.title, e.firm].filter(Boolean).join(' · ');
+      const line3 = isFund ? x.sector || '' : sec ? esc(sectorMeta(e)) : e.email ? `<code>${esc(maskEmail(e.email))}</code>` : [e.city, e.country].filter(Boolean).join(', ');
       const iso = isFund ? null : isoFor(e.country);
       return `<li class="pick"><span class="avwrap"><span class="avatar">${face(e, 64)}</span>${iso ? flagImg(iso, 'flagb') : ''}</span><span class="who"><b>${esc(isFund ? e.firm : e.name)}</b><span>${esc(line2)}</span><span>${line3}</span></span></li>`;
     })
@@ -286,6 +297,7 @@ const BLUR = {
   sector: ['Energy, Mobility, Industry', 'Food and agritech, Materials', 'Climate software, Energy'],
   ticket: ['€1–8m', '€2–10m', '€0.5–5m'],
   lead: ['Yes', 'No'],
+  stage: ['Seed', 'Pre-seed · Seed', 'Seed · Series A'],
   firm: ['Family Office Holding', 'Capital Partners AG', 'Private Investments SA', 'Family Capital Ltd', 'Heritage Holdings'],
 };
 const bl = (k, i) => `<span class="blur">${BLUR[k][i % BLUR[k].length]}</span>`;
@@ -309,8 +321,32 @@ function fundSheetDialog(list) {
 </dialog>`;
 }
 
+// Sector lists: the repo only holds the ten public rows, so the sheet shows those and then blurred placeholders.
+function sectorSheetDialog(list) {
+  const SHOW = Math.min(100, list.stats.rows);
+  const real = (list.rows || []).slice(0, FREE_ROWS);
+  const cell = (k, i) => bl(k, i);
+  const rows = [];
+  for (let i = 0; i < SHOW; i++) {
+    const r = real[i];
+    if (r) {
+      const x = r.extra || {};
+      const mail = r.email ? `<a class="free" href="mailto:${esc(r.email)}">${esc(r.email)}</a>` : esc(r.email_masked || '');
+      rows.push(`<tr><td class="ix">${i + 1}</td><td class="nm"><span class="av">${face(r, 48)}</span>${esc(r.name)}</td><td>${esc(r.firm || '')}</td><td class="ct">${isoFor(r.country) ? flagImg(isoFor(r.country), 'flagc') : ''}${esc(r.country || '')}</td><td>${esc(x.stage || '')}</td><td>${esc(x.check || '')}</td><td>${mail}</td><td>${r.linkedin_url ? `<a class="free" href="${esc(r.linkedin_url)}" target="_blank" rel="noopener">View profile</a>` : cell('linkedin', i)}</td></tr>`);
+    } else {
+      rows.push(`<tr><td class="ix">${i + 1}</td><td class="nm"><span class="av"><span>?</span></span>${bl('firm', i)}</td><td>${bl('firm', i + 2)}</td><td class="ct">${bl('surname', i)}</td><td>${bl('stage', i)}</td><td>${bl('ticket', i)}</td><td>${bl('email', i)}</td><td>${bl('linkedin', i)}</td></tr>`);
+    }
+  }
+  return `<dialog class="preview sheetdlg" id="sheet" aria-label="All ${n(list.stats.rows)} rows">
+  <div class="pvhead"><span class="script">the full list</span><h2>${esc(poolNote(list))}${list.pool > list.stats.rows ? ` ${esc(list.short_name)} investors` : ' investors'}. The first ${FREE_ROWS} are free, in full. The rest unlock when you buy.</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
+  <div class="grid-wrap"><table class="sheettbl"><thead><tr><th class="ix">#</th><th>Name</th><th>Firm</th><th>Country</th><th>Stage</th><th>Cheque size</th><th>Email</th><th>LinkedIn</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>
+  <div class="pvfoot"><span>The first ${FREE_ROWS} are yours. The other ${n(Math.max(0, list.stats.rows - FREE_ROWS))} unlock when you buy, with stage, cheque size, a verified email and LinkedIn on every row.</span><button class="btn" data-buy="${esc(list.slug)}">Unlock all ${n(list.stats.rows)} for ${usd(list.price_cents)}</button></div>
+</dialog>`;
+}
+
 function sheetDialog(list) {
   if (list.slug === 'climate-vcs-474') return fundSheetDialog(list);
+  if (isSector(list)) return sectorSheetDialog(list);
   const rows = (list.rows || []).map((r, i) => {
     const label = r.name || r.firm || '';
     const x = r.extra || {};
@@ -338,22 +374,23 @@ export function page(lists, featured) {
     ${brand()}
     <div class="kick"><span class="script">${featured ? `you asked for ${esc(KICKER_NAME[f.slug] || f.short_name)}. here it is.` : 'hey, founders and fund managers'}</span></div>
     <div class="h1row">${LIST_FLAGS[f.slug] ? flagStack(LIST_FLAGS[f.slug], 'flags lg') : `<span class="flags lg" aria-hidden="true"><span class="fl iconfl">${ICONS[f.icon] || ICONS.globe}</span></span>`}<h1><span class="hl">${esc(f.name)}</span></h1></div>
+    ${isSector(f) && f.pool ? `<p class="sub">${esc(poolNote(f))} ${esc(f.topic)} investors in our database, ranked by how well they fit. Stage, cheque size and a verified email on every row.</p>` : ''}
   </div>
 </header>
 
 <section class="offer main" id="offer" ${toneAttr(f)}>${offerBlock(f, { sheet: true })}</section>
 <div class="stickybuy" id="stickybuy"><span class="sp"><b>${usd(f.price_cents)}</b><small>one time · yours forever</small></span><button class="btn" data-buy="${esc(f.slug)}">Get the list</button></div>
 
-<section class="chips"><span class="lbl">+ ${others.length} more lists</span><span class="row">${others.slice(0, 6).map(chip).join('')}</span></section>
+<section class="chips"><span class="lbl">+ ${others.length} more ${isSector(f) ? 'sectors' : 'lists'}</span><span class="row">${others.slice(0, isSector(f) ? 5 : 6).map(chip).join('')}${isSector(f) ? '<a class="chip morechip" href="/sectors">All sectors</a>' : SECTORS.length ? '<a class="chip morechip" href="/sectors">By sector</a>' : ''}</span></section>
 ${proofStrip()}
 ${others.map(preview).join('\n')}
 ${sheetDialog(f)}`;
-  const title = featured ? `${f.name} · Climate Insiders` : 'Investor lists for founders and fund managers · Climate Insiders';
+  const title = featured ? `${f.name}${isSector(f) ? ' · Investor list' : ''} · Climate Insiders` : 'Investor lists for founders and fund managers · Climate Insiders';
   const description = featured
-    ? `${f.tagline} ${n(f.stats.rows)} rows, checked by hand. ${usd(f.price_cents)} one time.`
+    ? `${f.tagline} ${n(f.stats.rows)} rows${isSector(f) ? '' : ', checked by hand'}. ${usd(f.price_cents)} one time.`
     : `Hand-checked investor lists for founders and fund managers: family offices in Europe, the US, UK, DACH, the Nordics, APAC and LatAm, plus LPs and climate VCs.`;
   const url = featured ? `${SITE}/${f.slug}` : `${SITE}/`;
-  const ogImage = f.image_url || (featured ? `${SITE}/og/${f.slug}.png` : `${SITE}/og.png`);
+  const ogImage = f.image_url || (featured && !isSector(f) ? `${SITE}/og/${f.slug}.png` : `${SITE}/og.png`);
   const org = { '@type': 'Organization', name: 'Climate Insiders', url: 'https://climateinsiders.com', logo: 'https://cdn.prod.website-files.com/657b1ee1812a034008e87de8/6585389a7f43d48ed7b3c851_fav-md.jpg' };
   const jsonld = featured
     ? {
@@ -581,4 +618,35 @@ export function welcomePage() {
 <p class="thanks-small small">Anything missing? Email <a href="mailto:yoann@climateinsiders.com">yoann@climateinsiders.com</a> with your receipt.</p>
 <canvas id="confetti" aria-hidden="true"></canvas>`;
   return shell({ title: 'You have everything · Climate Insiders Investor Lists', description: 'Your full access.', canonical: `${SITE}/welcome`, body });
+}
+
+// ---------- /sectors: the lists by sector ----------
+export function sectorsPage(lists) {
+  const rows = lists.reduce((a, l) => a + (l.stats.rows || 0), 0);
+  const card = (l) => `<a class="scard" href="/${esc(l.slug)}" ${toneAttr(l)}>
+  <span class="sic">${ICONS[l.icon] || ICONS.globe}</span>
+  <b class="sct">${esc(l.count_label)}</b>
+  <span class="snm">${esc(l.short_name)}</span>
+  ${l.pool ? `<em class="spool">${esc(poolNote(l))} in the database</em>` : ''}
+  <small>${n(l.stats.verified || 0)} verified emails · ${n(l.stats.firms || 0)} funds · ${n(l.stats.countries || 0)} countries</small>
+  <span class="sgo">${usd(l.price_cents)} · see the list →</span>
+</a>`;
+  const body = `
+<header class="hero" style="--tone:#d8efe0;--tone-ink:#1b7a4a">
+  <div class="title">
+    ${brand()}
+    <div class="kick"><span class="script">investors who back your sector</span></div>
+    <div class="h1row"><h1>Investor lists <span class="hl">by sector</span></h1></div>
+    <p class="sub">${lists.length} lists, ${n(rows)} investors ranked by how closely they fit the sector, with stage, cheque size and a verified email on every row.</p>
+  </div>
+</header>
+<section class="sgrid">${lists.map(card).join('')}</section>
+<p class="sfoot">Looking for a region instead? <a href="/">Browse the lists by geography</a>.</p>
+${proofStrip()}`;
+  return shell({
+    title: 'Investor lists by sector · Climate Insiders',
+    description: `${lists.length} investor lists by sector (AI, fintech, climate tech, real estate, defense and more). Ranked by fit, with stage, cheque size and verified emails. ${usd(lists[0]?.price_cents || 13000)} each.`,
+    canonical: `${SITE}/sectors`,
+    body,
+  });
 }

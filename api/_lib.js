@@ -2,6 +2,8 @@
 // Supabase are all called over plain HTTPS.
 
 
+import { readFileSync } from 'node:fs';
+
 export const BUNDLE_PRICE_CENTS = 69000; // all 10 lists on /all
 export const LIST_PRICE_CENTS = 13000; // live price comes from paid_lists.price_cents
 export const UPSELL_PRICE_CENTS = 39000; // grand slam offer on /thanks for 24h: every list the buyer doesn't own yet
@@ -41,6 +43,20 @@ async function sb(path, { method = 'GET', body, prefer } = {}) {
   if (!res.ok) throw new Error(`Supabase ${method} ${path} -> ${res.status} ${await res.text()}`);
   const text = await res.text();
   return text ? JSON.parse(text) : null;
+}
+
+// Sector lists (data/sectors.json) are sold one by one. They are never part of the "all 10" bundle.
+let sectorSet;
+export function sectorSlugs() {
+  if (!sectorSet) {
+    try { sectorSet = new Set(JSON.parse(readFileSync(new URL('../data/sectors.json', import.meta.url), 'utf8')).lists.map((l) => l.slug)); }
+    catch { sectorSet = new Set(); }
+  }
+  return sectorSet;
+}
+export const isSectorSlug = (slug) => sectorSlugs().has(slug);
+export async function getBundleLists() {
+  return (await getActiveLists()).filter((l) => !isSectorSlug(l.slug));
 }
 
 export async function getActiveLists() {
@@ -217,9 +233,11 @@ export async function upgradeQuote(token) {
   if (!token || !/^[a-f0-9]{16,64}$/.test(token)) return null;
   const [p] = await selectRows('list_purchases', `token=eq.${token}&select=email,created_at`);
   if (!p) return null;
-  const all = await selectRows('list_purchases', `email=ilike.${encodeURIComponent(p.email)}&delivered_at=not.is.null&select=slugs,bundle,amount_cents,created_at&order=created_at.asc`);
+  const everything = await selectRows('list_purchases', `email=ilike.${encodeURIComponent(p.email)}&delivered_at=not.is.null&select=slugs,bundle,amount_cents,created_at&order=created_at.asc`);
+  // only purchases of the ten geographic lists count towards the bundle (sector lists do not)
+  const all = everything.filter((r) => r.bundle || (r.slugs || []).some((s) => !isSectorSlug(s)));
   const bundleOwned = all.some((r) => r.bundle);
-  const owned = [...new Set(all.flatMap((r) => r.slugs))];
+  const owned = [...new Set(all.flatMap((r) => r.slugs))].filter((s) => !isSectorSlug(s));
   const paid = all.filter((r) => !r.bundle).reduce((a, r) => a + r.amount_cents, 0);
   const first = new Date(all[0]?.created_at || p.created_at);
   const expiresAt = new Date(first.getTime() + UPGRADE_DAYS * 86400000);

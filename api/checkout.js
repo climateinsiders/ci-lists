@@ -1,4 +1,4 @@
-import { getActiveLists, stripe, readJson, json, siteUrl, upgradeQuote, BUNDLE_PRICE_CENTS, UPSELL_PRICE_CENTS, UNIQUE_INVESTORS } from './_lib.js';
+import { getActiveLists, getBundleLists, stripe, readJson, json, siteUrl, upgradeQuote, BUNDLE_PRICE_CENTS, UPSELL_PRICE_CENTS, UNIQUE_INVESTORS } from './_lib.js';
 
 // POST /api/checkout
 //   { slug: "europe-500" }               one list, $130
@@ -10,7 +10,8 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return json(res, 405, { error: 'POST only' });
   try {
     const body = await readJson(req);
-    const lists = await getActiveLists();
+    const everyList = await getActiveLists();
+    const lists = await getBundleLists(); // bundle and upsell: the ten geographic lists only
     const attribution = body.attribution && typeof body.attribution === 'object' ? body.attribution : {};
     let lineItems, slugs, bundle, origin, customerEmail, upgradeToken = '';
 
@@ -69,7 +70,7 @@ export default async function handler(req, res) {
         },
       ];
     } else {
-      const list = lists.find((l) => l.slug === body.slug);
+      const list = everyList.find((l) => l.slug === body.slug);
       if (!list) return json(res, 400, { error: 'Unknown list' });
       bundle = false;
       slugs = [list.slug];
