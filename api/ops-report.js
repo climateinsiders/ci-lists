@@ -1,4 +1,4 @@
-import { selectRows, insertRow, updateRows, stripe, json, env } from './_lib.js';
+import { selectRows, insertRow, updateRows, stripe, json, env, slackHook } from './_lib.js';
 import { lisbonDay } from './_dash-metrics.js';
 
 // GET /api/ops-report?key=<ops_tokens.token>[&peek=1]
@@ -53,8 +53,8 @@ export default async function handler(req, res) {
       const day = /^\d{4}-\d{2}-\d{2}$/.test(url.searchParams.get('day') || '') ? url.searchParams.get('day') : undefined;
       const { out, text } = await dailyReport(day);
       let slack = 'not sent';
-      if (url.searchParams.get('peek') !== '1' && process.env.SLACK_WEBHOOK_URL) {
-        const r = await fetch(process.env.SLACK_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+      if (url.searchParams.get('peek') !== '1' && slackHook()) {
+        const r = await fetch(slackHook(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
         slack = r.ok ? 'sent' : `failed ${r.status}`;
       }
       return json(res, 200, { ...out, slack });
@@ -66,10 +66,12 @@ export default async function handler(req, res) {
     res.setHeader('Cache-Control', 'no-store');
     // ?slack_test=1 sends one test message to the real-time sale channel (checks SLACK_WEBHOOK_URL).
     if (url.searchParams.get('slack_test') === '1') {
-      const hook = process.env.SLACK_WEBHOOK_URL;
+      const hook = slackHook();
       if (!hook) return json(res, 200, { slack: 'SLACK_WEBHOOK_URL not set' });
+      // Shape check only (never echo the secret): host, path prefix, segment count, length.
+      const shape = { host: (hook.match(/^https?:\/\/([^/]+)/) || [])[1] || 'bad', services: hook.includes('/services/'), parts: hook.split('/').length, len: hook.length };
       const r = await fetch(hook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: ':white_check_mark: Sale alerts are connected. Every investor-list sale will post here the moment Stripe confirms it.' }) });
-      return json(res, 200, { slack: r.ok ? 'sent' : `failed ${r.status}` });
+      return json(res, 200, { slack: r.ok ? 'sent' : `failed ${r.status}`, body: (await r.text()).slice(0, 60), shape });
     }
 
     const rows = await selectRows(

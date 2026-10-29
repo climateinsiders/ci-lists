@@ -1,4 +1,4 @@
-import { stripe, selectRows, updateRows } from './_lib.js';
+import { stripe, selectRows, updateRows, slackHook } from './_lib.js';
 
 const fmtUsd = (c) => '$' + (c / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -33,7 +33,7 @@ async function feeFor(paymentIntent, amount) {
 }
 
 export async function notifySale({ rowId, sessionId, paymentIntent, amountCents, email, firstName, slugs, bundle, upsell, upgrade, attribution }) {
-  const hook = process.env.SLACK_WEBHOOK_URL;
+  const hook = slackHook();
   if (!hook) return;
   try {
     const amount = amountCents || 0;
