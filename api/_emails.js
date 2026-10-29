@@ -11,7 +11,7 @@
 //   E0 "The cold emails I actually answered all did one thing..."
 //   E2 "the round rarely closes where it starts", Climentum being Copenhagen-based.
 // - Plain text, rendered as a plain Gmail-looking email (see textToHtml). No logos, no buttons.
-import { siteUrl, fmtUsd, UNIQUE_INVESTORS, UNIQUE_EMAILS, BUNDLE_PRICE_CENTS } from './_lib.js';
+import { isSectorSlug, siteUrl, fmtUsd, UNIQUE_INVESTORS, UNIQUE_EMAILS, BUNDLE_PRICE_CENTS } from './_lib.js';
 
 const n = (x) => Number(x).toLocaleString('en-US');
 const hi = (name) => (name ? `Hi ${name},` : 'Hi,');
@@ -23,7 +23,7 @@ function footer(token) {
 
 function links(chosen) {
   return chosen
-    .map((l) => (l.airtable_url ? `${l.short_name}: ${l.airtable_url}` : `${l.short_name}: Airtable link follows later today, the Excel file is attached`))
+    .map((l) => (l.airtable_url ? `${l.short_name}: ${l.airtable_url}` : isSectorSlug(l.slug) ? `${l.short_name}: the Excel file is attached. Want it in Airtable? Reply to this email and I'll send the link.` : `${l.short_name}: Airtable link follows later today, the Excel file is attached`))
     .join('\n');
 }
 
@@ -33,7 +33,7 @@ export function deliveryEmail({ chosen, allLists, bundle, token, amountCents, na
   const subject = bundle ? 'all ten, as promised' : `your ${one.short_name.toLowerCase()} list`;
   const text = `${hi(name)}
 
-${bundle ? `All ten lists, ${n(UNIQUE_INVESTORS)} investors. Links below, one Excel file per list attached, and the follow-up sequence I promised is in there too.` : `It's yours. Airtable link below, and the Excel file is attached if you'd rather work offline. Status dropdowns are already in it.`}
+${bundle ? `All ten lists, ${n(UNIQUE_INVESTORS)} investors. Links below, one Excel file per list attached, and the follow-up sequence I promised is in there too.` : (chosen.every((l) => l.airtable_url || !isSectorSlug(l.slug)) ? `It's yours. Airtable link below, and the Excel file is attached if you'd rather work offline. Status dropdowns are already in it.` : `It's yours. The Excel file is attached, with status dropdowns already in it.`)}
 
 ${links(chosen)}
 

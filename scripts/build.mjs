@@ -43,6 +43,7 @@ async function loadLists() {
     if (sd) Object.assign(l, { kind: 'sector', sector: sd.sector, icon: sd.icon, keyword: sd.keyword, topic: sd.topic, short_name: l.short_name || sd.short_name, value_points: l.value_points?.length ? l.value_points : sd.value_points });
     const [stats] = await sb(`rpc/paid_list_stats?slug=${l.slug}`).catch(() => [null]);
     l.stats = stats || (await computeStats(l.slug));
+    if (sd) l.stats = { ...sd.stats, ...l.stats, verified: sd.stats.verified }, l.pool = sd.pool; // verified status and the database total are not in paid_list_entries
     l.rows = await sb(`paid_list_entries?slug=eq.${l.slug}&order=sort_order.asc&select=sort_order,name,title,firm,country,region,extra,website,photo_url,logo_url`);
     // the free top 10: same rule as the emailed Excel (api/_pick.js), so page and inbox show the same ten
     const cand = await sb(`paid_list_entries?slug=eq.${l.slug}&order=sort_order.asc&select=sort_order,name,title,firm,country,region,city,email,linkedin_url,website,extra,photo_url,logo_url,is_sample`);

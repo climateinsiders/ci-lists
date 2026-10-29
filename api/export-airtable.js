@@ -1,4 +1,4 @@
-import { getActiveLists, getEntries, selectRows, json } from './_lib.js';
+import { getActiveLists, getEntries, selectRows, json, isSectorSlug } from './_lib.js';
 
 // GET /api/export-airtable?t=<token>  -> tab-separated rows with the exact Airtable column names,
 // for "Import data > Paste table data". Tokens live in airtable_export_tokens (one per list, expire).
@@ -13,7 +13,8 @@ export default async function handler(req, res) {
     const list = (await getActiveLists()).find((l) => l.slug === tok.slug);
     const entries = await getEntries(tok.slug);
     const cell = (v) => String(v ?? '').replace(/[\t\r\n]+/g, ' ').trim();
-    const isFunds = entries.some((e) => e.extra && (e.extra.stage || e.extra.sector));
+    const sector = isSectorSlug(tok.slug);
+    const isFunds = !sector && entries.some((e) => e.extra && (e.extra.stage || e.extra.sector));
     let header, rows;
     if (isFunds) {
       header = ['Fund', 'Website', 'Geography', 'City', 'Stage', 'Sector', 'Takes the lead', 'Min ticket', 'Max ticket', '#', 'Status'];
@@ -21,6 +22,9 @@ export default async function handler(req, res) {
         const x = e.extra || {};
         return [e.firm, e.website, e.region, e.city, x.stage, x.sector, x.lead, x.min, x.max, e.sort_order, 'To contact'];
       });
+    } else if (sector) {
+      header = ['Name', 'Title', 'Firm', 'Email', 'LinkedIn', 'Country', 'City', 'Stage', 'Cheque size', 'Website', '#', 'Status'];
+      rows = entries.map((e) => [e.name, e.title, e.firm, e.email, e.linkedin_url, e.country, e.city, e.extra?.stage, e.extra?.check, e.website, e.sort_order, 'To contact']);
     } else {
       header = ['Name', 'Title', 'Firm', 'Email', 'LinkedIn', 'Country', 'City', 'Region', 'Website', '#', 'Status'];
       rows = entries.map((e) => [e.name, e.title, e.firm, e.email, e.linkedin_url, e.country, e.city, e.region, e.website, e.sort_order, 'To contact']);

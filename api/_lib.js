@@ -136,7 +136,7 @@ export function toCsv(entries, list) {
   // Fund directories (climate VCs) carry their fields in `extra`.
   const extraKeys = [];
   for (const e of entries) if (e.extra) for (const k of Object.keys(e.extra)) if (!extraKeys.includes(k)) extraKeys.push(k);
-  const extraLabel = { sector: 'Sector', stage: 'Stage', lead: 'Takes the lead', min: 'Min ticket (m EUR)', max: 'Max ticket (m EUR)' };
+  const extraLabel = { sector: 'Sector', stage: 'Stage', lead: 'Takes the lead', check: 'Cheque size', kind: 'Fund type', min: 'Min ticket (m EUR)', max: 'Max ticket (m EUR)' };
   const cols = COLS.filter(([k]) => entries.some((e) => e[k] !== null && e[k] !== undefined && e[k] !== ''));
   const header = [...cols.map(([, l]) => l), ...extraKeys.map((k) => extraLabel[k] || k)];
   const lines = [header.map(csvCell).join(',')];

@@ -1,6 +1,7 @@
 // Hand-built .xlsx for list delivery. Zero dependencies: SpreadsheetML + a tiny zip writer.
 // Three tabs: "Start here" (cover), the list itself (styled, filters, Status dropdown, colored
 // statuses, frozen header), and "Pipeline" (live counts from the Status column).
+import { isSectorSlug } from './_lib.js';
 import zlib from 'node:zlib';
 
 // ---------- brand ----------
@@ -311,7 +312,8 @@ export function xlsxFilename(list) {
 // entries: rows from getEntries (already ordered: most complete first)
 export function toXlsx(entries, list, { name, date = new Date() } = {}) {
   const st = new Styles();
-  const isFunds = entries.some((e) => e.extra && (e.extra.stage || e.extra.sector));
+  const sectorList = isSectorSlug(list.slug); // people rows with stage + cheque size, never a fund directory
+  const isFunds = !sectorList && entries.some((e) => e.extra && (e.extra.stage || e.extra.sector));
   const listTab = String(list.short_name || list.name || 'List').replace(/[\\/?*[\]:]/g, '').slice(0, 28);
   const sheetName = isFunds ? 'Funds' : listTab;
   const qs = `'${sheetName.replace(/'/g, "''")}'`;
@@ -356,6 +358,7 @@ export function toXlsx(entries, list, { name, date = new Date() } = {}) {
         { h: 'City', w: 16 },
         { h: 'Country', w: 16 },
         { h: 'Website', w: 24 },
+        ...(sectorList ? [{ h: 'Stage', w: 24 }, { h: 'Cheque size', w: 18, center: true }] : []),
         { h: 'Status', w: 17, center: true },
         { h: 'Last touch', w: 13, center: true },
         { h: 'Notes', w: 40 },
@@ -426,6 +429,10 @@ export function toXlsx(entries, list, { name, date = new Date() } = {}) {
       sh.set(8, r, country, cell(i));
       const w = clean(e.website);
       sh.set(9, r, w ? bareHost(w) : '', cell(i, { font: { color: C.orangeDeep, underline: !!w } }), w ? { link: url(w), tooltip: 'Open website' } : {});
+      if (sectorList) {
+        sh.set(10, r, clean(e.extra?.stage), cell(i));
+        sh.set(11, r, clean(e.extra?.check), cell(i, { h: 'center' }));
+      }
     }
     sh.set(statusCol, r, 'To contact', cell(i, { h: 'center', font: { size: 9 } }));
     sh.set(touchCol, r, '', cell(i, { h: 'center', numFmt: 'd mmm yyyy' }));
