@@ -241,9 +241,9 @@ function chip(list) {
   const flags = LIST_FLAGS[list.slug];
   const label = list.name;
   if (flags) {
-    return `<a class="chip flagchip" href="/${esc(list.slug)}" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog" aria-label="${esc(label)}" title="${esc(list.card_name)}">${flagStack(flags.slice(0, 4), 'flags sm')}<span class="t"><b>${esc(list.count_label)}</b></span></a>`;
+    return `<a class="chip flagchip" href="/${esc(list.slug)}" ${toneAttr(list)} aria-label="${esc(label)}" title="${esc(list.card_name)}">${flagStack(flags.slice(0, 4), 'flags sm')}<span class="t"><b>${esc(list.count_label)}</b></span></a>`;
   }
-  return `<a class="chip" href="/${esc(list.slug)}" data-open="${esc(list.slug)}" ${toneAttr(list)} aria-haspopup="dialog" aria-label="${esc(label)}"><span class="dot">${ICONS[list.icon] || ICONS.globe}</span><span class="t"><b>${esc(list.count_label)}</b> ${esc(CHIP_NAME[list.slug] || list.short_name)}</span></a>`;
+  return `<a class="chip" href="/${esc(list.slug)}" ${toneAttr(list)} aria-label="${esc(label)}"><span class="dot">${ICONS[list.icon] || ICONS.globe}</span><span class="t"><b>${esc(list.count_label)}</b> ${esc(CHIP_NAME[list.slug] || list.short_name)}</span></a>`;
 }
 
 function statRow(list) {
@@ -381,9 +381,8 @@ export function page(lists, featured) {
 <section class="offer main" id="offer" ${toneAttr(f)}>${offerBlock(f, { sheet: true })}</section>
 <div class="stickybuy" id="stickybuy"><span class="sp"><b>${usd(f.price_cents)}</b><small>one time · yours forever</small></span><button class="btn" data-buy="${esc(f.slug)}">Get the list</button></div>
 
-<section class="chips"><span class="lbl">+ ${others.length} more ${isSector(f) ? 'sectors' : 'lists'}</span><span class="row">${others.slice(0, isSector(f) ? 5 : 6).map(chip).join('')}${isSector(f) ? '<a class="chip morechip" href="/sectors">All sectors</a>' : SECTORS.length ? '<a class="chip morechip" href="/sectors">By sector</a>' : ''}</span></section>
+<section class="chips"><span class="lbl">+ ${others.length} more ${isSector(f) ? 'sectors' : 'lists'}</span><span class="row">${others.slice(0, isSector(f) ? 5 : 6).map(chip).join('')}<a class="chip morechip" href="/all">All lists</a>${isSector(f) ? '<a class="chip morechip" href="/sectors">All sectors</a>' : SECTORS.length ? '<a class="chip morechip" href="/sectors">By sector</a>' : ''}</span></section>
 ${proofStrip()}
-${others.map(preview).join('\n')}
 ${sheetDialog(f)}`;
   const title = featured ? `${f.name}${isSector(f) ? ' · Investor list' : ''} · Climate Insiders` : 'Investor lists for founders and fund managers · Climate Insiders';
   const description = featured
