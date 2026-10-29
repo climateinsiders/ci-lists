@@ -186,17 +186,17 @@ const isSector = (list) => list.kind === 'sector';
 const poolNote = (l) => (l.pool > l.stats.rows ? `Top ${n(l.stats.rows)} of ${n(l.pool)}` : `All ${n(l.stats.rows)}`);
 const sectorMeta = (e) => [e.extra?.stage, e.extra?.check].filter(Boolean).join(' · ');
 
-function picks(list) {
+function picks(list, { compact = false } = {}) {
   const isFund = list.slug === 'climate-vcs-474';
   return (list.sample || [])
     .slice(0, 10)
     .map((e) => {
       const x = e.extra || {};
       const sec = isSector(list);
-      const line2 = isFund ? [e.region, x.stage].filter(Boolean).join(' · ') : sec ? [e.firm, e.country].filter(Boolean).join(' · ') : [e.title, e.firm].filter(Boolean).join(' · ');
+      const line2 = isFund ? [e.region, x.stage].filter(Boolean).join(' · ') : sec && compact ? [e.firm, x.check || x.stage].filter(Boolean).join(' · ') : sec ? [e.firm, e.country].filter(Boolean).join(' · ') : [e.title, e.firm].filter(Boolean).join(' · ');
       const line3 = isFund ? x.sector || '' : sec ? esc(sectorMeta(e)) : e.email ? `<code>${esc(maskEmail(e.email))}</code>` : [e.city, e.country].filter(Boolean).join(', ');
       const iso = isFund ? null : isoFor(e.country);
-      return `<li class="pick"><span class="avwrap"><span class="avatar">${face(e, 64)}</span>${iso ? flagImg(iso, 'flagb') : ''}</span><span class="who"><b>${esc(isFund ? e.firm : e.name)}</b><span>${esc(line2)}</span><span>${line3}</span></span></li>`;
+      return `<li class="pick"><span class="avwrap"><span class="avatar">${face(e, 64)}</span>${iso ? flagImg(iso, 'flagb') : ''}</span><span class="who"><b>${esc(isFund ? e.firm : e.name)}</b><span>${esc(line2)}</span>${compact && sec ? '' : `<span>${line3}</span>`}</span></li>`;
     })
     .join('');
 }
@@ -620,10 +620,23 @@ export function welcomePage() {
 }
 
 // ---------- /sectors: the lists by sector ----------
-// Same language as /all: the ladder of lists on the right, the top 10 of the one you point at on the left. Click opens that list's page.
+// Same deck as /all on the left (point at a card), the top 10 investors of that sector on the right. Touch screens get a plain list.
+function sectorCard(list, i) {
+  const of = list.pool > list.stats.rows ? `of ${n(list.pool)}` : 'all of them';
+  return `<button class="dcard" type="button" data-slug="${esc(list.slug)}" style="--i:${i};${toneVars(list)}" aria-label="${esc(list.short_name)}: ${esc(poolNote(list))} investors">
+  <span class="in">
+    <span class="top">${listFlags(list, 'flags md')}<i class="vl">${esc(of)}</i></span>
+    <b class="ct">${esc(list.count_label)}</b>
+    <span class="nm">${esc(list.short_name)}</span>
+    <span class="kd">investors</span>
+    <i class="no">${pad(i + 1)}</i>
+  </span>
+</button>`;
+}
+
 function sectorRow(list, maxRows) {
   const pct = Math.max(6, Math.round(((list.stats.rows || 0) / maxRows) * 100));
-  return `<li><a class="lrow" href="/${esc(list.slug)}" data-slug="${esc(list.slug)}" style="${toneVars(list)};--w:${pct}%" title="${esc(poolNote(list) + ' ' + list.topic + ' investors')}">
+  return `<li><a class="lrow" href="/${esc(list.slug)}" style="${toneVars(list)};--w:${pct}%">
   ${listFlags(list, 'flags sm')}
   <span class="lt"><b>${esc(list.count_label)}</b><small>${esc(list.short_name)}</small></span>
   <em>${usd(list.price_cents)}</em>
@@ -633,9 +646,9 @@ function sectorRow(list, maxRows) {
 
 function sectorPanel(list, i) {
   return `<div class="shp${i === 0 ? ' on' : ''}" data-for="${esc(list.slug)}" ${toneAttr(list)}>
-    <div class="head"><h3>Top 10 · ${esc(list.short_name)}<span class="script">best matches first</span></h3><a class="viewall" href="/${esc(list.slug)}">Open the full list <span aria-hidden="true">↗</span></a></div>
-    <ul class="picks">${picks(list)}</ul>
-    <p class="more">${esc(poolNote(list))} in the database · ${n(list.stats.verified || 0)} verified emails · ${n(list.stats.firms || 0)} funds · ${n(list.stats.countries || 0)} countries.</p>
+    <div class="shh">${listFlags(list, 'flags lg')}<div><span class="script">top 10 investors</span><h3>${esc(list.short_name)}</h3></div><span class="shn"><b>${esc(list.count_label)}</b>${esc(poolNote(list).toLowerCase())}</span></div>
+    <ul class="picks">${picks(list, { compact: true })}</ul>
+    <div class="shf"><small>${n(list.stats.verified || 0)} verified emails · ${n(list.stats.firms || 0)} funds · ${n(list.stats.countries || 0)} countries</small><a class="btn" href="/${esc(list.slug)}">Open the list · ${usd(list.price_cents)}</a></div>
   </div>`;
 }
 
@@ -652,11 +665,14 @@ export function sectorsPage(lists) {
 </header>
 
 <section class="offer main sectorhub" id="offer">
-  <div class="picksCol">${lists.map(sectorPanel).join('')}</div>
+  <div class="picksCol deckCol">
+    <div class="head"><h3>${lists.length} sectors<span class="script">one deck</span></h3><small>${n(rows)} investors · ${usd(lists[0]?.price_cents || 13000)} a list</small></div>
+    <div class="deck" id="deck">${lists.map(sectorCard).join('\n')}</div>
+    <p class="more"><span class="hv">Slide across the cards for the top 10. Click to open the list.</span></p>
+  </div>
   <div class="valueCol">
-    <span class="script">pick your sector</span>
-    <p class="fine">${lists.length} lists, ${n(rows)} investors, ${usd(lists[0]?.price_cents || 13000)} each. Ranked by fit, with stage, cheque size and a verified email on every row.</p>
-    <ul class="ladder">${lists.map((l) => sectorRow(l, maxRows)).join('')}</ul>
+    <div class="shstack" id="shstack" aria-live="polite">${lists.map(sectorPanel).join('')}</div>
+    <div class="sgrid"><span class="script">pick your sector</span><p class="fine">${lists.length} lists, ${n(rows)} investors, ${usd(lists[0]?.price_cents || 13000)} each. Ranked by fit, with stage, cheque size and a verified email on every row.</p><ul class="ladder">${lists.map((l) => sectorRow(l, maxRows)).join('')}</ul></div>
   </div>
 </section>
 <p class="sfoot">Looking for a region instead? <a href="/">Browse the lists by geography</a>.</p>

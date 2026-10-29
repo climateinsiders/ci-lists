@@ -428,12 +428,12 @@ a.chip { text-decoration: none; cursor: pointer; }
 
 .offer.allcard { overflow: clip; }
 .dsticky { position: sticky; top: 16px; display: flex; flex-direction: column; }
-.deck { container-type: inline-size; position: relative; flex: none; height: 470px; --cw: 184px; --ch: 266px; }
-.dcard { --sp: min(56px, calc((100cqw - var(--cw) - 40px) / 9)); --d: calc(var(--i) - 4.5); --x: calc(var(--i) * 5px - 22px); --y: calc(var(--i) * -2px); --r: calc(var(--i) * 1.3deg - 6deg); --z: calc(20 - var(--i));
+.deck { container-type: inline-size; position: relative; flex: none; height: 470px; --cw: 184px; --ch: 266px; --n: 10; --half: 4.5; --span: 9; --xs: 5px; --xo: 22px; --rs: 1.3deg; --ro: 6deg; --yk: 2.6px; --rk: 4.2deg; --ykm: 1.6px; --rkm: 4.6deg; --ys: -2px; }
+.dcard { --sp: min(56px, calc((100cqw - var(--cw) - 40px) / var(--span))); --d: calc(var(--i) - var(--half)); --x: calc(var(--i) * var(--xs) - var(--xo)); --y: calc(var(--i) * var(--ys)); --r: calc(var(--i) * var(--rs) - var(--ro)); --z: calc(var(--n) * 2 - var(--i));
   position: absolute; left: 50%; bottom: 22px; width: var(--cw); height: var(--ch); margin-left: calc(var(--cw) / -2); padding: 7px; border: 2px solid var(--ink); border-radius: 16px; background: var(--tone); color: var(--ink); cursor: pointer; overflow: hidden;
   box-shadow: 0 10px 18px -10px rgba(31,27,22,.55), 3px 3px 0 rgba(31,27,22,.9);
   z-index: var(--z); transform: translate(var(--x), var(--y)) rotate(var(--r)); transition: transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease, filter .25s ease; will-change: transform; }
-.deck:hover .dcard, .deck.open .dcard, .deck:focus-within .dcard { --x: calc(var(--d) * var(--sp)); --y: calc(var(--d) * var(--d) * 2.6px); --r: calc(var(--d) * 4.2deg); --z: calc(var(--i) + 1); }
+.deck:hover .dcard, .deck.open .dcard, .deck:focus-within .dcard { --x: calc(var(--d) * var(--sp)); --y: calc(var(--d) * var(--d) * var(--yk)); --r: calc(var(--d) * var(--rk)); --z: calc(var(--i) + 1); }
 .dcard:hover, .dcard.hl, .dcard:focus-visible { transform: translate(var(--x), calc(var(--y) - 38px)) rotate(0deg) scale(1.07); z-index: 60; box-shadow: 0 22px 30px -14px rgba(31,27,22,.6), 4px 5px 0 var(--orange); outline: none; }
 /* holographic sheen sweeps over the card you point at */
 .dcard::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(115deg, transparent 28%, rgba(255,255,255,.62) 46%, rgba(255,214,150,.35) 54%, transparent 70%); transform: translateX(-130%); transition: transform .75s ease; pointer-events: none; }
@@ -494,7 +494,7 @@ a.chip { text-decoration: none; cursor: pointer; }
   .allcard .more .hv { display: none; }
   .allcard .more .tp { display: inline; }
   .dsticky { position: static; }
-  .dcard { --sp: min(26px, calc((100cqw - var(--cw)) / 9)); --x: calc(var(--d) * var(--sp)); --y: calc(var(--d) * var(--d) * 1.6px); --r: calc(var(--d) * 4.6deg); --z: calc(var(--i) + 1); bottom: 14px; padding: 5px; border-radius: 13px; }
+  .dcard { --sp: min(26px, calc((100cqw - var(--cw)) / var(--span))); --x: calc(var(--d) * var(--sp)); --y: calc(var(--d) * var(--d) * var(--ykm)); --r: calc(var(--d) * var(--rkm)); --z: calc(var(--i) + 1); bottom: 14px; padding: 5px; border-radius: 13px; }
   .dcard:hover, .dcard.hl { transform: translate(var(--x), calc(var(--y) - 12px)) rotate(0deg) scale(1.04); }
   .dcard .in { gap: 3px; padding: 5px 5px 7px; }
   .dcard .flags { --fs: 20px; }
@@ -656,16 +656,39 @@ a.chip { text-decoration: none; cursor: pointer; }
 
 .sheettbl a.free { color: var(--orange-deep); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
 
-/* ---- /sectors hub: ladder on the right, top 10 of the sector you point at on the left ---- */
-.offer.sectorhub { grid-template-columns: minmax(0, 1fr) 440px; }
-.sectorhub .lrow { text-decoration: none; }
-.sectorhub .lrow em { display: none; }
-.sectorhub .lrow { grid-template-columns: auto minmax(0, 1fr); }
-.sectorhub .shp { display: none; }
-.sectorhub .shp.on { display: block; }
-.sectorhub .shp .viewall { text-decoration: none; color: var(--ink); }
-.sectorhub .valueCol .ladder { margin-top: 4px; }
-.sectorhub .valueCol .fine { margin: 2px 0 6px; }
+/* ---- /sectors: the deck of sectors on the left (same as /all), the top 10 of the one you point at on the right ---- */
+.offer.sectorhub { grid-template-columns: minmax(0, 1fr) 440px; overflow: clip; }
+.sectorhub .deckCol { padding-bottom: 14px; justify-content: center; background: radial-gradient(90% 70% at 50% 62%, rgba(255,122,26,.10), transparent 70%), linear-gradient(180deg, #fffdf8 0%, var(--paper) 100%); }
+.sectorhub .deck { --n: 20; --half: 9.5; --span: 19; --xs: 1.3px; --xo: 12px; --ys: -1.1px; --rs: .3deg; --ro: 3deg; --yk: .5px; --rk: 1.9deg; --ykm: .4px; --rkm: 2.2deg; }
+.sectorhub .dcard { border-color: var(--tone-ink); box-shadow: 0 8px 14px -10px rgba(31,27,22,.5), 2px 2px 0 var(--tone-ink); }
+.sectorhub .more { text-align: center; margin-top: 8px; }
+.sectorhub .valueCol { padding: 16px 20px 16px; }
+.shstack { display: grid; }
+.shp { grid-area: 1 / 1; opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity .22s ease, transform .28s cubic-bezier(.2,.8,.2,1), visibility 0s linear .28s; }
+.shp.on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+.shh { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.shh .flags { --fs: 34px; flex: none; }
+.shh h3 { margin: 0; font-family: var(--serif); font-variation-settings: 'opsz' 144; font-weight: 900; font-size: 26px; line-height: 1; letter-spacing: -0.02em; }
+.shh .script { display: block; font-size: 21px; line-height: 1; margin-bottom: -1px; }
+.shh .shn { margin-left: auto; text-align: right; font-size: 12px; line-height: 1.25; color: var(--ink-2); font-weight: 600; }
+.shh .shn b { display: block; font-family: var(--serif); font-weight: 900; font-size: 20px; color: var(--tone-ink); line-height: 1; }
+.sectorhub .shp .picks { grid-template-columns: 1fr; grid-auto-rows: auto; gap: 5px; flex: none; }
+.sectorhub .shp .pick { min-height: 0; padding: 5px 10px; grid-template-columns: 34px 1fr; }
+.sectorhub .shp .pick .avwrap, .sectorhub .shp .pick .avatar { width: 34px; height: 34px; }
+.sectorhub .shp .pick .who b { font-size: 13px; }
+.shf { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding-top: 10px; border-top: 2px dashed var(--ink); }
+.shf small { font-size: 12px; line-height: 1.3; color: var(--ink-2); flex: 1; }
+.shf .btn { text-decoration: none; white-space: nowrap; }
+.sectorhub .sgrid { display: none; }
 .sfoot { text-align: center; color: var(--ink-2); font-size: 14px; margin: 16px 0 0; }
-@media (max-width: 900px) { .offer.sectorhub { grid-template-columns: minmax(0, 1fr); } .sectorhub .picksCol { display: none; } }
+@media (min-width: 901px) { .offer.sectorhub.main { margin-top: 14px; } }
+@media (max-width: 900px) {
+  .offer.sectorhub { grid-template-columns: minmax(0, 1fr); }
+  .sectorhub .deckCol, .sectorhub .shstack { display: none; }
+  .sectorhub .sgrid { display: block; }
+  .sectorhub .valueCol .ladder { margin-top: 6px; }
+  .sectorhub .lrow { text-decoration: none; }
+  .sectorhub .lrow em { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .shp { transition: none; } }
 .chip.morechip { background: #1f1b16; color: #fff; border-color: #1f1b16; }

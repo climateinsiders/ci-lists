@@ -174,18 +174,51 @@
     setTimeout(fitStack, 0);
   }
 
-  // ---- /sectors: point at a sector and its top 10 shows on the left; clicking opens its page ----
+  // ---- /sectors: slide across the deck, the top 10 of the sector under the pointer shows on the right; click opens its page ----
   var hub = document.querySelector('.sectorhub');
   if (hub) {
+    var hdeck = document.getElementById('deck');
+    var hcards = hdeck ? [].slice.call(hdeck.querySelectorAll('.dcard')) : [];
+    var hscrub = hcards.length > 0 && window.matchMedia('(hover: hover) and (min-width: 901px)').matches;
+    var last = hcards.length - 1;
     var showSector = function (slug) {
       hub.querySelectorAll('.shp').forEach(function (p) { p.classList.toggle('on', p.getAttribute('data-for') === slug); });
-      hub.querySelectorAll('.lrow').forEach(function (r) { r.classList.toggle('hl', r.getAttribute('data-slug') === slug); });
+      hcards.forEach(function (c) { c.classList.toggle('sel', c.getAttribute('data-slug') === slug); });
     };
-    var firstRow = hub.querySelector('.lrow');
-    if (firstRow) showSector(firstRow.getAttribute('data-slug'));
-    ['mouseover', 'focusin'].forEach(function (evn) {
-      hub.addEventListener(evn, function (ev) { var r = ev.target.closest('.lrow'); if (r) showSector(r.getAttribute('data-slug')); });
-    });
+    var lightSector = function (slug) {
+      hcards.forEach(function (c) { c.classList.toggle('hl', !!slug && c.getAttribute('data-slug') === slug); });
+      if (hdeck) hdeck.classList.toggle('open', !!slug);
+      if (slug) showSector(slug);
+    };
+    if (hcards.length) showSector(hcards[0].getAttribute('data-slug'));
+    // the card under the pointer is worked out from its horizontal position over the fan, so lifting a card never knocks the hover off it
+    var hIndex = function (x) {
+      var r = hdeck.getBoundingClientRect(), cw = hcards[0].offsetWidth;
+      var sp = Math.min(56, (r.width - cw - 40) / last);
+      return (x - (r.left + r.width / 2 - (last / 2) * sp - cw / 2)) / sp;
+    };
+    var hActive = -1;
+    var hPick = function (x) {
+      var t = hIndex(x);
+      if (hActive >= 0 && t > hActive - 0.12 && t < (hActive === last ? 99 : hActive + 1.12)) return hActive;
+      return t >= last ? last : Math.max(0, Math.min(last - 1, Math.floor(t)));
+    };
+    if (hscrub) {
+      hdeck.classList.add('scrub');
+      var hIn = false;
+      hdeck.addEventListener('mouseenter', function () { hIn = true; hdeck.classList.add('open'); });
+      hdeck.addEventListener('mousemove', function (ev) {
+        if (!hIn) { hIn = true; hdeck.classList.add('open'); }
+        var i = hPick(ev.clientX);
+        if (i === hActive) return;
+        hActive = i;
+        lightSector(hcards[i].getAttribute('data-slug'));
+      });
+      hdeck.addEventListener('mouseleave', function () { hIn = false; hActive = -1; lightSector(''); });
+      hdeck.addEventListener('click', function (ev) { location.href = '/' + hcards[hPick(ev.clientX)].getAttribute('data-slug'); });
+    } else {
+      hcards.forEach(function (c) { c.addEventListener('click', function () { showSector(c.getAttribute('data-slug')); }); });
+    }
   }
 
   // ---- /all: point at a card (or a row) and its top 10 shows under the deck; click opens the full list ----
