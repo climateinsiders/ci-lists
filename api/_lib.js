@@ -249,3 +249,9 @@ export async function upgradeQuote(token) {
 export function fmtUsd(cents) {
   return `$${Math.round(cents / 100)}`;
 }
+
+// The Slack incoming-webhook URL, cleaned of the quotes/whitespace/newlines that copy-paste into Vercel often adds.
+export function slackHook() {
+  const raw = String(process.env.SLACK_WEBHOOK_URL || '').trim().replace(/^["']|["']$/g, '').trim();
+  return raw || null;
+}
