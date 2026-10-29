@@ -620,26 +620,45 @@ export function welcomePage() {
 }
 
 // ---------- /sectors: the lists by sector ----------
+// Same language as /all: the ladder of lists on the right, the top 10 of the one you point at on the left. Click opens that list's page.
+function sectorRow(list, maxRows) {
+  const pct = Math.max(6, Math.round(((list.stats.rows || 0) / maxRows) * 100));
+  return `<li><a class="lrow" href="/${esc(list.slug)}" data-slug="${esc(list.slug)}" style="${toneVars(list)};--w:${pct}%" title="${esc(poolNote(list) + ' ' + list.topic + ' investors')}">
+  ${listFlags(list, 'flags sm')}
+  <span class="lt"><b>${esc(list.count_label)}</b><small>${esc(list.short_name)}</small></span>
+  <em>${usd(list.price_cents)}</em>
+  <span class="bar" aria-hidden="true"></span>
+</a></li>`;
+}
+
+function sectorPanel(list, i) {
+  return `<div class="shp${i === 0 ? ' on' : ''}" data-for="${esc(list.slug)}" ${toneAttr(list)}>
+    <div class="head"><h3>Top 10 · ${esc(list.short_name)}<span class="script">best matches first</span></h3><a class="viewall" href="/${esc(list.slug)}">Open the full list <span aria-hidden="true">↗</span></a></div>
+    <ul class="picks">${picks(list)}</ul>
+    <p class="more">${esc(poolNote(list))} in the database · ${n(list.stats.verified || 0)} verified emails · ${n(list.stats.firms || 0)} funds · ${n(list.stats.countries || 0)} countries.</p>
+  </div>`;
+}
+
 export function sectorsPage(lists) {
   const rows = lists.reduce((a, l) => a + (l.stats.rows || 0), 0);
-  const card = (l) => `<a class="scard" href="/${esc(l.slug)}" ${toneAttr(l)}>
-  <span class="sic">${ICONS[l.icon] || ICONS.globe}</span>
-  <b class="sct">${esc(l.count_label)}</b>
-  <span class="snm">${esc(l.short_name)}</span>
-  ${l.pool ? `<em class="spool">${esc(poolNote(l))} in the database</em>` : ''}
-  <small>${n(l.stats.verified || 0)} verified emails · ${n(l.stats.firms || 0)} funds · ${n(l.stats.countries || 0)} countries</small>
-  <span class="sgo">${usd(l.price_cents)} · see the list →</span>
-</a>`;
+  const maxRows = Math.max(...lists.map((l) => l.stats.rows || 0));
   const body = `
 <header class="hero" style="--tone:#d8efe0;--tone-ink:#1b7a4a">
   <div class="title">
     ${brand()}
     <div class="kick"><span class="script">investors who back your sector</span></div>
     <div class="h1row"><h1>Investor lists <span class="hl">by sector</span></h1></div>
-    <p class="sub">${lists.length} lists, ${n(rows)} investors ranked by how closely they fit the sector, with stage, cheque size and a verified email on every row.</p>
   </div>
 </header>
-<section class="sgrid">${lists.map(card).join('')}</section>
+
+<section class="offer main sectorhub" id="offer">
+  <div class="picksCol">${lists.map(sectorPanel).join('')}</div>
+  <div class="valueCol">
+    <span class="script">pick your sector</span>
+    <p class="fine">${lists.length} lists, ${n(rows)} investors, ${usd(lists[0]?.price_cents || 13000)} each. Ranked by fit, with stage, cheque size and a verified email on every row.</p>
+    <ul class="ladder">${lists.map((l) => sectorRow(l, maxRows)).join('')}</ul>
+  </div>
+</section>
 <p class="sfoot">Looking for a region instead? <a href="/">Browse the lists by geography</a>.</p>
 ${proofStrip()}`;
   return shell({

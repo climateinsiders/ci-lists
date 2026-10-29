@@ -656,17 +656,16 @@ a.chip { text-decoration: none; cursor: pointer; }
 
 .sheettbl a.free { color: var(--orange-deep); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
 
-/* ---- /sectors hub ---- */
-.sgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; margin-top: 22px; }
-.scard { display: flex; flex-direction: column; gap: 2px; padding: 14px 16px 12px; border-radius: 16px; background: var(--tone); color: var(--tone-ink); text-decoration: none; border: 2px solid var(--tone-ink); box-shadow: 3px 3px 0 var(--tone-ink); transition: transform .15s, box-shadow .15s; }
-.scard:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--tone-ink); }
-.scard .sic { width: 34px; height: 34px; display: block; margin-bottom: 4px; }
-.scard .sic svg { width: 100%; height: 100%; }
-.scard .sct { font-family: var(--serif); font-variation-settings: 'opsz' 144; font-weight: 900; font-size: 34px; line-height: 1; letter-spacing: -0.02em; }
-.scard .snm { font-weight: 700; font-size: 16px; color: #1f1b16; }
-.scard small { font-size: 12.5px; line-height: 1.3; color: #3d3a33; margin-top: 2px; }
-.scard .sgo { margin-top: 8px; font-size: 13px; font-weight: 700; }
-.sfoot { text-align: center; color: var(--ink-2); font-size: 14px; margin: 20px 0 0; }
+/* ---- /sectors hub: ladder on the right, top 10 of the sector you point at on the left ---- */
+.offer.sectorhub { grid-template-columns: minmax(0, 1fr) 440px; }
+.sectorhub .lrow { text-decoration: none; }
+.sectorhub .lrow em { display: none; }
+.sectorhub .lrow { grid-template-columns: auto minmax(0, 1fr); }
+.sectorhub .shp { display: none; }
+.sectorhub .shp.on { display: block; }
+.sectorhub .shp .viewall { text-decoration: none; color: var(--ink); }
+.sectorhub .valueCol .ladder { margin-top: 4px; }
+.sectorhub .valueCol .fine { margin: 2px 0 6px; }
+.sfoot { text-align: center; color: var(--ink-2); font-size: 14px; margin: 16px 0 0; }
+@media (max-width: 900px) { .offer.sectorhub { grid-template-columns: minmax(0, 1fr); } .sectorhub .picksCol { display: none; } }
 .chip.morechip { background: #1f1b16; color: #fff; border-color: #1f1b16; }
-@media (max-width: 600px) { .sgrid { grid-template-columns: repeat(2, 1fr); gap: 10px; } .scard .sct { font-size: 28px; } }
-.scard .spool { font-style: normal; font-size: 12.5px; font-weight: 600; color: var(--tone-ink); opacity: .85; margin-bottom: 2px; }

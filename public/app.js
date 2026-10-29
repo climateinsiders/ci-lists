@@ -174,6 +174,20 @@
     setTimeout(fitStack, 0);
   }
 
+  // ---- /sectors: point at a sector and its top 10 shows on the left; clicking opens its page ----
+  var hub = document.querySelector('.sectorhub');
+  if (hub) {
+    var showSector = function (slug) {
+      hub.querySelectorAll('.shp').forEach(function (p) { p.classList.toggle('on', p.getAttribute('data-for') === slug); });
+      hub.querySelectorAll('.lrow').forEach(function (r) { r.classList.toggle('hl', r.getAttribute('data-slug') === slug); });
+    };
+    var firstRow = hub.querySelector('.lrow');
+    if (firstRow) showSector(firstRow.getAttribute('data-slug'));
+    ['mouseover', 'focusin'].forEach(function (evn) {
+      hub.addEventListener(evn, function (ev) { var r = ev.target.closest('.lrow'); if (r) showSector(r.getAttribute('data-slug')); });
+    });
+  }
+
   // ---- /all: point at a card (or a row) and its top 10 shows under the deck; click opens the full list ----
   var allCard = document.querySelector('.offer.allcard');
   if (allCard) {
