@@ -1,5 +1,6 @@
 import { selectRows, insertRow, updateRows, stripe, json, env, slackHook } from './_lib.js';
 import { lisbonDay } from './_dash-metrics.js';
+import { postSlack, alertByEmail, catchUpSales } from './_slack.js';
 
 // GET /api/ops-report?key=<ops_tokens.token>[&peek=1]
 // Sales since the last report and to date, net of Stripe fees. Used by the 4-hourly Slack update.
@@ -53,11 +54,14 @@ export default async function handler(req, res) {
       const day = /^\d{4}-\d{2}-\d{2}$/.test(url.searchParams.get('day') || '') ? url.searchParams.get('day') : undefined;
       const { out, text } = await dailyReport(day);
       let slack = 'not sent';
-      if (url.searchParams.get('peek') !== '1' && slackHook()) {
-        const r = await fetch(slackHook(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
-        slack = r.ok ? 'sent' : `failed ${r.status}`;
+      let catchup = null;
+      if (url.searchParams.get('peek') !== '1') {
+        catchup = await catchUpSales().catch((e) => ({ error: String(e.message || e).slice(0, 80) }));
+        const p = await postSlack(text);
+        slack = p.ok ? 'sent' : `failed ${p.status} ${p.body}`.trim();
+        if (!p.ok) await alertByEmail(`Daily scorecard (Slack alert failed)`, text, slack);
       }
-      return json(res, 200, { ...out, slack });
+      return json(res, 200, { ...out, slack, catchup });
     }
     const key = String(url.searchParams.get('key') || '');
     if (!/^[a-f0-9]{32,64}$/.test(key)) return json(res, 403, { error: 'no' });
@@ -71,7 +75,8 @@ export default async function handler(req, res) {
       // Shape check only (never echo the secret): host, path prefix, segment count, length.
       const shape = { host: (hook.match(/^https?:\/\/([^/]+)/) || [])[1] || 'bad', services: hook.includes('/services/'), parts: hook.split('/').length, len: hook.length };
       const r = await fetch(hook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: ':white_check_mark: Sale alerts are connected. Every investor-list sale will post here the moment Stripe confirms it.' }) });
-      return json(res, 200, { slack: r.ok ? 'sent' : `failed ${r.status}`, body: (await r.text()).slice(0, 60), shape });
+      const catchup = r.ok ? await catchUpSales().catch((e) => ({ error: String(e.message || e).slice(0, 80) })) : null;
+      return json(res, 200, { slack: r.ok ? 'sent' : `failed ${r.status}`, body: (await r.text()).slice(0, 60), shape, catchup });
     }
 
     const rows = await selectRows(
