@@ -1,4 +1,5 @@
-import { selectRows, insertRow, updateRows, stripe, json, env, slackHook } from './_lib.js';
+import { selectRows, insertRow, updateRows, stripe, json, env, slackHook, getSectorLists } from './_lib.js';
+import { deliverPurchase } from './_deliver.js';
 import { lisbonDay } from './_dash-metrics.js';
 import { postSlack, alertByEmail, catchUpSales } from './_slack.js';
 
@@ -68,6 +69,18 @@ export default async function handler(req, res) {
     const [tok] = await selectRows('ops_tokens', `token=eq.${key}&purpose=eq.sales_report&select=token`);
     if (!tok) return json(res, 403, { error: 'no' });
     res.setHeader('Cache-Control', 'no-store');
+    // ?grant=sectors&email=...  gives an existing paying buyer all sector lists for free (a promise made by hand).
+    // Records a $0 row (no follow-up sequence, not counted as a sale) and sends the standard sector delivery email.
+    if (url.searchParams.get('grant') === 'sectors') {
+      const email = String(url.searchParams.get('email') || '').trim();
+      const paid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) ? await selectRows('list_purchases', `email=ilike.${encodeURIComponent(email)}&amount_cents=gt.0&select=first_name&order=created_at.desc&limit=1`) : [];
+      if (!paid.length) return json(res, 400, { error: 'only for existing paying buyers' });
+      const slugs = (await getSectorLists()).map((l) => l.slug);
+      const [row] = await insertRow('list_purchases', { stripe_session_id: `grant:${Date.now()}`, email, first_name: paid[0].first_name, slugs, bundle: false, amount_cents: 0, followup_step: 99, attribution: { grant: 'sectors', by: 'yoann' } }, { returning: true });
+      const id = await deliverPurchase({ email, slugs, bundle: false, token: row.token, amountCents: 0, name: paid[0].first_name, sectorBundle: true });
+      await updateRows('list_purchases', `id=eq.${row.id}`, { delivered_at: new Date().toISOString(), slack_notified_at: new Date().toISOString() });
+      return json(res, 200, { ok: true, lists: slugs.length, resend_id: id });
+    }
     // ?slack_test=1 sends one test message to the real-time sale channel (checks SLACK_WEBHOOK_URL).
     if (url.searchParams.get('slack_test') === '1') {
       const hook = slackHook();
