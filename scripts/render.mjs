@@ -10,6 +10,18 @@ const UPSELL_INVESTORS = 2426; // same as UNIQUE_INVESTORS: every unique investo
 const BUNDLE = 690; // keep in sync with BUNDLE_PRICE_CENTS in api/_lib.js
 const UNIQUE_INVESTORS = 2426; // unique across all lists; keep in sync with api/_lib.js
 const AS = 'https://allstar-ci.vercel.app/p';
+
+// Google's Merchant listings report asks every Offer for a return policy.
+// Ours is in /terms and is unambiguous: "Because the product is digital
+// content delivered immediately and cannot be returned, all sales are final".
+// So this is a statement of the real policy, not markup written to satisfy
+// the report. shippingDetails is deliberately NOT set: nothing is shipped,
+// and describing a download as a shipment to clear a warning would be false.
+const RETURN_POLICY = {
+  '@type': 'MerchantReturnPolicy',
+  returnPolicyCategory: 'https://schema.org/MerchantReturnNotPermitted',
+  merchantReturnLink: `${SITE}/terms`,
+};
 const WF = 'https://cdn.prod.website-files.com/657b1ee1812a034008e87de8';
 
 export const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -392,9 +404,16 @@ ${bundleBanner(isSector(f) ? 'sectors' : 'regions')}
 ${proofStrip()}
 ${sheetDialog(f)}`;
   const title = featured ? `${f.name}${isSector(f) ? ' · Investor list' : ''} · Climate Insiders` : 'Investor lists for founders and fund managers · Climate Insiders';
-  const description = featured
+  const baseDescription = featured
     ? `${f.tagline} ${n(f.stats.rows)} rows${isSector(f) ? '' : ', checked by hand'}. ${usd(f.price_cents)} one time.`
     : `Hand-checked investor lists for founders and fund managers: family offices in Europe, the US, UK, DACH, the Nordics, APAC and LatAm, plus LPs and climate VCs.`;
+  // A short tagline can leave a list page near 105 characters, which both
+  // Google and Ahrefs flag as thin. Short ones get the delivery promise,
+  // which is true of every list, rather than producing a weak snippet.
+  const description =
+    featured && baseDescription.length < 115
+      ? `${baseDescription} Delivered by email in minutes, one payment.`
+      : baseDescription;
   const url = featured ? `${SITE}/${f.slug}` : `${SITE}/`;
   const ogImage = f.image_url || (featured && !isSector(f) ? `${SITE}/og/${f.slug}.png` : `${SITE}/og.png`);
   const org = { '@type': 'Organization', name: 'Climate Insiders', url: 'https://climateinsiders.com', logo: 'https://cdn.prod.website-files.com/657b1ee1812a034008e87de8/6585389a7f43d48ed7b3c851_fav-md.jpg' };
@@ -409,7 +428,7 @@ ${sheetDialog(f)}`;
         sku: f.slug,
         category: 'Investor database',
         brand: { '@type': 'Brand', name: 'Climate Insiders' },
-        offers: { '@type': 'Offer', price: (f.price_cents / 100).toFixed(2), priceCurrency: 'USD', availability: 'https://schema.org/InStock', url, seller: org },
+        offers: { '@type': 'Offer', price: (f.price_cents / 100).toFixed(2), priceCurrency: 'USD', availability: 'https://schema.org/InStock', url, seller: org, hasMerchantReturnPolicy: RETURN_POLICY },
       }
     : { '@context': 'https://schema.org', '@graph': [{ ...org, '@id': 'https://climateinsiders.com/#org' }, { '@type': 'WebSite', name: 'Climate Insiders Investor Lists', url: `${SITE}/`, publisher: { '@id': 'https://climateinsiders.com/#org' } }] };
   return shell({ title, description, canonical: url, ogImage, jsonld, body, nav: isSector(f) ? 'sectors' : 'regions' });
@@ -540,10 +559,10 @@ export function allPage(lists) {
 ${proofStrip()}`;
   return shell({
     title: 'All 10 investor lists · Climate Insiders',
-    description: `${n(UNIQUE_INVESTORS)} investors across 10 lists: family offices in every region, LPs and climate VC funds. $${BUNDLE} for all ten.`,
+    description: `${n(UNIQUE_INVESTORS)} investors across all 10 hand-checked lists: family offices in every region, LPs and climate VC funds. $${BUNDLE} once, delivered by email in minutes.`,
     canonical: `${SITE}/all`,
     ogImage: `${SITE}/og/all.png`,
-    jsonld: { '@context': 'https://schema.org', '@type': 'Product', name: 'All 10 Climate Insiders investor lists', description: `${n(UNIQUE_INVESTORS)} investors across 10 hand-checked lists.`, image: `${SITE}/og/all.png`, url: `${SITE}/all`, sku: 'all', brand: { '@type': 'Brand', name: 'Climate Insiders' }, offers: { '@type': 'Offer', price: String(BUNDLE) + '.00', priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: `${SITE}/all` } },
+    jsonld: { '@context': 'https://schema.org', '@type': 'Product', name: 'All 10 Climate Insiders investor lists', description: `${n(UNIQUE_INVESTORS)} investors across 10 hand-checked lists.`, image: `${SITE}/og/all.png`, url: `${SITE}/all`, sku: 'all', brand: { '@type': 'Brand', name: 'Climate Insiders' }, offers: { '@type': 'Offer', price: String(BUNDLE) + '.00', priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: `${SITE}/all`, hasMerchantReturnPolicy: RETURN_POLICY } },
     body,
     extraHead: '<meta name="x-page" content="all">',
     compactNav: true,
@@ -748,7 +767,7 @@ ${bundleBanner('regions')}
 ${proofStrip()}`;
   return shell({
     title: 'Investor lists by region · Climate Insiders',
-    description: `${GEO.length} hand-checked investor lists by region: family offices in Europe, the US, the UK, DACH, the Nordics, France and Benelux, Asia-Pacific and LatAm, plus LPs and climate VC funds.`,
+    description: `${GEO.length} hand-checked investor lists by region: family offices in Europe, the US, the UK, DACH, the Nordics, Benelux, APAC and LatAm, plus LPs and climate VC funds.`,
     canonical: `${SITE}/regions`,
     body,
     nav: 'regions',
@@ -793,7 +812,7 @@ export function bundlesPage() {
 </header>
 <div class="bundles">${bundleBanner('regions')}${SECTORS.length ? bundleBanner('sectors') : ''}</div>
 ${proofStrip()}`;
-  return shell({ title: 'Investor list bundles · Climate Insiders', description: `All ${GEO.length} region lists for $${BUNDLE}${SECTORS.length ? `, or all ${SECTORS.length} sector lists for $${n(SECTOR_BUNDLE.price_cents / 100)}` : ''}. One payment, delivered by email.`, canonical: `${SITE}/bundles`, body, nav: 'bundles' });
+  return shell({ title: 'Investor list bundles · Climate Insiders', description: `Buy every list at once: all ${GEO.length} region lists for $${BUNDLE}${SECTORS.length ? `, or all ${SECTORS.length} sector lists for $${n(SECTOR_BUNDLE.price_cents / 100)}` : ''}. Hand-checked contacts, one payment, delivered by email in minutes.`, canonical: `${SITE}/bundles`, body, nav: 'bundles' });
 }
 
 // ---------- /all-sectors: the sector bundle ----------
@@ -838,7 +857,7 @@ export function allSectorsPage() {
 ${proofStrip()}`;
   return shell({
     title: `All ${lists.length} investor lists by sector · Climate Insiders`,
-    description: `${n(SECTOR_BUNDLE.unique_investors)} unique investors across ${lists.length} sector lists. $${n(price)} for all of them.`,
+    description: `${n(SECTOR_BUNDLE.unique_investors)} unique investors across all ${lists.length} sector lists: AI, fintech, climate tech, biotech, defense and more. $${n(price)} once, delivered by email in minutes.`,
     canonical: `${SITE}/all-sectors`,
     body,
     nav: 'bundles',
