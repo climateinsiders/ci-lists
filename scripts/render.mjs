@@ -17,10 +17,27 @@ const AS = 'https://allstar-ci.vercel.app/p';
 // So this is a statement of the real policy, not markup written to satisfy
 // the report. shippingDetails is deliberately NOT set: nothing is shipped,
 // and describing a download as a shipment to clear a warning would be false.
+//
+// applicableCountry: the policy itself is worldwide and uniform. There is no
+// geographic restriction at checkout and no wildcard value in Google's spec,
+// which caps this at 50 ISO 3166-1 alpha-2 codes. So this lists the markets
+// we actually sell into (the EEA, where the seller is established, plus the
+// geographies our own lists cover) rather than pretending to enumerate every
+// country. It bounds where Google can surface the policy, not the policy.
 const RETURN_POLICY = {
   '@type': 'MerchantReturnPolicy',
   returnPolicyCategory: 'https://schema.org/MerchantReturnNotPermitted',
   merchantReturnLink: `${SITE}/terms`,
+  applicableCountry: [
+    // EU 27
+    'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR',
+    'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK',
+    'SI', 'ES', 'SE',
+    // Rest of the EEA, plus Switzerland and the UK
+    'IS', 'LI', 'NO', 'CH', 'GB',
+    // North America, APAC and Oceania, matching our regional lists
+    'US', 'CA', 'AU', 'NZ', 'SG', 'JP',
+  ],
 };
 const WF = 'https://cdn.prod.website-files.com/657b1ee1812a034008e87de8';
 
