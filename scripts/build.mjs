@@ -6,6 +6,7 @@ import { page, allPage, thanksPage, welcomePage, setNav, setSectors, homePage, r
 import { pickSample, sampleStats } from '../api/_pick.js';
 import { termsPage } from './terms.mjs';
 import { dashboardPage } from './dashboard.mjs';
+import { joinPage } from './join-page.mjs';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const dist = path.join(root, 'dist');
@@ -131,6 +132,10 @@ async function main() {
   await writeFile(path.join(dist, 'all', 'index.html'), allPage(lists));
   await mkdir(path.join(dist, 'thanks'), { recursive: true });
   await writeFile(path.join(dist, 'thanks', 'index.html'), thanksPage());
+  // Investor community signup. Replaces the Typeform that was closed from
+  // May 2025 to Nov 2026 and silently collected nothing.
+  await mkdir(path.join(dist, 'join'), { recursive: true });
+  await writeFile(path.join(dist, 'join', 'index.html'), joinPage());
   await mkdir(path.join(dist, 'welcome'), { recursive: true });
   await mkdir(path.join(dist, 'terms'), { recursive: true });
   await writeFile(path.join(dist, 'terms', 'index.html'), termsPage());
