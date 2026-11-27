@@ -31,6 +31,19 @@
     }
   } catch (e) {}
 
+  // First-party funnel (site_events): view, sheet opened, FAQ opened, checkout started. Random visitor id, no cookies.
+  var vid = '';
+  try { vid = localStorage.getItem('ci_v') || ''; if (!vid) { vid = Math.random().toString(36).slice(2, 12) + Date.now().toString(36); localStorage.setItem('ci_v', vid); } } catch (e) {}
+  var slugHere = (location.pathname.split('/')[1] || '');
+  function trackEv(name, slug) {
+    try {
+      if (/^\/(dashboard)/.test(location.pathname) || location.hostname === 'localhost') return;
+      fetch('/api/track', { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: name, path: location.pathname.replace(/\/$/, '') || '/', slug: slug || slugHere || null, utm_source: attribution.utm_source, utm_campaign: attribution.utm_campaign, utm_content: attribution.utm_content, ref: document.referrer, device: matchMedia('(max-width: 760px)').matches ? 'mobile' : 'desktop', v: vid }) }).catch(function () {});
+    } catch (e) {}
+  }
+  if (!/^\/(thanks|welcome)/.test(location.pathname)) trackEv('view');
+  document.addEventListener('toggle', function (e) { if (e.target.tagName === 'DETAILS' && e.target.open && e.target.closest('.faq')) trackEv('faq_open'); }, true);
+
   var toast = document.getElementById('toast');
   function say(msg, ms) {
     if (!toast) return alert(msg);
@@ -87,7 +100,7 @@
   document.addEventListener('click', function (ev) {
     var o = ev.target.closest('[data-open]');
     if (o) { ev.preventDefault(); openD(document.getElementById('p-' + o.getAttribute('data-open'))); return; }
-    if (ev.target.closest('[data-sheet]')) { ev.preventDefault(); openD(document.getElementById('sheet')); return; }
+    if (ev.target.closest('[data-sheet]')) { ev.preventDefault(); openD(document.getElementById('sheet')); trackEv('sheet_open'); return; }
     if (ev.target.closest('[data-close]')) { ev.preventDefault(); closeD(); return; }
     if (ev.target.tagName === 'DIALOG' && ev.target.id !== 'pay') closeD(); // backdrop click (never while paying)
   });
@@ -303,7 +316,9 @@
     track('purchase', { transaction_id: id, value: j.amount / 100, currency: (j.currency || 'usd').toUpperCase(), items: (j.lists || []).map(function (l) { return { item_id: l.slug, item_name: l.name }; }).concat(j.upsell ? [{ item_id: 'all-investors', item_name: 'All investors upgrade' }] : []) });
   }
   function startCheckout(payload, btn) {
-    track('begin_checkout', { currency: 'USD', items: [{ item_id: payload.upsell ? 'all-investors' : (payload.bundle ? 'all' : payload.sectorBundle ? 'all-sectors' : payload.slug) }] });
+    var item = payload.upsell ? 'all-investors' : (payload.bundle ? 'all' : payload.sectorBundle ? 'all-sectors' : payload.slug);
+    track('begin_checkout', { currency: 'USD', items: [{ item_id: item }] });
+    trackEv('checkout_start', item);
     // The label never changes (a longer text made the button grow past its box); a spinner shows progress.
     if (btn) { btn.disabled = true; btn.classList.add('is-loading'); btn.setAttribute('aria-busy', 'true'); }
     var done = function () { if (btn) { btn.disabled = false; btn.classList.remove('is-loading'); btn.removeAttribute('aria-busy'); } };
