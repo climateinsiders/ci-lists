@@ -49,7 +49,9 @@ const CSS = `
 .jf .actions{display:flex;align-items:center;gap:15px;flex-wrap:wrap}
 .jf .fine{font-size:12.5px;color:var(--ink-2);margin:13px 0 0;line-height:1.45}
 .jf .done{display:none}
-.jf .done.on{display:block}
+.jf .done.on{display:block;padding-top:48px}
+.jf .done:focus{outline:none}
+.jf .pitch[hidden],.jf [hidden]{display:none}
 .jf .done h2{font-family:var(--serif);font-variation-settings:'opsz' 144;font-weight:900;font-size:30px;margin:0 0 10px}
 `;
 
@@ -103,7 +105,7 @@ export function joinPage() {
         <b>Every Saturday, one thing you can use.</b>
         <p class="fine" style="margin-top:5px">The deals that got funded this week, what the terms actually were, and which investors are writing cheques right now. Read by 23,000 founders and investors. Free, and one click to leave.</p>
       </div>
-      <label class="consent"><input type="checkbox" name="newsletter" checked><span>Yes, send me the Climate Insiders newsletter</span></label>
+      <label class="consent"><input type="checkbox" name="newsletter"><span>Yes, send me the Climate Insiders newsletter</span></label>
       <label class="consent"><input type="checkbox" name="gdpr" required><span>I agree to the <a href="https://www.climateinsiders.com/terms-of-service" target="_blank" rel="noopener">terms of service</a> and to Climate Insiders holding my details so we can contact me about investment opportunities.</span></label>
       <div class="actions" style="margin-top:20px">
         <button class="btn big" type="submit" id="jsubmit">Join the community</button>
@@ -113,10 +115,16 @@ export function joinPage() {
     </fieldset>
   </form>
 
-  <div class="done" id="jdone">
+  <div class="done" id="jdone" tabindex="-1">
     <h2>You are on the list.</h2>
-    <p class="lede">Check your inbox, there is a confirmation on its way with the most useful things we have published. If it is not there in a few minutes, look in promotions.</p>
-    <p class="lede" style="margin-top:14px"><a class="btn" href="/all">Browse the investor lists</a></p>
+    <p class="lede">We have your details and will be in touch when the next round opens.</p>
+    <p class="lede" id="jmail" style="margin-top:10px">A confirmation is on its way to your inbox with the most useful things we have published. If it is not there in a few minutes, check promotions.</p>
+    <div class="pitch" id="jnews" hidden style="margin-top:22px">
+      <b>One more click for the newsletter.</b>
+      <p class="fine" style="margin:5px 0 14px">Substack asks you to confirm it yourself. It is free. If Substack shows paid plans, you can skip them.</p>
+      <a class="btn" id="jnewslink" href="https://climateinsiders.substack.com/subscribe" target="_blank" rel="noopener">Confirm my newsletter</a>
+    </div>
+    <p class="lede" style="margin-top:24px"><a href="/all">Browse the investor lists</a> · <a href="https://www.climateinsiders.com/">Back to climateinsiders.com</a></p>
   </div>
 </main>`;
 
@@ -126,6 +134,13 @@ export function joinPage() {
       done=document.getElementById('jdone'), btn=document.getElementById('jsubmit'),
       sel=f.elements.ticket, other=document.getElementById('otherwrap');
   sel.addEventListener('change',function(){ other.hidden = sel.value!=='Other'; });
+  var from=new URLSearchParams(location.search).get('from')||'';
+  var m=document.cookie.match(/(?:^|; )ci_lead=([^;]*)/);
+  if(m){
+    try{ f.elements.email.value=decodeURIComponent(m[1]); }catch(e){}
+    document.cookie='ci_lead=; domain=.climateinsiders.com; path=/; max-age=0; secure; samesite=lax';
+    f.elements.first_name.focus({preventScroll:true});
+  }
   function fail(m){ err.textContent=m; err.classList.add('on'); err.scrollIntoView({block:'center',behavior:'smooth'}); btn.disabled=false; btn.textContent='Join the community'; }
   f.addEventListener('submit',function(e){
     e.preventDefault();
@@ -139,7 +154,7 @@ export function joinPage() {
       targets:d.getAll('targets'), motivations:d.getAll('motivations'),
       newsletter:f.elements.newsletter.checked, gdpr:true,
       company_website:d.get('company_website'),
-      source:location.pathname + location.search
+      source:from ? 'climateinsiders.com' + from : location.pathname
     };
     btn.disabled=true; btn.textContent='Saving…';
     fetch('/api/join',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
@@ -147,11 +162,13 @@ export function joinPage() {
       .then(function(r){
         if(!r.ok) return fail(r.j && r.j.error ? r.j.error : 'Something went wrong. Please try again.');
         if(window.gtag) gtag('event','investor_signup');
-        // Substack cannot be subscribed server-side, so hand them over with the
-        // address prefilled. One click there and they are actually on the list.
-        if(r.j.next){ window.location.href=r.j.next; return; }
-        f.style.display='none'; done.classList.add('on');
-        done.scrollIntoView({block:'start',behavior:'smooth'});
+        // Stay here and confirm. Substack cannot be subscribed server-side, so
+        // the newsletter is a button the person chooses to press.
+        if(r.j.next){ document.getElementById('jnewslink').href=r.j.next; document.getElementById('jnews').hidden=false; }
+        if(r.j.emailed===false) document.getElementById('jmail').hidden=true;
+        f.style.display='none';
+        document.querySelector('.jf header').style.display='none';
+        done.classList.add('on'); done.focus({preventScroll:true}); window.scrollTo(0,0);
       })
       .catch(function(){ fail('Could not reach the server. Check your connection and try again.'); });
   });
