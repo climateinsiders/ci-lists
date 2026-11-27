@@ -197,6 +197,8 @@ let NAV = [];
 let GEO = [];
 let SECTORS = [];
 let SECTOR_BUNDLE = { price_cents: 149000, unique_investors: 0 };
+let BUYERS = 0; // distinct paying buyers, counted from list_purchases at build time
+export function setBuyers(count) { BUYERS = Number(count) || 0; }
 export function setNav(lists) { NAV = lists.map((l) => ({ slug: l.slug, name: l.name })); GEO = lists; }
 export function setSectors(lists, bundle) { SECTORS = lists; if (bundle) SECTOR_BUNDLE = bundle; }
 
@@ -293,6 +295,28 @@ function statRow(list) {
   return `<ul class="stats">${items.map(([v, l]) => `<li><b>${v}</b> ${l}</li>`).join('')}</ul>`;
 }
 
+// Who is behind the list, right under the value stack. Facts only: Yoann's own track record and the real buyer count.
+function builtBy() {
+  return `<div class="builtby"><img src="/yoann.jpg" alt="Yoann Berno" width="40" height="40" loading="lazy"><p><b>Built by hand by Yoann Berno.</b> 8 years in climate tech and VC, 47 investments.${BUYERS >= 10 ? ` ${n(BUYERS)} founders and fund managers have bought a list since October.` : ''}</p></div>`;
+}
+
+// The questions buyers ask in the DMs before paying, answered on the page.
+function faq(list) {
+  const sec = isSector(list);
+  const isFund = list.slug === 'climate-vcs-474';
+  const cols = isFund ? 'fund name, stage, region, sector, ticket size and whether they lead' : sec ? 'name, firm, country, stage, cheque size, email and LinkedIn' : 'name, title, firm, city, country, email and LinkedIn';
+  const items = [
+    ['What exactly do I get?', `An Excel file and an Airtable view by email, about 2 minutes after you pay. Every row has the ${cols}. The ${n(list.stats.rows)} rows are yours to keep.`],
+    ['How fresh is the data?', 'Checked by hand and refreshed every month. If a row is wrong, reply to the delivery email and I fix it, for free.'],
+    ['Is it a subscription?', `No. ${usd(list.price_cents)} once, and the list is yours for good. Receipt and invoice come with the payment.`],
+    ['Can I email these people?', 'Yes, one by one. Write a short personal note to each person, never a mass blast. That is also what gets replies.'],
+    sec
+      ? [`What if I need more than one sector?`, `All ${SECTORS.length || 20} sector lists come as one set for $${n((SECTOR_BUNDLE.price_cents || 149000) / 100)}. See the bundle below.`]
+      : ['What if I need more than one region?', `All 10 region lists are $${n(BUNDLE)}. Buy this one now and, if you upgrade within 10 days, what you paid counts towards the set. The link is in your follow-up email.`],
+  ];
+  return `<section class="faq" aria-label="Questions"><span class="script">before you buy</span><h2>Questions people ask me</h2>${items.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</section>`;
+}
+
 // The offer: top 10 on the left, the value stack and the buy button on the right.
 function offerBlock(list, { sheet = false } = {}) {
   const isFund = list.slug === 'climate-vcs-474';
@@ -309,6 +333,7 @@ function offerBlock(list, { sheet = false } = {}) {
     <p class="fine">Stripe checkout. Card, Apple Pay, Google Pay. Airtable + Excel by email in 2 minutes, receipt and invoice included.</p>
     <span class="script">what you get</span>
     ${valuePoints(list)}
+    ${sheet ? builtBy() : ''}
   </div>`;
 }
 
@@ -324,6 +349,8 @@ function preview(list) {
 // After that, surname and firm are replaced by blurred placeholders, so the page can't be scraped
 // into the product. Email and LinkedIn are always placeholders, never the data.
 const OPEN_ROWS = 20;
+const SHEET_ROWS = 60; // rows rendered in the preview; the rest is one closing line (500 full rows made a 7,000-node page)
+const moreRow = (list, cols) => list.stats.rows > SHEET_ROWS ? `<tr class="morerow"><td colspan="${cols}">+ ${n(list.stats.rows - SHEET_ROWS)} more rows, unlocked when you buy</td></tr>` : '';
 const FREE_ROWS = 10; // the first ten rows are free in full: email and LinkedIn included
 const BLUR = {
   email: ['firstname@familyoffice.com', 'name@capitalpartners.eu', 'info.direct@holdings.com', 'first.last@wealth.com'],
@@ -338,7 +365,7 @@ const BLUR = {
 const bl = (k, i) => `<span class="blur">${BLUR[k][i % BLUR[k].length]}</span>`;
 
 function fundSheetDialog(list) {
-  const rows = (list.rows || []).map((r, i) => {
+  const rows = (list.rows || []).slice(0, SHEET_ROWS).map((r, i) => {
     const x = r.extra || {};
     const open = i < OPEN_ROWS;
     const name = r.firm || r.name || '';
@@ -351,7 +378,7 @@ function fundSheetDialog(list) {
   });
   return `<dialog class="preview sheetdlg" id="sheet" aria-label="All ${n(list.stats.rows)} funds">
   <div class="pvhead"><span class="script">the full list</span><h2>${n(list.stats.rows)} funds. The first ${OPEN_ROWS} in full, the rest unlock when you buy.</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
-  <div class="grid-wrap"><table class="sheettbl funds"><thead><tr><th class="ix">#</th><th>Fund</th><th>Stage</th><th>Region</th><th>Sector</th><th>Ticket</th><th>Leads rounds</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>
+  <div class="grid-wrap"><table class="sheettbl funds"><thead><tr><th class="ix">#</th><th>Fund</th><th>Stage</th><th>Region</th><th>Sector</th><th>Ticket</th><th>Leads rounds</th></tr></thead><tbody>${rows.join('')}${moreRow(list, 7)}</tbody></table></div>
   <div class="pvfoot"><span>Fund names, sectors, ticket sizes and who leads unlock when you buy.</span><button class="btn" data-buy="${esc(list.slug)}">Unlock all ${n(list.stats.rows)} for ${usd(list.price_cents)}</button></div>
 </dialog>`;
 }
@@ -382,7 +409,7 @@ function sectorSheetDialog(list) {
 function sheetDialog(list) {
   if (list.slug === 'climate-vcs-474') return fundSheetDialog(list);
   if (isSector(list)) return sectorSheetDialog(list);
-  const rows = (list.rows || []).map((r, i) => {
+  const rows = (list.rows || []).slice(0, SHEET_ROWS).map((r, i) => {
     const label = r.name || r.firm || '';
     const x = r.extra || {};
     const open = i < OPEN_ROWS;
@@ -394,7 +421,7 @@ function sheetDialog(list) {
   });
   return `<dialog class="preview sheetdlg" id="sheet" aria-label="All ${n(list.stats.rows)} rows">
   <div class="pvhead"><span class="script">the full list</span><h2>${n(list.stats.rows)} rows. The first ${FREE_ROWS} are free, in full. The rest unlock when you buy.</h2><button class="close" type="button" data-close aria-label="Close">×</button></div>
-  <div class="grid-wrap"><table class="sheettbl"><thead><tr><th class="ix">#</th><th>Name</th><th>Title</th><th>Firm</th><th>Country</th><th>Email</th><th>LinkedIn</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>
+  <div class="grid-wrap"><table class="sheettbl"><thead><tr><th class="ix">#</th><th>Name</th><th>Title</th><th>Firm</th><th>Country</th><th>Email</th><th>LinkedIn</th></tr></thead><tbody>${rows.join('')}${moreRow(list, 7)}</tbody></table></div>
   <div class="pvfoot"><span>The first ${FREE_ROWS} are yours, emails and LinkedIn included. The other ${n(Math.max(0, list.stats.rows - FREE_ROWS))} unlock when you buy.</span><button class="btn" data-buy="${esc(list.slug)}">Unlock all ${n(list.stats.rows)} for ${usd(list.price_cents)}</button></div>
 </dialog>`;
 }
@@ -417,10 +444,12 @@ export function page(lists, featured) {
 <section class="offer main" id="offer" ${toneAttr(f)}>${offerBlock(f, { sheet: true })}</section>
 <div class="stickybuy" id="stickybuy"><span class="sp"><b>${usd(f.price_cents)}</b><small>one time · yours forever</small></span><button class="btn" data-buy="${esc(f.slug)}">Get the list</button></div>
 
+${faq(f)}
 ${bundleBanner(isSector(f) ? 'sectors' : 'regions')}
 ${proofStrip()}
 ${sheetDialog(f)}`;
-  const title = featured ? `${f.name}${isSector(f) ? ' · Investor list' : ''} · Climate Insiders` : 'Investor lists for founders and fund managers · Climate Insiders';
+  const fit = (t) => (t.length <= 60 ? t : t.replace(/ · Climate Insiders$/, '').replace(/ · Investor list$/, ''));
+  const title = featured ? fit(fit(`${f.name}${isSector(f) ? ' · Investor list' : ''} · Climate Insiders`)) : 'Investor lists for founders and funds · Climate Insiders';
   const baseDescription = featured
     ? `${f.tagline} ${n(f.stats.rows)} rows${isSector(f) ? '' : ', checked by hand'}. ${usd(f.price_cents)} one time.`
     : `Hand-checked investor lists for founders and fund managers: family offices in Europe, the US, UK, DACH, the Nordics, APAC and LatAm, plus LPs and climate VCs.`;
@@ -428,7 +457,7 @@ ${sheetDialog(f)}`;
   // Google and Ahrefs flag as thin. Short ones get the delivery promise,
   // which is true of every list, rather than producing a weak snippet.
   const description =
-    featured && baseDescription.length < 115
+    featured && baseDescription.length < 125
       ? `${baseDescription} Delivered by email in minutes, one payment.`
       : baseDescription;
   const url = featured ? `${SITE}/${f.slug}` : `${SITE}/`;
@@ -741,7 +770,7 @@ export function homePage() {
 </section>
 ${proofStrip()}`;
   return shell({
-    title: 'Investor lists for founders and fund managers · Climate Insiders',
+    title: 'Investor lists for founders and funds · Climate Insiders',
     description: 'Hand-checked investor lists for founders and fund managers: by region (family offices, LPs, climate VCs) and by sector (AI, fintech, climate tech and more).',
     canonical: `${SITE}/`,
     jsonld: { '@context': 'https://schema.org', '@graph': [{ '@type': 'Organization', '@id': 'https://climateinsiders.com/#org', name: 'Climate Insiders', url: 'https://climateinsiders.com', logo: 'https://cdn.prod.website-files.com/657b1ee1812a034008e87de8/6585389a7f43d48ed7b3c851_fav-md.jpg' }, { '@type': 'WebSite', name: 'Climate Insiders Investor Lists', url: `${SITE}/`, publisher: { '@id': 'https://climateinsiders.com/#org' } }] },

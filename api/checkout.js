@@ -21,6 +21,8 @@ export default async function handler(req, res) {
       const prev = await stripe(`checkout/sessions/${sid}`);
       if (prev.payment_status !== 'paid') return json(res, 400, { error: 'Purchase not found' });
       if (prev.metadata?.upsell === '1') return json(res, 400, { error: 'Already upgraded' });
+      // The /thanks offer runs 24h from the first purchase, as the countdown says. Enforced here, not only in the browser.
+      if (Date.now() > (Number(prev.created) || 0) * 1000 + 24 * 3600 * 1000) return json(res, 400, { error: 'This offer has ended. Reply to your receipt email if you want more lists.' });
       const owned = (prev.metadata?.slugs || '').split(',').filter(Boolean);
       const rest = lists.filter((l) => !owned.includes(l.slug));
       if (!rest.length) return json(res, 400, { error: 'You already own every list' });

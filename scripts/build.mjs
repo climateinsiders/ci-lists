@@ -2,7 +2,7 @@
 import { mkdir, writeFile, readFile, cp, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { page, allPage, thanksPage, welcomePage, setNav, setSectors, homePage, regionsPage, sectorsPage, bundlesPage, allSectorsPage } from './render.mjs';
+import { page, allPage, thanksPage, welcomePage, setNav, setSectors, setBuyers, homePage, regionsPage, sectorsPage, bundlesPage, allSectorsPage } from './render.mjs';
 import { pickSample, sampleStats } from '../api/_pick.js';
 import { termsPage } from './terms.mjs';
 import { dashboardPage } from './dashboard.mjs';
@@ -99,8 +99,21 @@ function decorate(lists) {
   return lists;
 }
 
+// Distinct paying buyers, for the "N founders and fund managers have bought a list" line. Local preview: a fixed sample.
+async function countBuyers() {
+  if (local) return 29;
+  try {
+    const rows = await sb('list_purchases?select=email&amount_cents=gt.0');
+    return new Set(rows.map((r) => String(r.email || '').trim().toLowerCase()).filter(Boolean)).size;
+  } catch (e) {
+    console.log(`buyer count skipped: ${e.message}`);
+    return 0;
+  }
+}
+
 async function main() {
   const all = decorate(await loadLists());
+  setBuyers(await countBuyers());
   const lists = all.filter((l) => l.kind !== 'sector');
   const sectors = all.filter((l) => l.kind === 'sector');
   setNav(lists);
