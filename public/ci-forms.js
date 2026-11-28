@@ -45,7 +45,7 @@
           { n: 'format', l: 'Your ideal format', t: 'select', o: ['Hands-on: Pick your deals a-la-carte', 'Hands-off: Trust the expert', 'Undecided'] },
           { n: 'secondaries', l: 'Would you consider secondaries?', t: 'select', o: ['Yes', 'No', 'Tell me more'], hint: 'Buying shares from an existing holder instead of in a new round.' },
           { n: 'targets', l: 'Which sectors do you want to see?', t: 'chips', o: SECTORS },
-          { n: 'motivations', l: 'What draws you to climate tech?', t: 'chips', o: ['Financial gain (20%+ IRR)', 'Drive enormous climate impact', 'Learn about startup investing', 'Might help your future career move', 'Other'] }
+          { n: 'motivations', l: 'What draws you to climate tech?', t: 'chips', o: ['Financial returns', 'Drive enormous climate impact', 'Learn about startup investing', 'Might help your future career move', 'Other'] }
         ] }
       ],
       newsletter: 'Send me the weekly newsletter: climate funding signals and investor lists. Free, unsubscribe anytime.',
