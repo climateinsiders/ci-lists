@@ -255,7 +255,8 @@
       var b = e.target.closest('[data-f]'); if (b) fail(b.getAttribute('data-f'), '');
       if (e.target.type === 'file') {
         var file = e.target.files[0];
-        b.querySelector('.fname').textContent = file ? file.name + ' (' + (file.size / 1048576).toFixed(1) + ' MB)' : 'Choose a file or drop it here';
+        var size = file && (file.size < 1048576 ? Math.max(1, Math.round(file.size / 1024)) + ' KB' : (file.size / 1048576).toFixed(1) + ' MB');
+        b.querySelector('.fname').textContent = file ? file.name + ' (' + size + ')' : 'Choose a file or drop it here';
         uploaded = null;
         if (file && file.size > MAX_DECK) fail('deck', 'That file is over 25 MB. Export a smaller PDF.');
       }
