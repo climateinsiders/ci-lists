@@ -240,9 +240,21 @@ async function stop(req, res, ids) {
   return page('Done', failed === valid.length ? 'There was nothing left to stop.' : 'No more emails in this series.');
 }
 
+// Read-only: every email in a series, exactly as it renders, for review.
+function preview(res, kind) {
+  const k = kind === 'founder' ? 'founder' : 'investor';
+  const blocks = sequence(k, { firstName: 'Alex', startup: 'Example Startup', coaching: true })
+    .map((m) => `<h2 style="font:600 15px -apple-system,Arial,sans-serif;max-width:560px;margin:34px auto 8px;padding:0 14px">Day ${m.day}${m.day ? ' (follow-up)' : ' (sent at once)'}: ${m.subject}</h2>${render(m, m.day === 0 ? { newsletterUrl: SUBSTACK } : { stopUrl: `${SITE}/api/join?stop=` }).html}`).join('');
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.setHeader('X-Robots-Tag', 'noindex');
+  res.end(`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Email preview: ${k}</title><body style="margin:0;background:#fff;color:#1e1d30;padding-bottom:40px"><p style="font:14px -apple-system,Arial,sans-serif;text-align:center;padding:18px">Preview of the ${k} emails. <a href="?preview=investor">Investors</a> · <a href="?preview=founder">Founders</a>. Follow-ups are ${env('CI_FOLLOWUPS', 'off') === 'on' ? 'ON' : 'OFF'}.</p>${blocks}</body>`);
+}
+
 export default async function handler(req, res) {
-  const stopIds = new URL(req.url || '/', 'http://x').searchParams.get('stop');
-  if (stopIds !== null) return stop(req, res, stopIds);
+  const params = new URL(req.url || '/', 'http://x').searchParams;
+  if (params.get('stop') !== null) return stop(req, res, params.get('stop'));
+  if (params.get('preview') !== null && req.method === 'GET') return preview(res, params.get('preview'));
 
   const origin = req.headers.origin;
   const allowed = origin && ALLOWED_ORIGIN.test(origin);
