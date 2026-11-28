@@ -17,11 +17,12 @@ import { sequence, render, CAL_INVESTOR, CAL_FOUNDER } from './_forms-mail.js';
 // Substack has no subscribe API, so newsletter consent is recorded and the
 // person gets a button to confirm it themselves.
 
-const BASE = 'appLZFv8yLM6DmF4V';
+// Founder pitches have their own base: the workspace is on Airtable's free plan,
+// which caps each base at 1,000 rows and 1 GB of attachments.
 const TABLES = {
-  investor: { id: 'tbloLkPqh9WWdudee', label: 'investor signup' },
-  founder: { id: 'tbl2q5Jh5rq5CQFiZ', label: 'founder pitch' },
-  contact: { id: 'tblKf0QICEfVSpTqS', label: 'contact message' },
+  investor: { base: 'appLZFv8yLM6DmF4V', id: 'tbloLkPqh9WWdudee', label: 'investor signup' },
+  founder: { base: 'app5l8j491jy8dUee', id: 'tbln03h086hcKeRrI', label: 'founder pitch' },
+  contact: { base: 'appLZFv8yLM6DmF4V', id: 'tblKf0QICEfVSpTqS', label: 'contact message' },
 };
 const BUCKET = 'ci-pitch-decks';
 const SITE = 'https://lists.climateinsiders.com';
@@ -84,7 +85,8 @@ async function uploadTicket(b) {
 async function deckLink(path) {
   if (!/^web\/[0-9a-f-]{36}\/[\w.\-]{1,100}$/.test(path)) throw new Bad('Please attach your deck again.');
   try {
-    const out = await storage(`/object/sign/${BUCKET}/${path}`, { expiresIn: 60 * 60 * 24 * 30 });
+    // Long lived: this is the link kept on the Airtable row. The bucket is private.
+    const out = await storage(`/object/sign/${BUCKET}/${path}`, { expiresIn: 60 * 60 * 24 * 365 * 10 });
     const filename = path.split('/').pop();
     return { filename, url: `${sbUrl()}${out.signedURL}&download=${encodeURIComponent(filename)}` };
   } catch (e) {
@@ -148,18 +150,19 @@ async function parse(kind, b) {
   };
   const deck = await deckLink(one(b.deck_path, 220));
   fields['Pitch deck'] = [deck];
+  fields['Deck link'] = deck.url;
   fields['Deck storage path'] = one(b.deck_path, 220);
   return { email, newsletter, firstName, startup, coaching, deck, who: `${startup} (${firstName} ${lastName})`, fields };
 }
 
-async function airtableCreate(table, fields) {
+async function airtableCreate({ base, id }, fields) {
   const key = env('AIRTABLE_API_KEY', '');
   if (!key) throw new Error('AIRTABLE_API_KEY missing');
   let payload = { ...fields };
   // A single unknown column makes Airtable reject the whole row, so drop it and
   // retry: schema drift can cost a column, never the lead.
   for (let i = 0; i < 8; i++) {
-    const res = await fetch(`https://api.airtable.com/v0/${BASE}/${table}`, {
+    const res = await fetch(`https://api.airtable.com/v0/${base}/${id}`, {
       method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ records: [{ fields: payload }], typecast: true }),
     });
@@ -167,6 +170,9 @@ async function airtableCreate(table, fields) {
     const body = await res.text();
     const miss = body.match(/Unknown field name:\s*\\?"([^"\\]+)/i);
     if (res.status === 422 && miss && miss[1] in payload) { delete payload[miss[1]]; continue; }
+    // If the attachment is what Airtable refuses (storage cap), keep the row: the
+    // deck link on it still works.
+    if ((res.status === 422 || res.status === 413) && 'Pitch deck' in payload && /attach/i.test(body)) { delete payload['Pitch deck']; continue; }
     throw new Error(`airtable ${res.status}: ${body.slice(0, 300)}`);
   }
   throw new Error('airtable: too many unknown fields');
@@ -182,14 +188,14 @@ async function resend(message) {
 }
 
 async function tellOwner(kind, d, saved, reason) {
-  const lines = Object.entries(d.fields).filter(([k, v]) => k !== 'Pitch deck' && v !== '' && !(Array.isArray(v) && !v.length))
+  const lines = Object.entries(d.fields).filter(([k, v]) => k !== 'Pitch deck' && k !== 'Deck link' && v !== '' && !(Array.isArray(v) && !v.length))
     .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`);
   await resend({
     to: [env('LEAD_FALLBACK_EMAIL', 'yoann@climateinsiders.com')], reply_to: d.email,
     subject: saved ? `New ${TABLES[kind].label}: ${d.who}` : `New ${TABLES[kind].label} (add to Airtable): ${d.who}`,
     text: [
-      saved ? `Saved in Airtable: https://airtable.com/${BASE}/${TABLES[kind].id}` : 'This could NOT be written to Airtable. Nothing is lost: add it by hand and fix the cause below.',
-      '', ...(d.deck ? [`Pitch deck (link works for 30 days): ${d.deck.url}`, ''] : []), ...lines,
+      saved ? `Saved in Airtable: https://airtable.com/${TABLES[kind].base}/${TABLES[kind].id}` : 'This could NOT be written to Airtable. Nothing is lost: add it by hand and fix the cause below.',
+      '', ...(d.deck ? [`Pitch deck (private link, do not forward): ${d.deck.url}`, ''] : []), ...lines,
       ...(saved ? [] : ['', `Cause: ${reason}`]),
     ].join('\n'),
     tags: [{ name: 'type', value: `${kind}-owner` }],
@@ -267,7 +273,7 @@ export default async function handler(req, res) {
     for (const k of Object.keys(d.fields)) { const v = d.fields[k]; if (v === '' || (Array.isArray(v) && !v.length)) delete d.fields[k]; }
     let saved = true, reason = '';
     try {
-      const { dropped } = await airtableCreate(TABLES[kind].id, d.fields);
+      const { dropped } = await airtableCreate(TABLES[kind], d.fields);
       if (dropped.length) console.warn('[join] missing columns, dropped:', dropped.join(', '));
     } catch (e) { saved = false; reason = e.message; console.error('[join] airtable write failed:', e.message); }
     try { await tellOwner(kind, d, saved, reason); }
